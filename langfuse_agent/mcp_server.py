@@ -5,7 +5,7 @@ from typing import Any, Dict
 from dotenv import load_dotenv, find_dotenv
 from fastmcp import FastMCP
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import create_mcp_server
