@@ -2,11 +2,13 @@ import os
 from pydantic import BaseModel, ConfigDict
 from agent_utilities.base_utilities import to_boolean
 
+
 class GraphConfig(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
     mcp_url: str | None = None
     mcp_config: str | None = None
     custom_skills_directory: str | None = None
+
 
 TAG_PROMPTS: dict[str, str] = {
     "telemetry": "You are a Langfuse Telemetry specialist. Evaluate metrics and traces.",
@@ -18,6 +20,7 @@ TAG_ENV_VARS: dict[str, str] = {
     "annotation": "ANNOTATIONTOOL",
 }
 
+
 def get_sys_prompt(raw_query: str) -> str:
     active_prompts = []
     has_active_tags = False
@@ -28,7 +31,6 @@ def get_sys_prompt(raw_query: str) -> str:
             if tag in TAG_PROMPTS:
                 active_prompts.append(TAG_PROMPTS[tag])
 
-                                                        
     if not active_prompts and has_active_tags:
         active_prompts.append("You are a Langfuse Observability Agent specialist.")
 

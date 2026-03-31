@@ -1,10 +1,12 @@
-from typing import Any, Dict, List, Optional
+from typing import Optional
 from pydantic import BaseModel
+
 
 class LangfuseProjectConfig(BaseModel):
     public_key: str
     secret_key: str
     host: str
+
 
 class AnnotationQueue(BaseModel):
     id: str
