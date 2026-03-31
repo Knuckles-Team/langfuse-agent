@@ -1,0 +1,41 @@
+---
+services:
+  langfuse-agent:
+    # image: docker.io/knucklessg1/langfuse-agent:latest
+    build:
+      context: . # Debug
+      dockerfile: debug.Dockerfile
+    container_name: langfuse-agent
+    hostname: langfuse-agent
+    command: [ "langfuse-agent" ]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - "HOST=0.0.0.0"
+      - "PORT=9001"
+      - "TRANSPORT=stdio"
+      - "LANGFUSE_URL=${LANGFUSE_URL}"
+      - "LANGFUSE_TOKEN=${LANGFUSE_TOKEN}"
+      - "PROVIDER=openai"
+      - "LLM_BASE_URL=${LLM_BASE_URL:-http://host.docker.internal:1234/v1}"
+      - "LLM_API_KEY=${LLM_API_KEY:-llama}"
+      - "MODEL_ID=${MODEL_ID:-nvidia/nemotron-3-super}"
+      - "DEBUG=False"
+      - "ENABLE_WEB_UI=True"
+      - "ENABLE_OTEL=True"
+    ports:
+      - "9001:9001"
+    healthcheck:
+      test: [ "CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9001/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "langfuse": {
+      "command": "langfuse-mcp",
+      "args": ["--transport", "stdio"],
+      "env": {
+        "LANGFUSE_URL": "${LANGFUSE_URL:-http://localhost:8080}",
+        "LANGFUSE_TOKEN": "${LANGFUSE_TOKEN}"
+      }
+    }
+  }
+}
