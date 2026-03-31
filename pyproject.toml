@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "langfuse-agent"
-version = "0.1.1"
+version = "0.1.2"
 description = "Agent for interacting with Langfuse Observability API"
 readme = "README.md"
 authors = [{ name = "Audel Rouhi", email = "knucklessg1@gmail.com" }]
