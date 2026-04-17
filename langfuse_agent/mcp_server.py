@@ -5,6 +5,7 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     try:
         from requests.exceptions import RequestsDependencyWarning
+
         warnings.filterwarnings("ignore", category=RequestsDependencyWarning)
     except ImportError:
         pass
@@ -19,7 +20,7 @@ import logging
 from typing import Any, Dict, Optional
 from fastmcp import FastMCP
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
 
 from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import create_mcp_server
