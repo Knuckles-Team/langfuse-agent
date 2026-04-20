@@ -1,5 +1,6 @@
 requests>=2.8.1
 urllib3>=2.2.2
+langfuse>=2.36.0
 fastmcp>=2.13.0.2
 uvicorn>=0.29.0
 fastapi>=0.110.0

@@ -173,6 +173,15 @@ wheels = [
 ]
 
 [[package]]
+name = "backoff"
+version = "2.2.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/d7/5bbeb12c44d7c4f2fb5b56abce497eb5ed9f34d85701de869acedd602619/backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba", size = 17001, upload-time = "2022-10-05T19:19:32.061Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/df/73/b6e24bd22e6720ca8ee9a85a0c4a2971af8497d8f3193fa05390cbd46e09/backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8", size = 15148, upload-time = "2022-10-05T19:19:30.546Z" },
+]
+
+[[package]]
 name = "backports-tarfile"
 version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1320,11 +1329,32 @@ wheels = [
 ]
 
 [[package]]
+name = "langfuse"
+version = "4.3.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "backoff" },
+    { name = "httpx" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-exporter-otlp-proto-http" },
+    { name = "opentelemetry-sdk" },
+    { name = "packaging" },
+    { name = "pydantic" },
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0c/84/e04d7966e79eda4126e9c4a90f374b1b7d9a6d8155e386f9bade49f19296/langfuse-4.3.1.tar.gz", hash = "sha256:fb83155d17c2bc96fdc7c749f10c8ae8b6be1e47619e31627b5a907f965a6580", size = 276525, upload-time = "2026-04-16T12:20:17.679Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b3/45/bcc15ea8df11224516e060efb2d813cdfafb8d285233f350ff0d8098ff20/langfuse-4.3.1-py3-none-any.whl", hash = "sha256:4ec1524fcb082acaff1a746f3da1ab92c4fb2352e66350c11341b34c13013685", size = 476379, upload-time = "2026-04-16T12:20:18.741Z" },
+]
+
+[[package]]
 name = "langfuse-agent"
-version = "0.1.6"
+version = "0.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "agent-utilities", extra = ["mcp"] },
+    { name = "langfuse" },
+    { name = "requests" },
 ]
 
 [package.optional-dependencies]
@@ -1340,6 +1370,8 @@ requires-dist = [
     { name = "agent-utilities", extras = ["agent", "logfire"], marker = "extra == 'agent'", specifier = ">=0.2.12" },
     { name = "agent-utilities", extras = ["mcp"], specifier = ">=0.2.12" },
     { name = "agent-utilities", extras = ["mcp", "agent", "logfire"], marker = "extra == 'all'", specifier = ">=0.2.12" },
+    { name = "langfuse", specifier = ">=2.36.0" },
+    { name = "requests", specifier = ">=2.8.1" },
 ]
 provides-extras = ["agent", "all"]
 
