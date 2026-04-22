@@ -1,4 +1,3 @@
-from typing import Optional
 from pydantic import BaseModel
 
 
@@ -11,6 +10,6 @@ class LangfuseProjectConfig(BaseModel):
 class AnnotationQueue(BaseModel):
     id: str
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     createdAt: str
     updatedAt: str

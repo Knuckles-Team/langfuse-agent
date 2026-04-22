@@ -1,4 +1,5 @@
 import os
+
 from langfuse import Langfuse
 
 _client = None

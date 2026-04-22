@@ -8,7 +8,7 @@ from typing import List
 
 warnings.filterwarnings("ignore", message=".*urllib3.*or chardet.*")
 
-__all__: List[str] = []
+__all__: list[str] = []
 
 CORE_MODULES = [
     "langfuse_agent.langfuse_api",
