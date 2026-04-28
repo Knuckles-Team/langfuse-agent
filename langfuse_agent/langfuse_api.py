@@ -34,7 +34,7 @@ class LangfuseApi:
                 return response.json()
             return {"success": True}
         except requests.exceptions.RequestException as e:
-            raise ApiError(f"API request failed: {e}")
+            raise ApiError(f"API request failed: {e}") from e
 
     def annotation_queues_list_queues(
         self, page: int | None = None, limit: int | None = None

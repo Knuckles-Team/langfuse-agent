@@ -173,6 +173,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "backoff"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -191,6 +192,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> d2389ff (Fixed changes.)
 name = "backports-tarfile"
 version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1110,6 +1113,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "iniconfig"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1119,6 +1123,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> d2389ff (Fixed changes.)
 name = "jaraco-classes"
 version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1347,6 +1353,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "langfuse"
 version = "4.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1373,6 +1380,13 @@ dependencies = [
     { name = "agent-utilities", extra = ["mcp"] },
     { name = "langfuse" },
     { name = "requests" },
+=======
+name = "langfuse-agent"
+version = "0.1.6"
+source = { editable = "." }
+dependencies = [
+    { name = "agent-utilities", extra = ["mcp"] },
+>>>>>>> d2389ff (Fixed changes.)
 ]
 
 [package.optional-dependencies]
@@ -1382,22 +1396,30 @@ agent = [
 all = [
     { name = "agent-utilities", extra = ["agent", "logfire", "mcp"] },
 ]
+<<<<<<< HEAD
 test = [
     { name = "pytest" },
     { name = "pytest-asyncio" },
 ]
+=======
+>>>>>>> d2389ff (Fixed changes.)
 
 [package.metadata]
 requires-dist = [
     { name = "agent-utilities", extras = ["agent", "logfire"], marker = "extra == 'agent'", specifier = ">=0.2.12" },
     { name = "agent-utilities", extras = ["mcp"], specifier = ">=0.2.12" },
     { name = "agent-utilities", extras = ["mcp", "agent", "logfire"], marker = "extra == 'all'", specifier = ">=0.2.12" },
+<<<<<<< HEAD
     { name = "langfuse", specifier = ">=2.36.0" },
     { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-asyncio", marker = "extra == 'test'" },
     { name = "requests", specifier = ">=2.8.1" },
 ]
 provides-extras = ["agent", "all", "test"]
+=======
+]
+provides-extras = ["agent", "all"]
+>>>>>>> d2389ff (Fixed changes.)
 
 [[package]]
 name = "logfire"
@@ -1807,6 +1829,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "pluggy"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1816,6 +1839,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> d2389ff (Fixed changes.)
 name = "prompt-toolkit"
 version = "3.0.52"
 source = { registry = "https://pypi.org/simple" }
@@ -2163,6 +2188,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "pytest"
 version = "9.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2195,6 +2221,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> d2389ff (Fixed changes.)
 name = "python-dotenv"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }

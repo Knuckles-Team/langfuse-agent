@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "langfuse": {
+      "command": "langfuse-mcp",
+      "args": [
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "LANGFUSE_URL": "${LANGFUSE_URL:-http://localhost:3000}",
+        "LANGFUSE_TOKEN": "${LANGFUSE_TOKEN}",
+        "ANNOTATION_QUEUES_TOOL": "${ ANNOTATION_QUEUES_TOOL:-True }",
+        "BLOB_STORAGE_INTEGRATIONS_TOOL": "${ BLOB_STORAGE_INTEGRATIONS_TOOL:-True }",
+        "COMMENTS_TOOL": "${ COMMENTS_TOOL:-True }",
+        "DATASETS_TOOL": "${ DATASETS_TOOL:-True }",
+        "DATASET_ITEMS_TOOL": "${ DATASET_ITEMS_TOOL:-True }",
+        "DATASET_RUN_ITEMS_TOOL": "${ DATASET_RUN_ITEMS_TOOL:-True }",
+        "HEALTH_TOOL": "${ HEALTH_TOOL:-True }",
+        "INGESTION_TOOL": "${ INGESTION_TOOL:-True }",
+        "LEGACY_METRICS_V1_TOOL": "${ LEGACY_METRICS_V1_TOOL:-True }",
+        "LEGACY_OBSERVATIONS_V1_TOOL": "${ LEGACY_OBSERVATIONS_V1_TOOL:-True }",
+        "LEGACY_SCORE_V1_TOOL": "${ LEGACY_SCORE_V1_TOOL:-True }",
+        "LLM_CONNECTIONS_TOOL": "${ LLM_CONNECTIONS_TOOL:-True }",
+        "MEDIA_TOOL": "${ MEDIA_TOOL:-True }",
+        "METRICS_TOOL": "${ METRICS_TOOL:-True }",
+        "MODELS_TOOL": "${ MODELS_TOOL:-True }",
+        "OBSERVATIONS_TOOL": "${ OBSERVATIONS_TOOL:-True }",
+        "OPENTELEMETRY_TOOL": "${ OPENTELEMETRY_TOOL:-True }",
+        "ORGANIZATIONS_TOOL": "${ ORGANIZATIONS_TOOL:-True }",
+        "PROJECTS_TOOL": "${ PROJECTS_TOOL:-True }",
+        "PROMPTS_TOOL": "${ PROMPTS_TOOL:-True }",
+        "PROMPT_VERSION_TOOL": "${ PROMPT_VERSION_TOOL:-True }",
+        "SCIM_TOOL": "${ SCIM_TOOL:-True }",
+        "SCORES_TOOL": "${ SCORES_TOOL:-True }",
+        "SCORE_CONFIGS_TOOL": "${ SCORE_CONFIGS_TOOL:-True }",
+        "SESSIONS_TOOL": "${ SESSIONS_TOOL:-True }",
+        "TRACE_TOOL": "${ TRACE_TOOL:-True }"
+      }
+    }
+  }
+}

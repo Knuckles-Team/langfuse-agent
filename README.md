@@ -33,6 +33,37 @@ This repository is actively maintained - Contributions are welcome!
 
 ## MCP
 
+### Available MCP Tools
+
+The MCP server provides 87 tools across 26 categories:
+
+- **Annotation Queues**: List, create, get, update, delete queues and items
+- **Blob Storage Integrations**: Get, upsert, check status, delete integrations
+- **Comments**: Create, get comments
+- **Dataset Items**: Create, list, get, delete dataset items
+- **Dataset Run Items**: Create, list dataset run items
+- **Datasets**: List, create, get, delete runs, get runs
+- **Health**: Health check
+- **Ingestion**: Batch ingestion
+- **Legacy Metrics**: V1 metrics
+- **Legacy Observations**: V1 get observations
+- **Legacy Score**: V1 create/delete scores
+- **LLM Connections**: List, upsert connections
+- **Media**: Get, patch, get upload URL
+- **Metrics**: Metrics query
+- **Models**: Create, list, get, delete models
+- **Observations**: Get many observations
+- **OpenTelemetry**: Export traces
+- **Organizations**: Manage organization and project memberships
+- **Projects**: Get, create, update, delete projects and API keys
+- **Prompts**: Version update, get, delete, list, create prompts
+- **SCIM**: Service provider config, resource types, schemas, user management
+- **Score Configs**: Create, get, update score configs
+- **Scores**: Get many scores, get by ID
+- **Sessions**: List, get sessions
+- **Traces**: Get, delete, list, delete multiple traces
+
+
 ### Using as an MCP Server
 
 The MCP Server can be run in two modes: `stdio` (for local testing) or `http` (for networked access).
@@ -64,6 +95,13 @@ export LANGFUSE_URL="http://localhost:8080"
 export LANGFUSE_TOKEN="your_token"
 langfuse-agent --provider openai --model-id gpt-4o --api-key sk-...
 ```
+
+The A2A agent uses agent-utilities for:
+- Auto-discovery of MCP tools from mcp_config.json
+- Pydantic AI agent with graph-based routing
+- Web UI support
+- OpenTelemetry integration
+- Custom skills support
 
 ## Docker
 
