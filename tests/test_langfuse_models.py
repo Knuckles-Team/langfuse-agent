@@ -24,7 +24,7 @@ class TestLangfuseProjectConfig:
     def test_langfuse_project_config_missing_field(self):
         """Test that missing required fields raise ValidationError."""
         with pytest.raises(ValidationError) as exc_info:
-            LangfuseProjectConfig(
+            LangfuseProjectConfig(  # type: ignore[call-arg]
                 public_key="test_public_key",
                 secret_key="test_secret_key",
                 # Missing host
@@ -108,7 +108,7 @@ class TestAnnotationQueue:
     def test_annotation_queue_missing_required_field(self):
         """Test that missing required fields raise ValidationError."""
         with pytest.raises(ValidationError) as exc_info:
-            AnnotationQueue(
+            AnnotationQueue(  # type: ignore[call-arg]
                 id="queue-123",
                 name="Test Queue",
                 # Missing createdAt and updatedAt

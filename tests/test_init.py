@@ -10,13 +10,13 @@ class TestPackageInitialization:
 
     def test_import_core_module(self):
         """Test that core module can be imported."""
-        from langfuse_agent import LangfuseApi
+        from langfuse_agent import LangfuseApi  # type: ignore[attr-defined]
 
         assert LangfuseApi is not None
 
     def test_import_api_class(self):
         """Test that LangfuseApi class is available."""
-        from langfuse_agent import LangfuseApi
+        from langfuse_agent import LangfuseApi  # type: ignore[attr-defined]
 
         assert hasattr(LangfuseApi, "__init__")
         assert hasattr(LangfuseApi, "_request")
@@ -143,14 +143,14 @@ class TestModuleReload:
         import langfuse_agent
 
         # Get initial state
-        initial_api = langfuse_agent.LangfuseApi
+        initial_api = langfuse_agent.LangfuseApi  # type: ignore[attr-defined]
 
         # Reload module
         importlib.reload(langfuse_agent)
 
         # Check that API is still available
         assert hasattr(langfuse_agent, "LangfuseApi")
-        assert langfuse_agent.LangfuseApi == initial_api
+        assert langfuse_agent.LangfuseApi == initial_api  # type: ignore[attr-defined]
 
 
 class TestPackageMetadata:

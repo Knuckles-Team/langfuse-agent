@@ -9,6 +9,7 @@ class TestGetClient:
     """Tests for the get_client function."""
 
     def test_get_client_with_env_vars(self, clean_env):
+        _ = clean_env
         """Test get_client with environment variables set."""
         os.environ["LANGFUSE_HOST"] = "https://test.langfuse.com"
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
@@ -36,6 +37,7 @@ class TestGetClient:
             assert client == mock_client
 
     def test_get_client_default_host(self, clean_env):
+        _ = clean_env
         """Test get_client uses default host when not set."""
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
@@ -59,6 +61,7 @@ class TestGetClient:
             assert call_kwargs["host"] == "https://cloud.langfuse.com"
 
     def test_get_client_caching(self, clean_env):
+        _ = clean_env
         """Test that get_client caches the client instance."""
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
@@ -84,6 +87,7 @@ class TestGetClient:
             assert client2 == mock_client
 
     def test_get_client_empty_credentials(self, clean_env):
+        _ = clean_env
         """Test get_client with empty credentials."""
         with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
             mock_client = MagicMock()
@@ -105,6 +109,7 @@ class TestGetClient:
             assert call_kwargs["secret_key"] == ""
 
     def test_get_client_custom_host(self, clean_env):
+        _ = clean_env
         """Test get_client with custom host."""
         os.environ["LANGFUSE_HOST"] = "https://custom.langfuse.com"
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"

@@ -538,7 +538,7 @@ class TestMCPServer:
         )
 
 
-class TestToolExecution:
+class TestToolExecutionFunctions:
     """Tests for actual tool function execution."""
 
     @pytest.fixture

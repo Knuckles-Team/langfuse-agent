@@ -4,7 +4,6 @@
 import importlib
 import inspect
 import warnings
-from typing import List
 
 warnings.filterwarnings("ignore", message=".*urllib3.*or chardet.*")
 
