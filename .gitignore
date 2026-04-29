@@ -164,3 +164,8 @@ cython_debug/
 *.repo_graph/
 *.ladybug/
 **/agent_data/*.db
+
+# Graph Database
+knowledge_graph.db*
+.repo_graph/
+.ladybug/

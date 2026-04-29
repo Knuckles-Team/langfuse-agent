@@ -17,30 +17,20 @@ warnings.filterwarnings("ignore", message=".*urllib3.*or charset_normalizer.*")
 import logging
 import os
 import sys
-<<<<<<< HEAD
 from typing import Any
 
-from fastmcp import FastMCP
-=======
-import logging
-from typing import Any, Dict, Optional
-from fastmcp import FastMCP, Context
+from fastmcp import Context, FastMCP
 from pydantic import Field
->>>>>>> d2389ff (Fixed changes.)
 
 __version__ = "0.1.7"
 
 from agent_utilities.base_utilities import to_boolean
-<<<<<<< HEAD
-from agent_utilities.mcp_utilities import create_mcp_server
-
-=======
 from agent_utilities.mcp_utilities import (
     create_mcp_server,
     ctx_confirm_destructive,
     ctx_progress,
 )
->>>>>>> d2389ff (Fixed changes.)
+
 from .auth import get_client
 
 logger = logging.getLogger(__name__)
@@ -69,17 +59,12 @@ def register_annotation_queues_tools(mcp: FastMCP):
         tags={"annotation_queues"},
     )
     def annotation_queues_list_queues(
-<<<<<<< HEAD
-        page: int | None = None, limit: int | None = None
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: int | None = None,
+        limit: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_list_queues(page, limit)
 
     @mcp.tool(
@@ -87,16 +72,12 @@ def register_annotation_queues_tools(mcp: FastMCP):
         description="Create an annotation queue",
         tags={"annotation_queues"},
     )
-<<<<<<< HEAD
-    def annotation_queues_create_queue(body: dict) -> dict[str, Any]:
-=======
     def annotation_queues_create_queue(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_create_queue(body)
 
     @mcp.tool(
@@ -104,16 +85,12 @@ def register_annotation_queues_tools(mcp: FastMCP):
         description="Get an annotation queue by ID",
         tags={"annotation_queues"},
     )
-<<<<<<< HEAD
-    def annotation_queues_get_queue(queue_id: str) -> dict[str, Any]:
-=======
     def annotation_queues_get_queue(
         queue_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_get_queue(queue_id)
 
     @mcp.tool(
@@ -123,20 +100,13 @@ def register_annotation_queues_tools(mcp: FastMCP):
     )
     def annotation_queues_list_queue_items(
         queue_id: str,
-<<<<<<< HEAD
         status: Any | None = None,
         page: int | None = None,
         limit: int | None = None,
-    ) -> dict[str, Any]:
-=======
-        status: Optional[Any] = None,
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_list_queue_items(
             queue_id, status, page, limit
         )
@@ -147,17 +117,12 @@ def register_annotation_queues_tools(mcp: FastMCP):
         tags={"annotation_queues"},
     )
     def annotation_queues_create_queue_item(
-<<<<<<< HEAD
-        queue_id: str, body: dict
-    ) -> dict[str, Any]:
-=======
         queue_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_create_queue_item(queue_id, body)
 
     @mcp.tool(
@@ -165,17 +130,13 @@ def register_annotation_queues_tools(mcp: FastMCP):
         description="Get a specific item from an annotation queue",
         tags={"annotation_queues"},
     )
-<<<<<<< HEAD
-    def annotation_queues_get_queue_item(queue_id: str, item_id: str) -> dict[str, Any]:
-=======
     def annotation_queues_get_queue_item(
         queue_id: str,
         item_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_get_queue_item(queue_id, item_id)
 
     @mcp.tool(
@@ -184,18 +145,13 @@ def register_annotation_queues_tools(mcp: FastMCP):
         tags={"annotation_queues"},
     )
     def annotation_queues_update_queue_item(
-<<<<<<< HEAD
-        queue_id: str, item_id: str, body: dict
-    ) -> dict[str, Any]:
-=======
         queue_id: str,
         item_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_update_queue_item(queue_id, item_id, body)
 
     @mcp.tool(
@@ -203,24 +159,18 @@ def register_annotation_queues_tools(mcp: FastMCP):
         description="Remove an item from an annotation queue",
         tags={"annotation_queues"},
     )
-<<<<<<< HEAD
-    def annotation_queues_delete_queue_item(
-        queue_id: str, item_id: str
-    ) -> dict[str, Any]:
-=======
     async def annotation_queues_delete_queue_item(
         queue_id: str,
         item_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx, "langfuse annotation queues annotation queues delete queue item"
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().annotation_queues_delete_queue_item(queue_id, item_id)
 
     @mcp.tool(
@@ -229,17 +179,12 @@ def register_annotation_queues_tools(mcp: FastMCP):
         tags={"annotation_queues"},
     )
     def annotation_queues_create_queue_assignment(
-<<<<<<< HEAD
-        queue_id: str, body: dict
-    ) -> dict[str, Any]:
-=======
         queue_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().annotation_queues_create_queue_assignment(queue_id, body)
 
     @mcp.tool(
@@ -247,24 +192,18 @@ def register_annotation_queues_tools(mcp: FastMCP):
         description="Delete an assignment for a user to an annotation queue",
         tags={"annotation_queues"},
     )
-<<<<<<< HEAD
-    def annotation_queues_delete_queue_assignment(
-        queue_id: str, body: dict
-    ) -> dict[str, Any]:
-=======
     async def annotation_queues_delete_queue_assignment(
         queue_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx, "langfuse annotation queues annotation queues delete queue assignment"
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().annotation_queues_delete_queue_assignment(queue_id, body)
 
 
@@ -274,15 +213,11 @@ def register_blob_storage_integrations_tools(mcp: FastMCP):
         description="Get all blob storage integrations for the organization (requires organization-scoped API key)",
         tags={"blob_storage_integrations"},
     )
-<<<<<<< HEAD
-    def blob_storage_integrations_get_blob_storage_integrations() -> dict[str, Any]:
-=======
     def blob_storage_integrations_get_blob_storage_integrations(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().blob_storage_integrations_get_blob_storage_integrations()
 
     @mcp.tool(
@@ -292,14 +227,10 @@ def register_blob_storage_integrations_tools(mcp: FastMCP):
     )
     def blob_storage_integrations_upsert_blob_storage_integration(
         body: dict,
-<<<<<<< HEAD
-    ) -> dict[str, Any]:
-=======
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().blob_storage_integrations_upsert_blob_storage_integration(
             body
         )
@@ -311,14 +242,10 @@ def register_blob_storage_integrations_tools(mcp: FastMCP):
     )
     def blob_storage_integrations_get_blob_storage_integration_status(
         id: str,
-<<<<<<< HEAD
-    ) -> dict[str, Any]:
-=======
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return (
             get_client().blob_storage_integrations_get_blob_storage_integration_status(
                 id
@@ -332,20 +259,16 @@ def register_blob_storage_integrations_tools(mcp: FastMCP):
     )
     async def blob_storage_integrations_delete_blob_storage_integration(
         id: str,
-<<<<<<< HEAD
-    ) -> dict[str, Any]:
-=======
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx,
             "langfuse blob storage integrations blob storage integrations delete blob storage integration",
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().blob_storage_integrations_delete_blob_storage_integration(
             id
         )
@@ -357,40 +280,27 @@ def register_comments_tools(mcp: FastMCP):
         description="Create a comment. Comments may be attached to different object types (trace, observation, session, prompt).",
         tags={"comments"},
     )
-<<<<<<< HEAD
-    def comments_create(body: dict) -> dict[str, Any]:
-=======
     def comments_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().comments_create(body)
 
     @mcp.tool(
         name="langfuse-comments-get", description="Get all comments", tags={"comments"}
     )
     def comments_get(
-<<<<<<< HEAD
         page: int | None = None,
         limit: int | None = None,
         object_type: str | None = None,
         object_id: str | None = None,
         author_user_id: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        object_type: Optional[str] = None,
-        object_id: Optional[str] = None,
-        author_user_id: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().comments_get(
             page, limit, object_type, object_id, author_user_id
         )
@@ -400,16 +310,12 @@ def register_comments_tools(mcp: FastMCP):
         description="Get a comment by id",
         tags={"comments"},
     )
-<<<<<<< HEAD
-    def comments_get_by_id(comment_id: str) -> dict[str, Any]:
-=======
     def comments_get_by_id(
         comment_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().comments_get_by_id(comment_id)
 
 
@@ -419,16 +325,12 @@ def register_dataset_items_tools(mcp: FastMCP):
         description="Create a dataset item",
         tags={"dataset_items"},
     )
-<<<<<<< HEAD
-    def dataset_items_create(body: dict) -> dict[str, Any]:
-=======
     def dataset_items_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().dataset_items_create(body)
 
     @mcp.tool(
@@ -437,26 +339,16 @@ def register_dataset_items_tools(mcp: FastMCP):
         tags={"dataset_items"},
     )
     def dataset_items_list(
-<<<<<<< HEAD
         dataset_name: str | None = None,
         source_trace_id: str | None = None,
         source_observation_id: str | None = None,
         version: str | None = None,
         page: int | None = None,
         limit: int | None = None,
-    ) -> dict[str, Any]:
-=======
-        dataset_name: Optional[str] = None,
-        source_trace_id: Optional[str] = None,
-        source_observation_id: Optional[str] = None,
-        version: Optional[str] = None,
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().dataset_items_list(
             dataset_name, source_trace_id, source_observation_id, version, page, limit
         )
@@ -466,16 +358,12 @@ def register_dataset_items_tools(mcp: FastMCP):
         description="Get a dataset item",
         tags={"dataset_items"},
     )
-<<<<<<< HEAD
-    def dataset_items_get(id: str) -> dict[str, Any]:
-=======
     def dataset_items_get(
         id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().dataset_items_get(id)
 
     @mcp.tool(
@@ -483,21 +371,17 @@ def register_dataset_items_tools(mcp: FastMCP):
         description="Delete a dataset item and all its run items. This action is irreversible.",
         tags={"dataset_items"},
     )
-<<<<<<< HEAD
-    def dataset_items_delete(id: str) -> dict[str, Any]:
-=======
     async def dataset_items_delete(
         id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx, "langfuse dataset items dataset items delete"
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().dataset_items_delete(id)
 
 
@@ -507,18 +391,14 @@ def register_dataset_run_items_tools(mcp: FastMCP):
         description="Create a dataset run item",
         tags={"dataset_run_items"},
     )
-<<<<<<< HEAD
-    def dataset_run_items_create(body: dict) -> dict[str, Any]:
-=======
     async def dataset_run_items_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         await ctx_progress(ctx, 0, 100)
         await ctx_progress(ctx, 100, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().dataset_run_items_create(body)
 
     @mcp.tool(
@@ -529,20 +409,14 @@ def register_dataset_run_items_tools(mcp: FastMCP):
     async def dataset_run_items_list(
         dataset_id: str,
         run_name: str,
-<<<<<<< HEAD
         page: int | None = None,
         limit: int | None = None,
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         await ctx_progress(ctx, 0, 100)
         await ctx_progress(ctx, 100, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().dataset_run_items_list(dataset_id, run_name, page, limit)
 
 
@@ -551,17 +425,12 @@ def register_datasets_tools(mcp: FastMCP):
         name="langfuse-datasets-list", description="Get all datasets", tags={"datasets"}
     )
     def datasets_list(
-<<<<<<< HEAD
-        page: int | None = None, limit: int | None = None
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: int | None = None,
+        limit: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().datasets_list(page, limit)
 
     @mcp.tool(
@@ -569,31 +438,23 @@ def register_datasets_tools(mcp: FastMCP):
         description="Create a dataset",
         tags={"datasets"},
     )
-<<<<<<< HEAD
-    def datasets_create(body: dict) -> dict[str, Any]:
-=======
     def datasets_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().datasets_create(body)
 
     @mcp.tool(
         name="langfuse-datasets-get", description="Get a dataset", tags={"datasets"}
     )
-<<<<<<< HEAD
-    def datasets_get(dataset_name: str) -> dict[str, Any]:
-=======
     def datasets_get(
         dataset_name: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().datasets_get(dataset_name)
 
     @mcp.tool(
@@ -601,20 +462,16 @@ def register_datasets_tools(mcp: FastMCP):
         description="Get a dataset run and its items",
         tags={"datasets"},
     )
-<<<<<<< HEAD
-    def datasets_get_run(dataset_name: str, run_name: str) -> dict[str, Any]:
-=======
     async def datasets_get_run(
         dataset_name: str,
         run_name: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         await ctx_progress(ctx, 0, 100)
         await ctx_progress(ctx, 100, 100)
         await ctx_progress(ctx, 100, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().datasets_get_run(dataset_name, run_name)
 
     @mcp.tool(
@@ -622,20 +479,16 @@ def register_datasets_tools(mcp: FastMCP):
         description="Delete a dataset run and all its run items. This action is irreversible.",
         tags={"datasets"},
     )
-<<<<<<< HEAD
-    def datasets_delete_run(dataset_name: str, run_name: str) -> dict[str, Any]:
-=======
     async def datasets_delete_run(
         dataset_name: str,
         run_name: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse datasets delete run"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().datasets_delete_run(dataset_name, run_name)
 
     @mcp.tool(
@@ -643,22 +496,16 @@ def register_datasets_tools(mcp: FastMCP):
         description="Get dataset runs",
         tags={"datasets"},
     )
-<<<<<<< HEAD
-    def datasets_get_runs(
-        dataset_name: str, page: int | None = None, limit: int | None = None
-    ) -> dict[str, Any]:
-=======
     async def datasets_get_runs(
         dataset_name: str,
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: int | None = None,
+        limit: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         await ctx_progress(ctx, 0, 100)
         await ctx_progress(ctx, 100, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().datasets_get_runs(dataset_name, page, limit)
 
 
@@ -668,15 +515,11 @@ def register_health_tools(mcp: FastMCP):
         description="Check health of API and database",
         tags={"health"},
     )
-<<<<<<< HEAD
-    def health_health() -> dict[str, Any]:
-=======
     def health_health(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().health_health()
 
 
@@ -686,19 +529,15 @@ def register_ingestion_tools(mcp: FastMCP):
         description='**Legacy endpoint for batch ingestion for Langfuse Observability.**  -> Please use the OpenTelemetry endpoint (`/api/public/otel/v1/traces`). Learn more: https://langfuse.com/integrations/native/opentelemetry  Within each batch, there can be multiple events. Each event has a type, an id, a timestamp, metadata and a body. Internally, we refer to this as the "event envelope" as it tells us something about the event but not the trace. We use the event id within this envelope to deduplicate messages to avoid processing the same event twice, i.e. the event id should be unique per request. The event.body.id is the ID of the actual trace and will be used for updates and will be visible within the Langfuse App. I.e. if you want to update a trace, you\'d use the same body id, but separate event IDs.  Notes: - Introduction to data model: https://langfuse.com/docs/observability/data-model - Batch sizes are limited to 3.5 MB in total. You need to adjust the number of events per batch accordingly. - The API does not return a 4xx status code for input errors. Instead, it responds with a 207 status code, which includes a list of the encountered errors.',
         tags={"ingestion"},
     )
-<<<<<<< HEAD
-    def ingestion_batch(batch: list, metadata: Any | None = None) -> dict[str, Any]:
-=======
     async def ingestion_batch(
         batch: list,
-        metadata: Optional[Any] = None,
+        metadata: Any | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         await ctx_progress(ctx, 0, 100)
         await ctx_progress(ctx, 100, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().ingestion_batch(batch, metadata)
 
 
@@ -708,16 +547,12 @@ def register_legacy_metrics_v1_tools(mcp: FastMCP):
         description="Get metrics from the Langfuse project using a query object.  Consider using the [v2 metrics endpoint](/api-reference#tag/metricsv2/GET/api/public/v2/metrics) for better performance.  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).",
         tags={"legacy_metrics_v1"},
     )
-<<<<<<< HEAD
-    def legacy_metrics_v1_metrics(query: str) -> dict[str, Any]:
-=======
     def legacy_metrics_v1_metrics(
         query: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().legacy_metrics_v1_metrics(query)
 
 
@@ -727,16 +562,12 @@ def register_legacy_observations_v1_tools(mcp: FastMCP):
         description="Get a observation",
         tags={"legacy_observations_v1"},
     )
-<<<<<<< HEAD
-    def legacy_observations_v1_get(observation_id: str) -> dict[str, Any]:
-=======
     def legacy_observations_v1_get(
         observation_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().legacy_observations_v1_get(observation_id)
 
     @mcp.tool(
@@ -745,7 +576,6 @@ def register_legacy_observations_v1_tools(mcp: FastMCP):
         tags={"legacy_observations_v1"},
     )
     def legacy_observations_v1_get_many(
-<<<<<<< HEAD
         page: int | None = None,
         limit: int | None = None,
         name: str | None = None,
@@ -759,26 +589,10 @@ def register_legacy_observations_v1_tools(mcp: FastMCP):
         to_start_time: str | None = None,
         version: str | None = None,
         filter: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        name: Optional[str] = None,
-        user_id: Optional[str] = None,
-        type: Optional[str] = None,
-        trace_id: Optional[str] = None,
-        level: Optional[Any] = None,
-        parent_observation_id: Optional[str] = None,
-        environment: Optional[list] = None,
-        from_start_time: Optional[str] = None,
-        to_start_time: Optional[str] = None,
-        version: Optional[str] = None,
-        filter: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().legacy_observations_v1_get_many(
             page,
             limit,
@@ -802,16 +616,12 @@ def register_legacy_score_v1_tools(mcp: FastMCP):
         description="Create a score (supports both trace and session scores)",
         tags={"legacy_score_v1"},
     )
-<<<<<<< HEAD
-    def legacy_score_v1_create(body: dict) -> dict[str, Any]:
-=======
     def legacy_score_v1_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().legacy_score_v1_create(body)
 
     @mcp.tool(
@@ -819,21 +629,17 @@ def register_legacy_score_v1_tools(mcp: FastMCP):
         description="Delete a score (supports both trace and session scores)",
         tags={"legacy_score_v1"},
     )
-<<<<<<< HEAD
-    def legacy_score_v1_delete(score_id: str) -> dict[str, Any]:
-=======
     async def legacy_score_v1_delete(
         score_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx, "langfuse legacy score v1 legacy score v1 delete"
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().legacy_score_v1_delete(score_id)
 
 
@@ -844,17 +650,12 @@ def register_llm_connections_tools(mcp: FastMCP):
         tags={"llm_connections"},
     )
     def llm_connections_list(
-<<<<<<< HEAD
-        page: int | None = None, limit: int | None = None
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: int | None = None,
+        limit: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().llm_connections_list(page, limit)
 
     @mcp.tool(
@@ -862,16 +663,12 @@ def register_llm_connections_tools(mcp: FastMCP):
         description="Create or update an LLM connection. The connection is upserted on provider.",
         tags={"llm_connections"},
     )
-<<<<<<< HEAD
-    def llm_connections_upsert(body: dict) -> dict[str, Any]:
-=======
     def llm_connections_upsert(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().llm_connections_upsert(body)
 
 
@@ -879,32 +676,24 @@ def register_media_tools(mcp: FastMCP):
     @mcp.tool(
         name="langfuse-media-get", description="Get a media record", tags={"media"}
     )
-<<<<<<< HEAD
-    def media_get(media_id: str) -> dict[str, Any]:
-=======
     def media_get(
         media_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().media_get(media_id)
 
     @mcp.tool(
         name="langfuse-media-patch", description="Patch a media record", tags={"media"}
     )
-<<<<<<< HEAD
-    def media_patch(media_id: str, body: dict) -> dict[str, Any]:
-=======
     def media_patch(
         media_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().media_patch(media_id, body)
 
     @mcp.tool(
@@ -912,18 +701,14 @@ def register_media_tools(mcp: FastMCP):
         description="Get a presigned upload URL for a media record",
         tags={"media"},
     )
-<<<<<<< HEAD
-    def media_get_upload_url(body: dict) -> dict[str, Any]:
-=======
     async def media_get_upload_url(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         await ctx_progress(ctx, 0, 100)
         await ctx_progress(ctx, 100, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().media_get_upload_url(body)
 
 
@@ -933,16 +718,12 @@ def register_metrics_tools(mcp: FastMCP):
         description="Get metrics from the Langfuse project using a query object. V2 endpoint with optimized performance.  ## V2 Differences - Supports `observations`, `scores-numeric`, and `scores-categorical` views only (traces view not supported) - Direct access to tags and release fields on observations - Backwards-compatible: traceName, traceRelease, traceVersion dimensions are still available on observations view - High cardinality dimensions are not supported and will return a 400 error (see below)  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).  ## Available Views  ### observations Query observation-level data (spans, generations, events).  **Dimensions:** - `environment` - Deployment environment (e.g., production, staging) - `type` - Type of observation (SPAN, GENERATION, EVENT) - `name` - Name of the observation - `level` - Logging level of the observation - `version` - Version of the observation - `tags` - User-defined tags - `release` - Release version - `traceName` - Name of the parent trace (backwards-compatible) - `traceRelease` - Release version of the parent trace (backwards-compatible, maps to release) - `traceVersion` - Version of the parent trace (backwards-compatible, maps to version) - `providedModelName` - Name of the model used - `promptName` - Name of the prompt used - `promptVersion` - Version of the prompt used - `startTimeMonth` - Month of start_time in YYYY-MM format  **Measures:** - `count` - Total number of observations - `latency` - Observation latency (milliseconds) - `streamingLatency` - Generation latency from completion start to end (milliseconds) - `inputTokens` - Sum of input tokens consumed - `outputTokens` - Sum of output tokens produced - `totalTokens` - Sum of all tokens consumed - `outputTokensPerSecond` - Output tokens per second - `tokensPerSecond` - Total tokens per second - `inputCost` - Input cost (USD) - `outputCost` - Output cost (USD) - `totalCost` - Total cost (USD) - `timeToFirstToken` - Time to first token (milliseconds) - `countScores` - Number of scores attached to the observation  ### scores-numeric Query numeric and boolean score data.  **Dimensions:** - `environment` - Deployment environment - `name` - Name of the score (e.g., accuracy, toxicity) - `source` - Origin of the score (API, ANNOTATION, EVAL) - `dataType` - Data type (NUMERIC, BOOLEAN) - `configId` - Identifier of the score config - `timestampMonth` - Month in YYYY-MM format - `timestampDay` - Day in YYYY-MM-DD format - `value` - Numeric value of the score - `traceName` - Name of the parent trace - `tags` - Tags - `traceRelease` - Release version - `traceVersion` - Version - `observationName` - Name of the associated observation - `observationModelName` - Model name of the associated observation - `observationPromptName` - Prompt name of the associated observation - `observationPromptVersion` - Prompt version of the associated observation  **Measures:** - `count` - Total number of scores - `value` - Score value (for aggregations)  ### scores-categorical Query categorical score data. Same dimensions as scores-numeric except uses `stringValue` instead of `value`.  **Measures:** - `count` - Total number of scores  ## High Cardinality Dimensions The following dimensions cannot be used as grouping dimensions in v2 metrics API as they can cause performance issues. Use them in filters instead.  **observations view:** - `id` - Use traceId filter to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `parentObservationId` - Use parentObservationId filter instead  **scores-numeric / scores-categorical views:** - `id` - Use specific filters to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `observationId` - Use observationId filter instead  ## Aggregations Available aggregation functions: `sum`, `avg`, `count`, `max`, `min`, `p50`, `p75`, `p90`, `p95`, `p99`, `histogram`  ## Time Granularities Available granularities for timeDimension: `auto`, `minute`, `hour`, `day`, `week`, `month` - `auto` bins the data into approximately 50 buckets based on the time range",
         tags={"metrics"},
     )
-<<<<<<< HEAD
-    def metrics_metrics(query: str) -> dict[str, Any]:
-=======
     def metrics_metrics(
         query: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().metrics_metrics(query)
 
 
@@ -950,36 +731,24 @@ def register_models_tools(mcp: FastMCP):
     @mcp.tool(
         name="langfuse-models-create", description="Create a model", tags={"models"}
     )
-<<<<<<< HEAD
-    def models_create(body: dict) -> dict[str, Any]:
-=======
     def models_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().models_create(body)
 
     @mcp.tool(
         name="langfuse-models-list", description="Get all models", tags={"models"}
     )
     def models_list(
-<<<<<<< HEAD
-        page: int | None = None, limit: int | None = None
-    ) -> dict[str, Any]:
-        return get_client().models_list(page, limit)
-
-    @mcp.tool(name="langfuse-models-get", description="Get a model", tags={"models"})
-    def models_get(id: str) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: int | None = None,
+        limit: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         return get_client().models_list(page, limit)
 
     @mcp.tool(name="langfuse-models-get", description="Get a model", tags={"models"})
@@ -988,8 +757,7 @@ def register_models_tools(mcp: FastMCP):
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().models_get(id)
 
     @mcp.tool(
@@ -997,19 +765,15 @@ def register_models_tools(mcp: FastMCP):
         description="Delete a model. Cannot delete models managed by Langfuse. You can create your own definition with the same modelName to override the definition though.",
         tags={"models"},
     )
-<<<<<<< HEAD
-    def models_delete(id: str) -> dict[str, Any]:
-=======
     async def models_delete(
         id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse models delete"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().models_delete(id)
 
 
@@ -1020,7 +784,6 @@ def register_observations_tools(mcp: FastMCP):
         tags={"observations"},
     )
     def observations_get_many(
-<<<<<<< HEAD
         fields: str | None = None,
         expand_metadata: str | None = None,
         limit: int | None = None,
@@ -1037,29 +800,10 @@ def register_observations_tools(mcp: FastMCP):
         to_start_time: str | None = None,
         version: str | None = None,
         filter: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        fields: Optional[str] = None,
-        expand_metadata: Optional[str] = None,
-        limit: Optional[int] = None,
-        cursor: Optional[str] = None,
-        parse_io_as_json: Optional[bool] = None,
-        name: Optional[str] = None,
-        user_id: Optional[str] = None,
-        type: Optional[str] = None,
-        trace_id: Optional[str] = None,
-        level: Optional[Any] = None,
-        parent_observation_id: Optional[str] = None,
-        environment: Optional[list] = None,
-        from_start_time: Optional[str] = None,
-        to_start_time: Optional[str] = None,
-        version: Optional[str] = None,
-        filter: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().observations_get_many(
             fields,
             expand_metadata,
@@ -1086,16 +830,12 @@ def register_opentelemetry_tools(mcp: FastMCP):
         description="**OpenTelemetry Traces Ingestion Endpoint**  This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability.  **Supported Formats:** - Binary Protobuf: `Content-Type: application/x-protobuf` - JSON Protobuf: `Content-Type: application/json` - Supports gzip compression via `Content-Encoding: gzip` header  **Specification Compliance:** - Conforms to [OTLP/HTTP Trace Export](https://opentelemetry.io/docs/specs/otlp/#otlphttp) - Implements `ExportTraceServiceRequest` message format  **Documentation:** - Integration guide: https://langfuse.com/integrations/native/opentelemetry - Data model: https://langfuse.com/docs/observability/data-model",
         tags={"opentelemetry"},
     )
-<<<<<<< HEAD
-    def opentelemetry_export_traces(resource_spans: list) -> dict[str, Any]:
-=======
     def opentelemetry_export_traces(
         resource_spans: list,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().opentelemetry_export_traces(resource_spans)
 
 
@@ -1105,15 +845,11 @@ def register_organizations_tools(mcp: FastMCP):
         description="Get all memberships for the organization associated with the API key (requires organization-scoped API key)",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_get_organization_memberships() -> dict[str, Any]:
-=======
     def organizations_get_organization_memberships(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().organizations_get_organization_memberships()
 
     @mcp.tool(
@@ -1121,16 +857,12 @@ def register_organizations_tools(mcp: FastMCP):
         description="Create or update a membership for the organization associated with the API key (requires organization-scoped API key)",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_update_organization_membership(body: dict) -> dict[str, Any]:
-=======
     def organizations_update_organization_membership(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().organizations_update_organization_membership(body)
 
     @mcp.tool(
@@ -1138,21 +870,17 @@ def register_organizations_tools(mcp: FastMCP):
         description="Delete a membership from the organization associated with the API key (requires organization-scoped API key)",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_delete_organization_membership(body: dict) -> dict[str, Any]:
-=======
     async def organizations_delete_organization_membership(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx, "langfuse organizations delete organization membership"
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().organizations_delete_organization_membership(body)
 
     @mcp.tool(
@@ -1160,16 +888,12 @@ def register_organizations_tools(mcp: FastMCP):
         description="Get all memberships for a specific project (requires organization-scoped API key)",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_get_project_memberships(project_id: str) -> dict[str, Any]:
-=======
     def organizations_get_project_memberships(
         project_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().organizations_get_project_memberships(project_id)
 
     @mcp.tool(
@@ -1178,17 +902,12 @@ def register_organizations_tools(mcp: FastMCP):
         tags={"organizations"},
     )
     def organizations_update_project_membership(
-<<<<<<< HEAD
-        project_id: str, body: dict
-    ) -> dict[str, Any]:
-=======
         project_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().organizations_update_project_membership(project_id, body)
 
     @mcp.tool(
@@ -1196,24 +915,18 @@ def register_organizations_tools(mcp: FastMCP):
         description="Delete a membership from a specific project (requires organization-scoped API key). The user must be a member of the organization.",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_delete_project_membership(
-        project_id: str, body: dict
-    ) -> dict[str, Any]:
-=======
     async def organizations_delete_project_membership(
         project_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(
             ctx, "langfuse organizations delete project membership"
         ):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().organizations_delete_project_membership(project_id, body)
 
     @mcp.tool(
@@ -1221,15 +934,11 @@ def register_organizations_tools(mcp: FastMCP):
         description="Get all projects for the organization associated with the API key (requires organization-scoped API key)",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_get_organization_projects() -> dict[str, Any]:
-=======
     def organizations_get_organization_projects(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().organizations_get_organization_projects()
 
     @mcp.tool(
@@ -1237,15 +946,11 @@ def register_organizations_tools(mcp: FastMCP):
         description="Get all API keys for the organization associated with the API key (requires organization-scoped API key)",
         tags={"organizations"},
     )
-<<<<<<< HEAD
-    def organizations_get_organization_api_keys() -> dict[str, Any]:
-=======
     def organizations_get_organization_api_keys(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().organizations_get_organization_api_keys()
 
 
@@ -1255,15 +960,11 @@ def register_projects_tools(mcp: FastMCP):
         description="Get Project associated with API key (requires project-scoped API key). You can use GET /api/public/organizations/projects to get all projects with an organization-scoped key.",
         tags={"projects"},
     )
-<<<<<<< HEAD
-    def projects_get() -> dict[str, Any]:
-=======
     def projects_get(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().projects_get()
 
     @mcp.tool(
@@ -1272,18 +973,13 @@ def register_projects_tools(mcp: FastMCP):
         tags={"projects"},
     )
     def projects_create(
-<<<<<<< HEAD
-        name: str, retention: int, metadata: dict | None = None
-    ) -> dict[str, Any]:
-=======
         name: str,
         retention: int,
-        metadata: Optional[dict] = None,
+        metadata: dict | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().projects_create(name, retention, metadata)
 
     @mcp.tool(
@@ -1294,18 +990,12 @@ def register_projects_tools(mcp: FastMCP):
     def projects_update(
         project_id: str,
         name: str,
-<<<<<<< HEAD
         metadata: dict | None = None,
         retention: int | None = None,
-    ) -> dict[str, Any]:
-=======
-        metadata: Optional[dict] = None,
-        retention: Optional[int] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().projects_update(project_id, name, metadata, retention)
 
     @mcp.tool(
@@ -1313,19 +1003,15 @@ def register_projects_tools(mcp: FastMCP):
         description="Delete a project by ID (requires organization-scoped API key). Project deletion is processed asynchronously.",
         tags={"projects"},
     )
-<<<<<<< HEAD
-    def projects_delete(project_id: str) -> dict[str, Any]:
-=======
     async def projects_delete(
         project_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse projects delete"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().projects_delete(project_id)
 
     @mcp.tool(
@@ -1333,16 +1019,12 @@ def register_projects_tools(mcp: FastMCP):
         description="Get all API keys for a project (requires organization-scoped API key)",
         tags={"projects"},
     )
-<<<<<<< HEAD
-    def projects_get_api_keys(project_id: str) -> dict[str, Any]:
-=======
     def projects_get_api_keys(
         project_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().projects_get_api_keys(project_id)
 
     @mcp.tool(
@@ -1352,20 +1034,13 @@ def register_projects_tools(mcp: FastMCP):
     )
     def projects_create_api_key(
         project_id: str,
-<<<<<<< HEAD
         note: str | None = None,
         public_key: str | None = None,
         secret_key: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        note: Optional[str] = None,
-        public_key: Optional[str] = None,
-        secret_key: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().projects_create_api_key(
             project_id, note, public_key, secret_key
         )
@@ -1375,20 +1050,16 @@ def register_projects_tools(mcp: FastMCP):
         description="Delete an API key for a project (requires organization-scoped API key)",
         tags={"projects"},
     )
-<<<<<<< HEAD
-    def projects_delete_api_key(project_id: str, api_key_id: str) -> dict[str, Any]:
-=======
     async def projects_delete_api_key(
         project_id: str,
         api_key_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse projects delete api key"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().projects_delete_api_key(project_id, api_key_id)
 
 
@@ -1399,18 +1070,13 @@ def register_prompt_version_tools(mcp: FastMCP):
         tags={"prompt_version"},
     )
     def prompt_version_update(
-<<<<<<< HEAD
-        name: str, version: int, new_labels: list
-    ) -> dict[str, Any]:
-=======
         name: str,
         version: int,
         new_labels: list,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().prompt_version_update(name, version, new_labels)
 
 
@@ -1418,20 +1084,13 @@ def register_prompts_tools(mcp: FastMCP):
     @mcp.tool(name="langfuse-prompts-get", description="Get a prompt", tags={"prompts"})
     def prompts_get(
         prompt_name: str,
-<<<<<<< HEAD
         version: int | None = None,
         label: str | None = None,
         resolve: bool | None = None,
-    ) -> dict[str, Any]:
-=======
-        version: Optional[int] = None,
-        label: Optional[str] = None,
-        resolve: Optional[bool] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().prompts_get(prompt_name, version, label, resolve)
 
     @mcp.tool(
@@ -1439,23 +1098,17 @@ def register_prompts_tools(mcp: FastMCP):
         description="Delete prompt versions. If neither version nor label is specified, all versions of the prompt are deleted.",
         tags={"prompts"},
     )
-<<<<<<< HEAD
-    def prompts_delete(
-        prompt_name: str, label: str | None = None, version: int | None = None
-    ) -> dict[str, Any]:
-=======
     async def prompts_delete(
         prompt_name: str,
-        label: Optional[str] = None,
-        version: Optional[int] = None,
+        label: str | None = None,
+        version: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse prompts delete"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().prompts_delete(prompt_name, label, version)
 
     @mcp.tool(
@@ -1464,7 +1117,6 @@ def register_prompts_tools(mcp: FastMCP):
         tags={"prompts"},
     )
     def prompts_list(
-<<<<<<< HEAD
         name: str | None = None,
         label: str | None = None,
         tag: str | None = None,
@@ -1472,20 +1124,10 @@ def register_prompts_tools(mcp: FastMCP):
         limit: int | None = None,
         from_updated_at: str | None = None,
         to_updated_at: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        name: Optional[str] = None,
-        label: Optional[str] = None,
-        tag: Optional[str] = None,
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        from_updated_at: Optional[str] = None,
-        to_updated_at: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().prompts_list(
             name, label, tag, page, limit, from_updated_at, to_updated_at
         )
@@ -1495,16 +1137,12 @@ def register_prompts_tools(mcp: FastMCP):
         description="Create a new version for the prompt with the given `name`",
         tags={"prompts"},
     )
-<<<<<<< HEAD
-    def prompts_create(body: dict) -> dict[str, Any]:
-=======
     def prompts_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().prompts_create(body)
 
 
@@ -1514,15 +1152,11 @@ def register_scim_tools(mcp: FastMCP):
         description="Get SCIM Service Provider Configuration (requires organization-scoped API key)",
         tags={"scim"},
     )
-<<<<<<< HEAD
-    def scim_get_service_provider_config() -> dict[str, Any]:
-=======
     def scim_get_service_provider_config(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scim_get_service_provider_config()
 
     @mcp.tool(
@@ -1530,15 +1164,11 @@ def register_scim_tools(mcp: FastMCP):
         description="Get SCIM Resource Types (requires organization-scoped API key)",
         tags={"scim"},
     )
-<<<<<<< HEAD
-    def scim_get_resource_types() -> dict[str, Any]:
-=======
     def scim_get_resource_types(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scim_get_resource_types()
 
     @mcp.tool(
@@ -1546,15 +1176,11 @@ def register_scim_tools(mcp: FastMCP):
         description="Get SCIM Schemas (requires organization-scoped API key)",
         tags={"scim"},
     )
-<<<<<<< HEAD
-    def scim_get_schemas() -> dict[str, Any]:
-=======
     def scim_get_schemas(
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scim_get_schemas()
 
     @mcp.tool(
@@ -1563,20 +1189,13 @@ def register_scim_tools(mcp: FastMCP):
         tags={"scim"},
     )
     def scim_list_users(
-<<<<<<< HEAD
         filter: str | None = None,
         start_index: int | None = None,
         count: int | None = None,
-    ) -> dict[str, Any]:
-=======
-        filter: Optional[str] = None,
-        start_index: Optional[int] = None,
-        count: Optional[int] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scim_list_users(filter, start_index, count)
 
     @mcp.tool(
@@ -1587,20 +1206,13 @@ def register_scim_tools(mcp: FastMCP):
     def scim_create_user(
         user_name: str,
         name: Any,
-<<<<<<< HEAD
         emails: list | None = None,
         active: bool | None = None,
         password: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        emails: Optional[list] = None,
-        active: Optional[bool] = None,
-        password: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scim_create_user(user_name, name, emails, active, password)
 
     @mcp.tool(
@@ -1608,16 +1220,12 @@ def register_scim_tools(mcp: FastMCP):
         description="Get a specific user by ID (requires organization-scoped API key)",
         tags={"scim"},
     )
-<<<<<<< HEAD
-    def scim_get_user(user_id: str) -> dict[str, Any]:
-=======
     def scim_get_user(
         user_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scim_get_user(user_id)
 
     @mcp.tool(
@@ -1625,19 +1233,15 @@ def register_scim_tools(mcp: FastMCP):
         description="Remove a user from the organization (requires organization-scoped API key). Note that this only removes the user from the organization but does not delete the user entity itself.",
         tags={"scim"},
     )
-<<<<<<< HEAD
-    def scim_delete_user(user_id: str) -> dict[str, Any]:
-=======
     async def scim_delete_user(
         user_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse scim delete user"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().scim_delete_user(user_id)
 
 
@@ -1647,16 +1251,12 @@ def register_score_configs_tools(mcp: FastMCP):
         description="Create a score configuration (config). Score configs are used to define the structure of scores",
         tags={"score_configs"},
     )
-<<<<<<< HEAD
-    def score_configs_create(body: dict) -> dict[str, Any]:
-=======
     def score_configs_create(
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().score_configs_create(body)
 
     @mcp.tool(
@@ -1665,17 +1265,12 @@ def register_score_configs_tools(mcp: FastMCP):
         tags={"score_configs"},
     )
     def score_configs_get(
-<<<<<<< HEAD
-        page: int | None = None, limit: int | None = None
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
+        page: int | None = None,
+        limit: int | None = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().score_configs_get(page, limit)
 
     @mcp.tool(
@@ -1683,16 +1278,12 @@ def register_score_configs_tools(mcp: FastMCP):
         description="Get a score config",
         tags={"score_configs"},
     )
-<<<<<<< HEAD
-    def score_configs_get_by_id(config_id: str) -> dict[str, Any]:
-=======
     def score_configs_get_by_id(
         config_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().score_configs_get_by_id(config_id)
 
     @mcp.tool(
@@ -1700,17 +1291,13 @@ def register_score_configs_tools(mcp: FastMCP):
         description="Update a score config",
         tags={"score_configs"},
     )
-<<<<<<< HEAD
-    def score_configs_update(config_id: str, body: dict) -> dict[str, Any]:
-=======
     def score_configs_update(
         config_id: str,
         body: dict,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().score_configs_update(config_id, body)
 
 
@@ -1721,7 +1308,6 @@ def register_scores_tools(mcp: FastMCP):
         tags={"scores"},
     )
     def scores_get_many(
-<<<<<<< HEAD
         page: int | None = None,
         limit: int | None = None,
         user_id: str | None = None,
@@ -1743,34 +1329,10 @@ def register_scores_tools(mcp: FastMCP):
         trace_tags: list | None = None,
         fields: str | None = None,
         filter: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        user_id: Optional[str] = None,
-        name: Optional[str] = None,
-        from_timestamp: Optional[str] = None,
-        to_timestamp: Optional[str] = None,
-        environment: Optional[list] = None,
-        source: Optional[Any] = None,
-        operator: Optional[str] = None,
-        value: Optional[int] = None,
-        score_ids: Optional[str] = None,
-        config_id: Optional[str] = None,
-        session_id: Optional[str] = None,
-        dataset_run_id: Optional[str] = None,
-        trace_id: Optional[str] = None,
-        observation_id: Optional[str] = None,
-        queue_id: Optional[str] = None,
-        data_type: Optional[Any] = None,
-        trace_tags: Optional[list] = None,
-        fields: Optional[str] = None,
-        filter: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scores_get_many(
             page,
             limit,
@@ -1800,16 +1362,12 @@ def register_scores_tools(mcp: FastMCP):
         description="Get a score (supports both trace and session scores)",
         tags={"scores"},
     )
-<<<<<<< HEAD
-    def scores_get_by_id(score_id: str) -> dict[str, Any]:
-=======
     def scores_get_by_id(
         score_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().scores_get_by_id(score_id)
 
 
@@ -1818,24 +1376,15 @@ def register_sessions_tools(mcp: FastMCP):
         name="langfuse-sessions-list", description="Get sessions", tags={"sessions"}
     )
     def sessions_list(
-<<<<<<< HEAD
         page: int | None = None,
         limit: int | None = None,
         from_timestamp: str | None = None,
         to_timestamp: str | None = None,
         environment: list | None = None,
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        from_timestamp: Optional[str] = None,
-        to_timestamp: Optional[str] = None,
-        environment: Optional[list] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().sessions_list(
             page, limit, from_timestamp, to_timestamp, environment
         )
@@ -1845,16 +1394,12 @@ def register_sessions_tools(mcp: FastMCP):
         description="Get a session. Please note that `traces` on this endpoint are not paginated, if you plan to fetch large sessions, consider `GET /api/public/traces?sessionId=<sessionId>`",
         tags={"sessions"},
     )
-<<<<<<< HEAD
-    def sessions_get(session_id: str) -> dict[str, Any]:
-=======
     def sessions_get(
         session_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().sessions_get(session_id)
 
 
@@ -1862,16 +1407,12 @@ def register_trace_tools(mcp: FastMCP):
     @mcp.tool(
         name="langfuse-trace-get", description="Get a specific trace", tags={"trace"}
     )
-<<<<<<< HEAD
-    def trace_get(trace_id: str) -> dict[str, Any]:
-=======
     def trace_get(
         trace_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().trace_get(trace_id)
 
     @mcp.tool(
@@ -1879,26 +1420,21 @@ def register_trace_tools(mcp: FastMCP):
         description="Delete a specific trace",
         tags={"trace"},
     )
-<<<<<<< HEAD
-    def trace_delete(trace_id: str) -> dict[str, Any]:
-=======
     async def trace_delete(
         trace_id: str,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse trace delete"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().trace_delete(trace_id)
 
     @mcp.tool(
         name="langfuse-trace-list", description="Get list of traces", tags={"trace"}
     )
     def trace_list(
-<<<<<<< HEAD
         page: int | None = None,
         limit: int | None = None,
         user_id: str | None = None,
@@ -1913,27 +1449,10 @@ def register_trace_tools(mcp: FastMCP):
         environment: list | None = None,
         fields: str | None = None,
         filter: str | None = None,
-    ) -> dict[str, Any]:
-=======
-        page: Optional[int] = None,
-        limit: Optional[int] = None,
-        user_id: Optional[str] = None,
-        name: Optional[str] = None,
-        session_id: Optional[str] = None,
-        from_timestamp: Optional[str] = None,
-        to_timestamp: Optional[str] = None,
-        order_by: Optional[str] = None,
-        tags: Optional[list] = None,
-        version: Optional[str] = None,
-        release: Optional[str] = None,
-        environment: Optional[list] = None,
-        fields: Optional[str] = None,
-        filter: Optional[str] = None,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
->>>>>>> d2389ff (Fixed changes.)
+    ) -> dict[str, Any]:
         return get_client().trace_list(
             page,
             limit,
@@ -1956,19 +1475,15 @@ def register_trace_tools(mcp: FastMCP):
         description="Delete multiple traces",
         tags={"trace"},
     )
-<<<<<<< HEAD
-    def trace_delete_multiple(trace_ids: list) -> dict[str, Any]:
-=======
     async def trace_delete_multiple(
         trace_ids: list,
         ctx: Context = Field(
             description="MCP context for progress reporting", default=None
         ),
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not await ctx_confirm_destructive(ctx, "langfuse trace delete multiple"):
             return {"status": "cancelled", "message": "Operation cancelled by user"}
         await ctx_progress(ctx, 0, 100)
->>>>>>> d2389ff (Fixed changes.)
         return get_client().trace_delete_multiple(trace_ids)
 
 
