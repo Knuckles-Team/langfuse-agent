@@ -1,7 +1,7 @@
 from typing import Any
 
 import requests
-from agent_utilities.exceptions import ApiError, AuthError
+from agent_utilities.core.exceptions import ApiError, AuthError
 
 
 class LangfuseApi:

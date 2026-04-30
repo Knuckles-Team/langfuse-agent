@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import MagicMock, patch
-from agent_utilities.exceptions import ApiError, AuthError
+from agent_utilities.core.exceptions import ApiError, AuthError
 
 from langfuse_agent.langfuse_api import LangfuseApi
 
@@ -78,7 +78,7 @@ class TestLangfuseApiRequest:
     def test_request_401_unauthorized(self, mock_api_client):
         """Test 401 error raises AuthError."""
         import requests.exceptions
-        from agent_utilities.exceptions import AuthError
+        from agent_utilities.core.exceptions import AuthError
 
         # Test that AuthError can be raised
         with pytest.raises(AuthError):
@@ -87,7 +87,7 @@ class TestLangfuseApiRequest:
     def test_request_network_error(self, mock_api_client):
         """Test network error raises ApiError."""
         import requests.exceptions
-        from agent_utilities.exceptions import ApiError
+        from agent_utilities.core.exceptions import ApiError
 
         # Test that ApiError can be raised
         with pytest.raises(ApiError):
