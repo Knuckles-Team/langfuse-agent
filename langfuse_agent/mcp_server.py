@@ -22,7 +22,7 @@ from typing import Any
 from fastmcp import Context, FastMCP
 from pydantic import Field
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from agent_utilities.base_utilities import to_boolean
 from agent_utilities.mcp_utilities import (
