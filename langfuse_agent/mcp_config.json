@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "langfuse": {
-      "command": "langfuse-mcp",
+      "command": "uv",
       "args": [
-        "--transport",
-        "stdio"
+        "run",
+        "langfuse-mcp"
       ],
       "env": {
         "LANGFUSE_URL": "${LANGFUSE_URL:-http://localhost:3000}",
@@ -34,7 +34,13 @@
         "SCORES_TOOL": "${ SCORES_TOOL:-True }",
         "SCORE_CONFIGS_TOOL": "${ SCORE_CONFIGS_TOOL:-True }",
         "SESSIONS_TOOL": "${ SESSIONS_TOOL:-True }",
-        "TRACE_TOOL": "${ TRACE_TOOL:-True }"
+        "TRACE_TOOL": "${ TRACE_TOOL:-True }",
+        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
+        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
+        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
+        "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
+        "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
+        "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>"
       }
     }
   }

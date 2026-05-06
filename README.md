@@ -21,7 +21,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/langfuse-agent)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/langfuse-agent)
 
-*Version: 0.5.0*
+*Version: 0.6.0*
 
 ## Overview
 
@@ -176,3 +176,112 @@ uv pip install langfuse-agent
 
 ![GitHub followers](https://img.shields.io/github/followers/Knucklessg1)
 ![GitHub User's stars](https://img.shields.io/github/stars/Knucklessg1)
+
+
+## MCP Configuration Examples
+
+### 1. Standard IO (stdio) Deployment
+
+```json
+{
+  "mcpServers": {
+    "langfuse-agent": {
+      "command": "uv",
+      "args": [
+        "run",
+        "langfuse-mcp"
+      ],
+      "env": {
+        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
+        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
+        "ANNOTATION_QUEUES_TOOL": "True",
+        "BLOB_STORAGE_INTEGRATIONS_TOOL": "True",
+        "COMMENTS_TOOL": "True",
+        "DATASETS_TOOL": "True",
+        "DATASET_ITEMS_TOOL": "True",
+        "DATASET_RUN_ITEMS_TOOL": "True",
+        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
+        "HEALTH_TOOL": "True",
+        "INGESTION_TOOL": "True",
+        "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
+        "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
+        "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>",
+        "LEGACY_METRICS_V1_TOOL": "True",
+        "LEGACY_OBSERVATIONS_V1_TOOL": "True",
+        "LEGACY_SCORE_V1_TOOL": "True",
+        "LLM_CONNECTIONS_TOOL": "True",
+        "MEDIA_TOOL": "True",
+        "METRICS_TOOL": "True",
+        "MODELS_TOOL": "True",
+        "OBSERVATIONS_TOOL": "True",
+        "OPENTELEMETRY_TOOL": "True",
+        "ORGANIZATIONS_TOOL": "True",
+        "PROJECTS_TOOL": "True",
+        "PROMPTS_TOOL": "True",
+        "PROMPT_VERSION_TOOL": "True",
+        "SCIM_TOOL": "True",
+        "SCORES_TOOL": "True",
+        "SCORE_CONFIGS_TOOL": "True",
+        "SESSIONS_TOOL": "True",
+        "TRACE_TOOL": "True"
+      }
+    }
+  }
+}
+```
+
+### 2. Streamable HTTP (SSE) Deployment
+
+```json
+{
+  "mcpServers": {
+    "langfuse-agent": {
+      "command": "uv",
+      "args": [
+        "run",
+        "langfuse-mcp",
+        "--transport",
+        "http",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000"
+      ],
+      "env": {
+        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
+        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
+        "ANNOTATION_QUEUES_TOOL": "True",
+        "BLOB_STORAGE_INTEGRATIONS_TOOL": "True",
+        "COMMENTS_TOOL": "True",
+        "DATASETS_TOOL": "True",
+        "DATASET_ITEMS_TOOL": "True",
+        "DATASET_RUN_ITEMS_TOOL": "True",
+        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
+        "HEALTH_TOOL": "True",
+        "INGESTION_TOOL": "True",
+        "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
+        "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
+        "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>",
+        "LEGACY_METRICS_V1_TOOL": "True",
+        "LEGACY_OBSERVATIONS_V1_TOOL": "True",
+        "LEGACY_SCORE_V1_TOOL": "True",
+        "LLM_CONNECTIONS_TOOL": "True",
+        "MEDIA_TOOL": "True",
+        "METRICS_TOOL": "True",
+        "MODELS_TOOL": "True",
+        "OBSERVATIONS_TOOL": "True",
+        "OPENTELEMETRY_TOOL": "True",
+        "ORGANIZATIONS_TOOL": "True",
+        "PROJECTS_TOOL": "True",
+        "PROMPTS_TOOL": "True",
+        "PROMPT_VERSION_TOOL": "True",
+        "SCIM_TOOL": "True",
+        "SCORES_TOOL": "True",
+        "SCORE_CONFIGS_TOOL": "True",
+        "SESSIONS_TOOL": "True",
+        "TRACE_TOOL": "True"
+      }
+    }
+  }
+}
+```
