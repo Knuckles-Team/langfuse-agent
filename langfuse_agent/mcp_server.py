@@ -31,7 +31,7 @@ from starlette.responses import JSONResponse
 
 from langfuse_agent.auth import get_client
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 
 logger = get_logger(name="langfuse-agent")
 logger.setLevel(logging.INFO)
