@@ -35,57 +35,36 @@ This repository is actively maintained - Contributions are welcome!
 
 ### Available MCP Tools
 
-The MCP server provides 87 tools across 26 categories:
+This server utilizes dynamic Action-Routed tools to optimize token overhead and maximize IDE compatibility.
 
-- **Annotation Queues**: List, create, get, update, delete queues and items
-- **Blob Storage Integrations**: Get, upsert, check status, delete integrations
-- **Comments**: Create, get comments
-- **Dataset Items**: Create, list, get, delete dataset items
-- **Dataset Run Items**: Create, list dataset run items
-- **Datasets**: List, create, get, delete runs, get runs
-- **Health**: Health check
-- **Ingestion**: Batch ingestion
-- **Legacy Metrics**: V1 metrics
-- **Legacy Observations**: V1 get observations
-- **Legacy Score**: V1 create/delete scores
-- **LLM Connections**: List, upsert connections
-- **Media**: Get, patch, get upload URL
-- **Metrics**: Metrics query
-- **Models**: Create, list, get, delete models
-- **Observations**: Get many observations
-- **OpenTelemetry**: Export traces
-- **Organizations**: Manage organization and project memberships
-- **Projects**: Get, create, update, delete projects and API keys
-- **Prompts**: Version update, get, delete, list, create prompts
-- **SCIM**: Service provider config, resource types, schemas, user management
-- **Score Configs**: Create, get, update score configs
-- **Scores**: Get many scores, get by ID
-- **Sessions**: List, get sessions
-- **Traces**: Get, delete, list, delete multiple traces
-
-
-### Using as an MCP Server
-
-The MCP Server can be run in two modes: `stdio` (for local testing) or `http` (for networked access).
-
-#### Environment Variables
-
-*   `LANGFUSE_URL`: The URL of the target service.
-*   `LANGFUSE_TOKEN`: The API token or access token.
-
-#### Run in stdio mode (default):
-```bash
-export LANGFUSE_URL="http://localhost:8080"
-export LANGFUSE_TOKEN="your_token"
-langfuse-mcp --transport "stdio"
-```
-
-#### Run in HTTP mode:
-```bash
-export LANGFUSE_URL="http://localhost:8080"
-export LANGFUSE_TOKEN="your_token"
-langfuse-mcp --transport "http" --host "0.0.0.0" --port "8000"
-```
+| Tool Name | Description |
+|-----------|-------------|
+| `langfuse_annotation_queues` | Consolidated Action-Routed tool for annotation_queues. Methods: annotation_queues_list_queues, annotation_queues_create_queue, annotation_queues_get_queue, annotation_queues_list_queue_items, annotation_queues_create_queue_item, annotation_queues_get_queue_item, annotation_queues_update_queue_item, annotation_queues_delete_queue_item, annotation_queues_create_queue_assignment, annotation_queues_delete_queue_assignment |
+| `langfuse_blob_storage_integrations` | Consolidated Action-Routed tool for blob_storage_integrations. Methods: blob_storage_integrations_get_blob_storage_integrations, blob_storage_integrations_upsert_blob_storage_integration, blob_storage_integrations_get_blob_storage_integration_status, blob_storage_integrations_delete_blob_storage_integration |
+| `langfuse_comments` | Consolidated Action-Routed tool for comments. Methods: comments_create, comments_get, comments_get_by_id |
+| `langfuse_dataset_items` | Consolidated Action-Routed tool for dataset_items. Methods: dataset_items_create, dataset_items_list, dataset_items_get, dataset_items_delete |
+| `langfuse_dataset_run_items` | Consolidated Action-Routed tool for dataset_run_items. Methods: dataset_run_items_create, dataset_run_items_list |
+| `langfuse_datasets` | Consolidated Action-Routed tool for datasets. Methods: datasets_list, datasets_create, datasets_get, datasets_get_run, datasets_delete_run, datasets_get_runs |
+| `langfuse_health` | Consolidated Action-Routed tool for health. Methods: health_health |
+| `langfuse_ingestion` | Consolidated Action-Routed tool for ingestion. Methods: ingestion_batch |
+| `langfuse_legacy_metrics_v1` | Consolidated Action-Routed tool for legacy_metrics_v1. Methods: legacy_metrics_v1_metrics |
+| `langfuse_legacy_observations_v1` | Consolidated Action-Routed tool for legacy_observations_v1. Methods: legacy_observations_v1_get, legacy_observations_v1_get_many |
+| `langfuse_legacy_score_v1` | Consolidated Action-Routed tool for legacy_score_v1. Methods: legacy_score_v1_create, legacy_score_v1_delete |
+| `langfuse_llm_connections` | Consolidated Action-Routed tool for llm_connections. Methods: llm_connections_list, llm_connections_upsert |
+| `langfuse_media` | Consolidated Action-Routed tool for media. Methods: media_get, media_patch, media_get_upload_url |
+| `langfuse_metrics` | Consolidated Action-Routed tool for metrics. Methods: metrics_metrics |
+| `langfuse_models` | Consolidated Action-Routed tool for models. Methods: models_create, models_list, models_get, models_delete |
+| `langfuse_observations` | Consolidated Action-Routed tool for observations. Methods: observations_get_many |
+| `langfuse_opentelemetry` | Consolidated Action-Routed tool for opentelemetry. Methods: opentelemetry_export_traces |
+| `langfuse_organizations` | Consolidated Action-Routed tool for organizations. Methods: organizations_get_organization_memberships, organizations_update_organization_membership, organizations_delete_organization_membership, organizations_get_project_memberships, organizations_update_project_membership, organizations_delete_project_membership, organizations_get_organization_projects, organizations_get_organization_api_keys |
+| `langfuse_projects` | Consolidated Action-Routed tool for projects. Methods: projects_get, projects_create, projects_update, projects_delete, projects_get_api_keys, projects_create_api_key, projects_delete_api_key |
+| `langfuse_prompt_version` | Consolidated Action-Routed tool for prompt_version. Methods: prompt_version_update |
+| `langfuse_prompts` | Consolidated Action-Routed tool for prompts. Methods: prompts_get, prompts_delete, prompts_list, prompts_create |
+| `langfuse_scim` | Consolidated Action-Routed tool for scim. Methods: scim_get_service_provider_config, scim_get_resource_types, scim_get_schemas, scim_list_users, scim_create_user, scim_get_user, scim_delete_user |
+| `langfuse_score_configs` | Consolidated Action-Routed tool for score_configs. Methods: score_configs_create, score_configs_get, score_configs_get_by_id, score_configs_update |
+| `langfuse_scores` | Consolidated Action-Routed tool for scores. Methods: scores_get_many, scores_get_by_id |
+| `langfuse_sessions` | Consolidated Action-Routed tool for sessions. Methods: sessions_list, sessions_get |
+| `langfuse_trace` | Consolidated Action-Routed tool for trace. Methods: trace_get, trace_delete, trace_list, trace_delete_multiple |
 
 ## A2A Agent
 

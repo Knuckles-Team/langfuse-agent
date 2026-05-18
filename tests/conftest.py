@@ -18,7 +18,7 @@ def mock_langfuse_client():
 @pytest.fixture
 def mock_api_client():
     """Mock LangfuseApi client for testing."""
-    from langfuse_agent.langfuse_api import LangfuseApi
+    from langfuse_agent.api_client import LangfuseApi
 
     client = LangfuseApi(
         public_key="test_public_key",
@@ -32,7 +32,7 @@ def mock_api_client():
 @pytest.fixture
 def mock_requests():
     """Mock requests module for HTTP request testing."""
-    with patch("langfuse_agent.langfuse_api.requests") as mock_req:
+    with patch("langfuse_agent.api_client.requests") as mock_req:
         # Setup default mock response
         mock_response = MagicMock()
         mock_response.status_code = 200

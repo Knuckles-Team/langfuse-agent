@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import warnings
 
 # Filter RequestsDependencyWarning early to prevent log spam
@@ -10,7 +11,6 @@ with warnings.catch_warnings():
     except ImportError:
         pass
 
-# General urllib3/chardet mismatch warnings
 warnings.filterwarnings("ignore", message=".*urllib3.*or chardet.*")
 warnings.filterwarnings("ignore", message=".*urllib3.*or charset_normalizer.*")
 
@@ -19,1582 +19,1379 @@ import os
 import sys
 from typing import Any
 
-from fastmcp import Context, FastMCP
+from agent_utilities.base_utilities import to_boolean
+from agent_utilities.mcp_utilities import create_mcp_server
+from dotenv import find_dotenv, load_dotenv
+from fastmcp import FastMCP
+from fastmcp.dependencies import Depends
+from fastmcp.utilities.logging import get_logger
 from pydantic import Field
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+from langfuse_agent.auth import get_client
 
 __version__ = "0.10.0"
 
-from agent_utilities.base_utilities import to_boolean
-from agent_utilities.mcp_utilities import (
-    create_mcp_server,
-    ctx_confirm_destructive,
-    ctx_progress,
-)
-
-from .auth import get_client
-
-logger = logging.getLogger(__name__)
+logger = get_logger(name="langfuse-agent")
 logger.setLevel(logging.INFO)
 
 
-def register_prompts(mcp: FastMCP):
-    @mcp.prompt(
-        name="langfuse-system-summary",
-        description="Get a summary of the Langfuse application.",
-    )
-    def langfuse_system_summary() -> str:
-        return "Check Langfuse metrics, traces, and available annotation queues."
-
-
-### BEGIN GENERATED TOOL REGISTRATION ###
-
-
-### BEGIN GENERATED TOOL REGISTRATION ###
-
-
 def register_annotation_queues_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-list-queues",
-        description="Get all annotation queues",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_list_queues(
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"annotation_queues"})
+    async def langfuse_annotation_queues(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'annotation_queues_list_queues', 'annotation_queues_create_queue', 'annotation_queues_get_queue', 'annotation_queues_list_queue_items', 'annotation_queues_create_queue_item', 'annotation_queues_get_queue_item', 'annotation_queues_update_queue_item', 'annotation_queues_delete_queue_item', 'annotation_queues_create_queue_assignment', 'annotation_queues_delete_queue_assignment'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_list_queues(page, limit)
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        body: dict | None = Field(default=None, description="body"),
+        queue_id: str | None = Field(default=None, description="queue id"),
+        status: Any | None = Field(default=None, description="status"),
+        item_id: str | None = Field(default=None, description="item id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage annotation queues operations.
 
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-create-queue",
-        description="Create an annotation queue",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_create_queue(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_create_queue(body)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-get-queue",
-        description="Get an annotation queue by ID",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_get_queue(
-        queue_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_get_queue(queue_id)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-list-queue-items",
-        description="Get items for a specific annotation queue",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_list_queue_items(
-        queue_id: str,
-        status: Any | None = None,
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_list_queue_items(
-            queue_id, status, page, limit
+        Actions:
+          - 'annotation_queues_list_queues': Get all annotation queues
+          - 'annotation_queues_create_queue': Create an annotation queue
+          - 'annotation_queues_get_queue': Get an annotation queue by ID
+          - 'annotation_queues_list_queue_items': Get items for a specific annotation queue
+          - 'annotation_queues_create_queue_item': Add an item to an annotation queue
+          - 'annotation_queues_get_queue_item': Get a specific item from an annotation queue
+          - 'annotation_queues_update_queue_item': Update an annotation queue item
+          - 'annotation_queues_delete_queue_item': Remove an item from an annotation queue
+          - 'annotation_queues_create_queue_assignment': Create an assignment for a user to an annotation queue
+          - 'annotation_queues_delete_queue_assignment': Delete an assignment for a user to an annotation queue
+        """
+        kwargs: dict[str, Any]
+        if action == "annotation_queues_list_queues":
+            kwargs = {"page": page, "limit": limit}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_list_queues(**kwargs)
+        if action == "annotation_queues_create_queue":
+            kwargs = {"body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_create_queue(**kwargs)
+        if action == "annotation_queues_get_queue":
+            kwargs = {"queue_id": queue_id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_get_queue(**kwargs)
+        if action == "annotation_queues_list_queue_items":
+            kwargs = {
+                "queue_id": queue_id,  # type: ignore
+                "status": status,
+                "page": page,
+                "limit": limit,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_list_queue_items(**kwargs)
+        if action == "annotation_queues_create_queue_item":
+            kwargs = {"queue_id": queue_id, "body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_create_queue_item(**kwargs)
+        if action == "annotation_queues_get_queue_item":
+            kwargs = {"queue_id": queue_id, "item_id": item_id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_get_queue_item(**kwargs)
+        if action == "annotation_queues_update_queue_item":
+            kwargs = {
+                "queue_id": queue_id,
+                "item_id": item_id,
+                "body": body,
+            }  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_update_queue_item(**kwargs)
+        if action == "annotation_queues_delete_queue_item":
+            kwargs = {"queue_id": queue_id, "item_id": item_id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_delete_queue_item(**kwargs)
+        if action == "annotation_queues_create_queue_assignment":
+            kwargs = {"queue_id": queue_id, "body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_create_queue_assignment(**kwargs)
+        if action == "annotation_queues_delete_queue_assignment":
+            kwargs = {"queue_id": queue_id, "body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.annotation_queues_delete_queue_assignment(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: annotation_queues_list_queues', 'annotation_queues_create_queue', 'annotation_queues_get_queue', 'annotation_queues_list_queue_items', 'annotation_queues_create_queue_item', 'annotation_queues_get_queue_item', 'annotation_queues_update_queue_item', 'annotation_queues_delete_queue_item', 'annotation_queues_create_queue_assignment', 'annotation_queues_delete_queue_assignment"
         )
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-create-queue-item",
-        description="Add an item to an annotation queue",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_create_queue_item(
-        queue_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_create_queue_item(queue_id, body)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-get-queue-item",
-        description="Get a specific item from an annotation queue",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_get_queue_item(
-        queue_id: str,
-        item_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_get_queue_item(queue_id, item_id)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-update-queue-item",
-        description="Update an annotation queue item",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_update_queue_item(
-        queue_id: str,
-        item_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_update_queue_item(queue_id, item_id, body)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-delete-queue-item",
-        description="Remove an item from an annotation queue",
-        tags={"annotation_queues"},
-    )
-    async def annotation_queues_delete_queue_item(
-        queue_id: str,
-        item_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx, "langfuse annotation queues annotation queues delete queue item"
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().annotation_queues_delete_queue_item(queue_id, item_id)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-create-queue-assignment",
-        description="Create an assignment for a user to an annotation queue",
-        tags={"annotation_queues"},
-    )
-    def annotation_queues_create_queue_assignment(
-        queue_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().annotation_queues_create_queue_assignment(queue_id, body)
-
-    @mcp.tool(
-        name="langfuse-annotation-queues-annotation-queues-delete-queue-assignment",
-        description="Delete an assignment for a user to an annotation queue",
-        tags={"annotation_queues"},
-    )
-    async def annotation_queues_delete_queue_assignment(
-        queue_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx, "langfuse annotation queues annotation queues delete queue assignment"
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().annotation_queues_delete_queue_assignment(queue_id, body)
 
 
 def register_blob_storage_integrations_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-blob-storage-integrations-blob-storage-integrations-get-blob-storage-integrations",
-        description="Get all blob storage integrations for the organization (requires organization-scoped API key)",
-        tags={"blob_storage_integrations"},
-    )
-    def blob_storage_integrations_get_blob_storage_integrations(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"blob_storage_integrations"})
+    async def langfuse_blob_storage_integrations(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'blob_storage_integrations_get_blob_storage_integrations', 'blob_storage_integrations_upsert_blob_storage_integration', 'blob_storage_integrations_get_blob_storage_integration_status', 'blob_storage_integrations_delete_blob_storage_integration'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().blob_storage_integrations_get_blob_storage_integrations()
+        body: dict | None = Field(default=None, description="body"),
+        id: str | None = Field(default=None, description="id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage blob storage integrations operations.
 
-    @mcp.tool(
-        name="langfuse-blob-storage-integrations-blob-storage-integrations-upsert-blob-storage-integration",
-        description="Create or update a blob storage integration for a specific project (requires organization-scoped API key). The configuration is validated by performing a test upload to the bucket.",
-        tags={"blob_storage_integrations"},
-    )
-    def blob_storage_integrations_upsert_blob_storage_integration(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().blob_storage_integrations_upsert_blob_storage_integration(
-            body
-        )
-
-    @mcp.tool(
-        name="langfuse-blob-storage-integrations-blob-storage-integrations-get-blob-storage-integration-status",
-        description="Get the sync status of a blob storage integration by integration ID (requires organization-scoped API key)",
-        tags={"blob_storage_integrations"},
-    )
-    def blob_storage_integrations_get_blob_storage_integration_status(
-        id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return (
-            get_client().blob_storage_integrations_get_blob_storage_integration_status(
-                id
+        Actions:
+          - 'blob_storage_integrations_get_blob_storage_integrations': Get all blob storage integrations for the organization (requires organization-scoped API key)
+          - 'blob_storage_integrations_upsert_blob_storage_integration': Create or update a blob storage integration for a specific project (requires organization-scoped API key). The configuration is validated by performing a test upload to the bucket.
+          - 'blob_storage_integrations_get_blob_storage_integration_status': Get the sync status of a blob storage integration by integration ID (requires organization-scoped API key)
+          - 'blob_storage_integrations_delete_blob_storage_integration': Delete a blob storage integration by ID (requires organization-scoped API key)
+        """
+        kwargs: dict[str, Any]
+        if action == "blob_storage_integrations_get_blob_storage_integrations":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.blob_storage_integrations_get_blob_storage_integrations(
+                **kwargs
             )
-        )
-
-    @mcp.tool(
-        name="langfuse-blob-storage-integrations-blob-storage-integrations-delete-blob-storage-integration",
-        description="Delete a blob storage integration by ID (requires organization-scoped API key)",
-        tags={"blob_storage_integrations"},
-    )
-    async def blob_storage_integrations_delete_blob_storage_integration(
-        id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx,
-            "langfuse blob storage integrations blob storage integrations delete blob storage integration",
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().blob_storage_integrations_delete_blob_storage_integration(
-            id
+        if action == "blob_storage_integrations_upsert_blob_storage_integration":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.blob_storage_integrations_upsert_blob_storage_integration(
+                **kwargs
+            )
+        if action == "blob_storage_integrations_get_blob_storage_integration_status":
+            kwargs = {"id": id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.blob_storage_integrations_get_blob_storage_integration_status(
+                **kwargs
+            )
+        if action == "blob_storage_integrations_delete_blob_storage_integration":
+            kwargs = {"id": id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.blob_storage_integrations_delete_blob_storage_integration(
+                **kwargs
+            )
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: blob_storage_integrations_get_blob_storage_integrations', 'blob_storage_integrations_upsert_blob_storage_integration', 'blob_storage_integrations_get_blob_storage_integration_status', 'blob_storage_integrations_delete_blob_storage_integration"
         )
 
 
 def register_comments_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-comments-create",
-        description="Create a comment. Comments may be attached to different object types (trace, observation, session, prompt).",
-        tags={"comments"},
-    )
-    def comments_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"comments"})
+    async def langfuse_comments(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'comments_create', 'comments_get', 'comments_get_by_id'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().comments_create(body)
+        body: dict | None = Field(default=None, description="body"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        object_type: str | None = Field(default=None, description="object type"),
+        object_id: str | None = Field(default=None, description="object id"),
+        author_user_id: str | None = Field(default=None, description="author user id"),
+        comment_id: str | None = Field(default=None, description="comment id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage comments operations.
 
-    @mcp.tool(
-        name="langfuse-comments-get", description="Get all comments", tags={"comments"}
-    )
-    def comments_get(
-        page: int | None = None,
-        limit: int | None = None,
-        object_type: str | None = None,
-        object_id: str | None = None,
-        author_user_id: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().comments_get(
-            page, limit, object_type, object_id, author_user_id
+        Actions:
+          - 'comments_create': Create a comment. Comments may be attached to different object types (trace, observation, session, prompt).
+          - 'comments_get': Get all comments
+          - 'comments_get_by_id': Get a comment by id
+        """
+        kwargs: dict[str, Any]
+        if action == "comments_create":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.comments_create(**kwargs)
+        if action == "comments_get":
+            kwargs = {
+                "page": page,  # type: ignore
+                "limit": limit,  # type: ignore
+                "object_type": object_type,  # type: ignore
+                "object_id": object_id,  # type: ignore
+                "author_user_id": author_user_id,  # type: ignore
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.comments_get(**kwargs)
+        if action == "comments_get_by_id":
+            kwargs = {"comment_id": comment_id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.comments_get_by_id(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: comments_create', 'comments_get', 'comments_get_by_id"
         )
-
-    @mcp.tool(
-        name="langfuse-comments-get-by-id",
-        description="Get a comment by id",
-        tags={"comments"},
-    )
-    def comments_get_by_id(
-        comment_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().comments_get_by_id(comment_id)
 
 
 def register_dataset_items_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-dataset-items-dataset-items-create",
-        description="Create a dataset item",
-        tags={"dataset_items"},
-    )
-    def dataset_items_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"dataset_items"})
+    async def langfuse_dataset_items(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'dataset_items_create', 'dataset_items_list', 'dataset_items_get', 'dataset_items_delete'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().dataset_items_create(body)
+        body: dict | None = Field(default=None, description="body"),
+        dataset_name: str | None = Field(default=None, description="dataset name"),
+        source_trace_id: str | None = Field(
+            default=None, description="source trace id"
+        ),
+        source_observation_id: str | None = Field(
+            default=None, description="source observation id"
+        ),
+        version: str | None = Field(default=None, description="version"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        id: str | None = Field(default=None, description="id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage dataset items operations.
 
-    @mcp.tool(
-        name="langfuse-dataset-items-dataset-items-list",
-        description="Get dataset items. Optionally specify a version to get the items as they existed at that point in time. Note: If version parameter is provided, datasetName must also be provided.",
-        tags={"dataset_items"},
-    )
-    def dataset_items_list(
-        dataset_name: str | None = None,
-        source_trace_id: str | None = None,
-        source_observation_id: str | None = None,
-        version: str | None = None,
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().dataset_items_list(
-            dataset_name, source_trace_id, source_observation_id, version, page, limit
+        Actions:
+          - 'dataset_items_create': Create a dataset item
+          - 'dataset_items_list': Get dataset items. Optionally specify a version to get the items as they existed at that point in time. Note: If version parameter is provided, datasetName must also be provided.
+          - 'dataset_items_get': Get a dataset item
+          - 'dataset_items_delete': Delete a dataset item and all its run items. This action is irreversible.
+        """
+        kwargs: dict[str, Any]
+        if action == "dataset_items_create":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.dataset_items_create(**kwargs)
+        if action == "dataset_items_list":
+            kwargs = {
+                "dataset_name": dataset_name,  # type: ignore
+                "source_trace_id": source_trace_id,  # type: ignore
+                "source_observation_id": source_observation_id,  # type: ignore
+                "version": version,  # type: ignore
+                "page": page,  # type: ignore
+                "limit": limit,  # type: ignore
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.dataset_items_list(**kwargs)
+        if action == "dataset_items_get":
+            kwargs = {"id": id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.dataset_items_get(**kwargs)
+        if action == "dataset_items_delete":
+            kwargs = {"id": id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.dataset_items_delete(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: dataset_items_create', 'dataset_items_list', 'dataset_items_get', 'dataset_items_delete"
         )
-
-    @mcp.tool(
-        name="langfuse-dataset-items-dataset-items-get",
-        description="Get a dataset item",
-        tags={"dataset_items"},
-    )
-    def dataset_items_get(
-        id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().dataset_items_get(id)
-
-    @mcp.tool(
-        name="langfuse-dataset-items-dataset-items-delete",
-        description="Delete a dataset item and all its run items. This action is irreversible.",
-        tags={"dataset_items"},
-    )
-    async def dataset_items_delete(
-        id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx, "langfuse dataset items dataset items delete"
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().dataset_items_delete(id)
 
 
 def register_dataset_run_items_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-dataset-run-items-dataset-run-items-create",
-        description="Create a dataset run item",
-        tags={"dataset_run_items"},
-    )
-    async def dataset_run_items_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"dataset_run_items"})
+    async def langfuse_dataset_run_items(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'dataset_run_items_create', 'dataset_run_items_list'"
         ),
-    ) -> dict[str, Any]:
-        await ctx_progress(ctx, 0, 100)
-        await ctx_progress(ctx, 100, 100)
-        return get_client().dataset_run_items_create(body)
+        body: dict | None = Field(default=None, description="body"),
+        dataset_id: str | None = Field(default=None, description="dataset id"),
+        run_name: str | None = Field(default=None, description="run name"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage dataset run items operations.
 
-    @mcp.tool(
-        name="langfuse-dataset-run-items-dataset-run-items-list",
-        description="List dataset run items",
-        tags={"dataset_run_items"},
-    )
-    async def dataset_run_items_list(
-        dataset_id: str,
-        run_name: str,
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        await ctx_progress(ctx, 0, 100)
-        await ctx_progress(ctx, 100, 100)
-        return get_client().dataset_run_items_list(dataset_id, run_name, page, limit)
+        Actions:
+          - 'dataset_run_items_create': Create a dataset run item
+          - 'dataset_run_items_list': List dataset run items
+        """
+        kwargs: dict[str, Any]
+        if action == "dataset_run_items_create":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.dataset_run_items_create(**kwargs)
+        if action == "dataset_run_items_list":
+            kwargs = {
+                "dataset_id": dataset_id,  # type: ignore
+                "run_name": run_name,  # type: ignore
+                "page": page,  # type: ignore
+                "limit": limit,  # type: ignore
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.dataset_run_items_list(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: dataset_run_items_create', 'dataset_run_items_list"
+        )
 
 
 def register_datasets_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-datasets-list", description="Get all datasets", tags={"datasets"}
-    )
-    def datasets_list(
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"datasets"})
+    async def langfuse_datasets(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'datasets_list', 'datasets_create', 'datasets_get', 'datasets_get_run', 'datasets_delete_run', 'datasets_get_runs'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().datasets_list(page, limit)
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        body: dict | None = Field(default=None, description="body"),
+        dataset_name: str | None = Field(default=None, description="dataset name"),
+        run_name: str | None = Field(default=None, description="run name"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage datasets operations.
 
-    @mcp.tool(
-        name="langfuse-datasets-create",
-        description="Create a dataset",
-        tags={"datasets"},
-    )
-    def datasets_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().datasets_create(body)
-
-    @mcp.tool(
-        name="langfuse-datasets-get", description="Get a dataset", tags={"datasets"}
-    )
-    def datasets_get(
-        dataset_name: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().datasets_get(dataset_name)
-
-    @mcp.tool(
-        name="langfuse-datasets-get-run",
-        description="Get a dataset run and its items",
-        tags={"datasets"},
-    )
-    async def datasets_get_run(
-        dataset_name: str,
-        run_name: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        await ctx_progress(ctx, 0, 100)
-        await ctx_progress(ctx, 100, 100)
-        await ctx_progress(ctx, 100, 100)
-        return get_client().datasets_get_run(dataset_name, run_name)
-
-    @mcp.tool(
-        name="langfuse-datasets-delete-run",
-        description="Delete a dataset run and all its run items. This action is irreversible.",
-        tags={"datasets"},
-    )
-    async def datasets_delete_run(
-        dataset_name: str,
-        run_name: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse datasets delete run"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().datasets_delete_run(dataset_name, run_name)
-
-    @mcp.tool(
-        name="langfuse-datasets-get-runs",
-        description="Get dataset runs",
-        tags={"datasets"},
-    )
-    async def datasets_get_runs(
-        dataset_name: str,
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        await ctx_progress(ctx, 0, 100)
-        await ctx_progress(ctx, 100, 100)
-        return get_client().datasets_get_runs(dataset_name, page, limit)
+        Actions:
+          - 'datasets_list': Get all datasets
+          - 'datasets_create': Create a dataset
+          - 'datasets_get': Get a dataset
+          - 'datasets_get_run': Get a dataset run and its items
+          - 'datasets_delete_run': Delete a dataset run and all its run items. This action is irreversible.
+          - 'datasets_get_runs': Get dataset runs
+        """
+        kwargs: dict[str, Any]
+        if action == "datasets_list":
+            kwargs = {"page": page, "limit": limit}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.datasets_list(**kwargs)
+        if action == "datasets_create":
+            kwargs = {"body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.datasets_create(**kwargs)
+        if action == "datasets_get":
+            kwargs = {"dataset_name": dataset_name}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.datasets_get(**kwargs)
+        if action == "datasets_get_run":
+            kwargs = {
+                "dataset_name": dataset_name,
+                "run_name": run_name,
+            }  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.datasets_get_run(**kwargs)
+        if action == "datasets_delete_run":
+            kwargs = {
+                "dataset_name": dataset_name,
+                "run_name": run_name,
+            }  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.datasets_delete_run(**kwargs)
+        if action == "datasets_get_runs":
+            kwargs = {
+                "dataset_name": dataset_name,
+                "page": page,
+                "limit": limit,
+            }  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.datasets_get_runs(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: datasets_list', 'datasets_create', 'datasets_get', 'datasets_get_run', 'datasets_delete_run', 'datasets_get_runs"
+        )
 
 
 def register_health_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-health-health",
-        description="Check health of API and database",
-        tags={"health"},
-    )
-    def health_health(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"health"})
+    async def langfuse_health(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'health_health'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().health_health()
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage health operations.
+
+        Actions:
+          - 'health_health': Check health of API and database
+        """
+        kwargs: dict[str, Any]
+        if action == "health_health":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.health_health(**kwargs)
+        raise ValueError(f"Unknown action: {action}. Must be one of: health_health")
 
 
 def register_ingestion_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-ingestion-batch",
-        description='**Legacy endpoint for batch ingestion for Langfuse Observability.**  -> Please use the OpenTelemetry endpoint (`/api/public/otel/v1/traces`). Learn more: https://langfuse.com/integrations/native/opentelemetry  Within each batch, there can be multiple events. Each event has a type, an id, a timestamp, metadata and a body. Internally, we refer to this as the "event envelope" as it tells us something about the event but not the trace. We use the event id within this envelope to deduplicate messages to avoid processing the same event twice, i.e. the event id should be unique per request. The event.body.id is the ID of the actual trace and will be used for updates and will be visible within the Langfuse App. I.e. if you want to update a trace, you\'d use the same body id, but separate event IDs.  Notes: - Introduction to data model: https://langfuse.com/docs/observability/data-model - Batch sizes are limited to 3.5 MB in total. You need to adjust the number of events per batch accordingly. - The API does not return a 4xx status code for input errors. Instead, it responds with a 207 status code, which includes a list of the encountered errors.',
-        tags={"ingestion"},
-    )
-    async def ingestion_batch(
-        batch: list,
-        metadata: Any | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"ingestion"})
+    async def langfuse_ingestion(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'ingestion_batch'"
         ),
-    ) -> dict[str, Any]:
-        await ctx_progress(ctx, 0, 100)
-        await ctx_progress(ctx, 100, 100)
-        return get_client().ingestion_batch(batch, metadata)
+        batch: list | None = Field(default=None, description="batch"),
+        metadata: Any | None = Field(default=None, description="metadata"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage ingestion operations.
+
+        Actions:
+          - 'ingestion_batch': **Legacy endpoint for batch ingestion for Langfuse Observability.**  -> Please use the OpenTelemetry endpoint (`/api/public/otel/v1/traces`). Learn more: https://langfuse.com/integrations/native/opentelemetry  Within each batch, there can be multiple events. Each event has a type, an id, a timestamp, metadata and a body. Internally, we refer to this as the "event envelope" as it tells us something about the event but not the trace. We use the event id within this envelope to deduplicate messages to avoid processing the same event twice, i.e. the event id should be unique per request. The event.body.id is the ID of the actual trace and will be used for updates and will be visible within the Langfuse App. I.e. if you want to update a trace, you'd use the same body id, but separate event IDs.  Notes: - Introduction to data model: https://langfuse.com/docs/observability/data-model - Batch sizes are limited to 3.5 MB in total. You need to adjust the number of events per batch accordingly. - The API does not return a 4xx status code for input errors. Instead, it responds with a 207 status code, which includes a list of the encountered errors.
+        """
+        kwargs: dict[str, Any]
+        if action == "ingestion_batch":
+            kwargs = {"batch": batch, "metadata": metadata}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.ingestion_batch(**kwargs)
+        raise ValueError(f"Unknown action: {action}. Must be one of: ingestion_batch")
 
 
 def register_legacy_metrics_v1_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-legacy-metrics-v1-legacy-metrics-v1-metrics",
-        description="Get metrics from the Langfuse project using a query object.  Consider using the [v2 metrics endpoint](/api-reference#tag/metricsv2/GET/api/public/v2/metrics) for better performance.  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).",
-        tags={"legacy_metrics_v1"},
-    )
-    def legacy_metrics_v1_metrics(
-        query: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"legacy_metrics_v1"})
+    async def langfuse_legacy_metrics_v1(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'legacy_metrics_v1_metrics'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().legacy_metrics_v1_metrics(query)
+        query: str | None = Field(default=None, description="query"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage legacy metrics v1 operations.
+
+        Actions:
+          - 'legacy_metrics_v1_metrics': Get metrics from the Langfuse project using a query object.  Consider using the [v2 metrics endpoint](/api-reference#tag/metricsv2/GET/api/public/v2/metrics) for better performance.  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).
+        """
+        kwargs: dict[str, Any]
+        if action == "legacy_metrics_v1_metrics":
+            kwargs = {"query": query}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.legacy_metrics_v1_metrics(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: legacy_metrics_v1_metrics"
+        )
 
 
 def register_legacy_observations_v1_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-legacy-observations-v1-legacy-observations-v1-get",
-        description="Get a observation",
-        tags={"legacy_observations_v1"},
-    )
-    def legacy_observations_v1_get(
-        observation_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"legacy_observations_v1"})
+    async def langfuse_legacy_observations_v1(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'legacy_observations_v1_get', 'legacy_observations_v1_get_many'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().legacy_observations_v1_get(observation_id)
+        observation_id: str | None = Field(default=None, description="observation id"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        name: str | None = Field(default=None, description="name"),
+        user_id: str | None = Field(default=None, description="user id"),
+        type: str | None = Field(default=None, description="type"),
+        trace_id: str | None = Field(default=None, description="trace id"),
+        level: Any | None = Field(default=None, description="level"),
+        parent_observation_id: str | None = Field(
+            default=None, description="parent observation id"
+        ),
+        environment: list | None = Field(default=None, description="environment"),
+        from_start_time: str | None = Field(
+            default=None, description="from start time"
+        ),
+        to_start_time: str | None = Field(default=None, description="to start time"),
+        version: str | None = Field(default=None, description="version"),
+        filter: str | None = Field(default=None, description="filter"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage legacy observations v1 operations.
 
-    @mcp.tool(
-        name="langfuse-legacy-observations-v1-legacy-observations-v1-get-many",
-        description="Get a list of observations.  Consider using the [v2 observations endpoint](/api-reference#tag/observationsv2/GET/api/public/v2/observations) for cursor-based pagination and field selection.",
-        tags={"legacy_observations_v1"},
-    )
-    def legacy_observations_v1_get_many(
-        page: int | None = None,
-        limit: int | None = None,
-        name: str | None = None,
-        user_id: str | None = None,
-        type: str | None = None,
-        trace_id: str | None = None,
-        level: Any | None = None,
-        parent_observation_id: str | None = None,
-        environment: list | None = None,
-        from_start_time: str | None = None,
-        to_start_time: str | None = None,
-        version: str | None = None,
-        filter: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().legacy_observations_v1_get_many(
-            page,
-            limit,
-            name,
-            user_id,
-            type,
-            trace_id,
-            level,
-            parent_observation_id,
-            environment,
-            from_start_time,
-            to_start_time,
-            version,
-            filter,
+        Actions:
+          - 'legacy_observations_v1_get': Get a observation
+          - 'legacy_observations_v1_get_many': Get a list of observations.  Consider using the [v2 observations endpoint](/api-reference#tag/observationsv2/GET/api/public/v2/observations) for cursor-based pagination and field selection.
+        """
+        kwargs: dict[str, Any]
+        if action == "legacy_observations_v1_get":
+            kwargs = {"observation_id": observation_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.legacy_observations_v1_get(**kwargs)
+        if action == "legacy_observations_v1_get_many":
+            kwargs = {
+                "page": page,  # type: ignore
+                "limit": limit,  # type: ignore
+                "name": name,
+                "user_id": user_id,
+                "type": type,
+                "trace_id": trace_id,
+                "level": level,
+                "parent_observation_id": parent_observation_id,
+                "environment": environment,  # type: ignore
+                "from_start_time": from_start_time,
+                "to_start_time": to_start_time,
+                "version": version,
+                "filter": filter,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.legacy_observations_v1_get_many(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: legacy_observations_v1_get', 'legacy_observations_v1_get_many"
         )
 
 
 def register_legacy_score_v1_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-legacy-score-v1-legacy-score-v1-create",
-        description="Create a score (supports both trace and session scores)",
-        tags={"legacy_score_v1"},
-    )
-    def legacy_score_v1_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"legacy_score_v1"})
+    async def langfuse_legacy_score_v1(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'legacy_score_v1_create', 'legacy_score_v1_delete'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().legacy_score_v1_create(body)
+        body: dict | None = Field(default=None, description="body"),
+        score_id: str | None = Field(default=None, description="score id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage legacy score v1 operations.
 
-    @mcp.tool(
-        name="langfuse-legacy-score-v1-legacy-score-v1-delete",
-        description="Delete a score (supports both trace and session scores)",
-        tags={"legacy_score_v1"},
-    )
-    async def legacy_score_v1_delete(
-        score_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx, "langfuse legacy score v1 legacy score v1 delete"
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().legacy_score_v1_delete(score_id)
+        Actions:
+          - 'legacy_score_v1_create': Create a score (supports both trace and session scores)
+          - 'legacy_score_v1_delete': Delete a score (supports both trace and session scores)
+        """
+        kwargs: dict[str, Any]
+        if action == "legacy_score_v1_create":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.legacy_score_v1_create(**kwargs)
+        if action == "legacy_score_v1_delete":
+            kwargs = {"score_id": score_id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.legacy_score_v1_delete(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: legacy_score_v1_create', 'legacy_score_v1_delete"
+        )
 
 
 def register_llm_connections_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-llm-connections-llm-connections-list",
-        description="Get all LLM connections in a project",
-        tags={"llm_connections"},
-    )
-    def llm_connections_list(
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"llm_connections"})
+    async def langfuse_llm_connections(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'llm_connections_list', 'llm_connections_upsert'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().llm_connections_list(page, limit)
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        body: dict | None = Field(default=None, description="body"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage llm connections operations.
 
-    @mcp.tool(
-        name="langfuse-llm-connections-llm-connections-upsert",
-        description="Create or update an LLM connection. The connection is upserted on provider.",
-        tags={"llm_connections"},
-    )
-    def llm_connections_upsert(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().llm_connections_upsert(body)
+        Actions:
+          - 'llm_connections_list': Get all LLM connections in a project
+          - 'llm_connections_upsert': Create or update an LLM connection. The connection is upserted on provider.
+        """
+        kwargs: dict[str, Any]
+        if action == "llm_connections_list":
+            kwargs = {"page": page, "limit": limit}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.llm_connections_list(**kwargs)
+        if action == "llm_connections_upsert":
+            kwargs = {"body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.llm_connections_upsert(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: llm_connections_list', 'llm_connections_upsert"
+        )
 
 
 def register_media_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-media-get", description="Get a media record", tags={"media"}
-    )
-    def media_get(
-        media_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"media"})
+    async def langfuse_media(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'media_get', 'media_patch', 'media_get_upload_url'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().media_get(media_id)
+        media_id: str | None = Field(default=None, description="media id"),
+        body: dict | None = Field(default=None, description="body"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage media operations.
 
-    @mcp.tool(
-        name="langfuse-media-patch", description="Patch a media record", tags={"media"}
-    )
-    def media_patch(
-        media_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().media_patch(media_id, body)
-
-    @mcp.tool(
-        name="langfuse-media-get-upload-url",
-        description="Get a presigned upload URL for a media record",
-        tags={"media"},
-    )
-    async def media_get_upload_url(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        await ctx_progress(ctx, 0, 100)
-        await ctx_progress(ctx, 100, 100)
-        return get_client().media_get_upload_url(body)
+        Actions:
+          - 'media_get': Get a media record
+          - 'media_patch': Patch a media record
+          - 'media_get_upload_url': Get a presigned upload URL for a media record
+        """
+        kwargs: dict[str, Any]
+        if action == "media_get":
+            kwargs = {"media_id": media_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.media_get(**kwargs)
+        if action == "media_patch":
+            kwargs = {"media_id": media_id, "body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.media_patch(**kwargs)
+        if action == "media_get_upload_url":
+            kwargs = {"body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.media_get_upload_url(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: media_get', 'media_patch', 'media_get_upload_url"
+        )
 
 
 def register_metrics_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-metrics-metrics",
-        description="Get metrics from the Langfuse project using a query object. V2 endpoint with optimized performance.  ## V2 Differences - Supports `observations`, `scores-numeric`, and `scores-categorical` views only (traces view not supported) - Direct access to tags and release fields on observations - Backwards-compatible: traceName, traceRelease, traceVersion dimensions are still available on observations view - High cardinality dimensions are not supported and will return a 400 error (see below)  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).  ## Available Views  ### observations Query observation-level data (spans, generations, events).  **Dimensions:** - `environment` - Deployment environment (e.g., production, staging) - `type` - Type of observation (SPAN, GENERATION, EVENT) - `name` - Name of the observation - `level` - Logging level of the observation - `version` - Version of the observation - `tags` - User-defined tags - `release` - Release version - `traceName` - Name of the parent trace (backwards-compatible) - `traceRelease` - Release version of the parent trace (backwards-compatible, maps to release) - `traceVersion` - Version of the parent trace (backwards-compatible, maps to version) - `providedModelName` - Name of the model used - `promptName` - Name of the prompt used - `promptVersion` - Version of the prompt used - `startTimeMonth` - Month of start_time in YYYY-MM format  **Measures:** - `count` - Total number of observations - `latency` - Observation latency (milliseconds) - `streamingLatency` - Generation latency from completion start to end (milliseconds) - `inputTokens` - Sum of input tokens consumed - `outputTokens` - Sum of output tokens produced - `totalTokens` - Sum of all tokens consumed - `outputTokensPerSecond` - Output tokens per second - `tokensPerSecond` - Total tokens per second - `inputCost` - Input cost (USD) - `outputCost` - Output cost (USD) - `totalCost` - Total cost (USD) - `timeToFirstToken` - Time to first token (milliseconds) - `countScores` - Number of scores attached to the observation  ### scores-numeric Query numeric and boolean score data.  **Dimensions:** - `environment` - Deployment environment - `name` - Name of the score (e.g., accuracy, toxicity) - `source` - Origin of the score (API, ANNOTATION, EVAL) - `dataType` - Data type (NUMERIC, BOOLEAN) - `configId` - Identifier of the score config - `timestampMonth` - Month in YYYY-MM format - `timestampDay` - Day in YYYY-MM-DD format - `value` - Numeric value of the score - `traceName` - Name of the parent trace - `tags` - Tags - `traceRelease` - Release version - `traceVersion` - Version - `observationName` - Name of the associated observation - `observationModelName` - Model name of the associated observation - `observationPromptName` - Prompt name of the associated observation - `observationPromptVersion` - Prompt version of the associated observation  **Measures:** - `count` - Total number of scores - `value` - Score value (for aggregations)  ### scores-categorical Query categorical score data. Same dimensions as scores-numeric except uses `stringValue` instead of `value`.  **Measures:** - `count` - Total number of scores  ## High Cardinality Dimensions The following dimensions cannot be used as grouping dimensions in v2 metrics API as they can cause performance issues. Use them in filters instead.  **observations view:** - `id` - Use traceId filter to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `parentObservationId` - Use parentObservationId filter instead  **scores-numeric / scores-categorical views:** - `id` - Use specific filters to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `observationId` - Use observationId filter instead  ## Aggregations Available aggregation functions: `sum`, `avg`, `count`, `max`, `min`, `p50`, `p75`, `p90`, `p95`, `p99`, `histogram`  ## Time Granularities Available granularities for timeDimension: `auto`, `minute`, `hour`, `day`, `week`, `month` - `auto` bins the data into approximately 50 buckets based on the time range",
-        tags={"metrics"},
-    )
-    def metrics_metrics(
-        query: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"metrics"})
+    async def langfuse_metrics(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'metrics_metrics'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().metrics_metrics(query)
+        query: str | None = Field(default=None, description="query"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage metrics operations.
+
+        Actions:
+          - 'metrics_metrics': Get metrics from the Langfuse project using a query object. V2 endpoint with optimized performance.  ## V2 Differences - Supports `observations`, `scores-numeric`, and `scores-categorical` views only (traces view not supported) - Direct access to tags and release fields on observations - Backwards-compatible: traceName, traceRelease, traceVersion dimensions are still available on observations view - High cardinality dimensions are not supported and will return a 400 error (see below)  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).  ## Available Views  ### observations Query observation-level data (spans, generations, events).  **Dimensions:** - `environment` - Deployment environment (e.g., production, staging) - `type` - Type of observation (SPAN, GENERATION, EVENT) - `name` - Name of the observation - `level` - Logging level of the observation - `version` - Version of the observation - `tags` - User-defined tags - `release` - Release version - `traceName` - Name of the parent trace (backwards-compatible) - `traceRelease` - Release version of the parent trace (backwards-compatible, maps to release) - `traceVersion` - Version of the parent trace (backwards-compatible, maps to version) - `providedModelName` - Name of the model used - `promptName` - Name of the prompt used - `promptVersion` - Version of the prompt used - `startTimeMonth` - Month of start_time in YYYY-MM format  **Measures:** - `count` - Total number of observations - `latency` - Observation latency (milliseconds) - `streamingLatency` - Generation latency from completion start to end (milliseconds) - `inputTokens` - Sum of input tokens consumed - `outputTokens` - Sum of output tokens produced - `totalTokens` - Sum of all tokens consumed - `outputTokensPerSecond` - Output tokens per second - `tokensPerSecond` - Total tokens per second - `inputCost` - Input cost (USD) - `outputCost` - Output cost (USD) - `totalCost` - Total cost (USD) - `timeToFirstToken` - Time to first token (milliseconds) - `countScores` - Number of scores attached to the observation  ### scores-numeric Query numeric and boolean score data.  **Dimensions:** - `environment` - Deployment environment - `name` - Name of the score (e.g., accuracy, toxicity) - `source` - Origin of the score (API, ANNOTATION, EVAL) - `dataType` - Data type (NUMERIC, BOOLEAN) - `configId` - Identifier of the score config - `timestampMonth` - Month in YYYY-MM format - `timestampDay` - Day in YYYY-MM-DD format - `value` - Numeric value of the score - `traceName` - Name of the parent trace - `tags` - Tags - `traceRelease` - Release version - `traceVersion` - Version - `observationName` - Name of the associated observation - `observationModelName` - Model name of the associated observation - `observationPromptName` - Prompt name of the associated observation - `observationPromptVersion` - Prompt version of the associated observation  **Measures:** - `count` - Total number of scores - `value` - Score value (for aggregations)  ### scores-categorical Query categorical score data. Same dimensions as scores-numeric except uses `stringValue` instead of `value`.  **Measures:** - `count` - Total number of scores  ## High Cardinality Dimensions The following dimensions cannot be used as grouping dimensions in v2 metrics API as they can cause performance issues. Use them in filters instead.  **observations view:** - `id` - Use traceId filter to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `parentObservationId` - Use parentObservationId filter instead  **scores-numeric / scores-categorical views:** - `id` - Use specific filters to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `observationId` - Use observationId filter instead  ## Aggregations Available aggregation functions: `sum`, `avg`, `count`, `max`, `min`, `p50`, `p75`, `p90`, `p95`, `p99`, `histogram`  ## Time Granularities Available granularities for timeDimension: `auto`, `minute`, `hour`, `day`, `week`, `month` - `auto` bins the data into approximately 50 buckets based on the time range
+        """
+        kwargs: dict[str, Any]
+        if action == "metrics_metrics":
+            kwargs = {"query": query}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.metrics_metrics(**kwargs)
+        raise ValueError(f"Unknown action: {action}. Must be one of: metrics_metrics")
 
 
 def register_models_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-models-create", description="Create a model", tags={"models"}
-    )
-    def models_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"models"})
+    async def langfuse_models(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'models_create', 'models_list', 'models_get', 'models_delete'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().models_create(body)
+        body: dict | None = Field(default=None, description="body"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        id: str | None = Field(default=None, description="id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage models operations.
 
-    @mcp.tool(
-        name="langfuse-models-list", description="Get all models", tags={"models"}
-    )
-    def models_list(
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().models_list(page, limit)
-
-    @mcp.tool(name="langfuse-models-get", description="Get a model", tags={"models"})
-    def models_get(
-        id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().models_get(id)
-
-    @mcp.tool(
-        name="langfuse-models-delete",
-        description="Delete a model. Cannot delete models managed by Langfuse. You can create your own definition with the same modelName to override the definition though.",
-        tags={"models"},
-    )
-    async def models_delete(
-        id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse models delete"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().models_delete(id)
+        Actions:
+          - 'models_create': Create a model
+          - 'models_list': Get all models
+          - 'models_get': Get a model
+          - 'models_delete': Delete a model. Cannot delete models managed by Langfuse. You can create your own definition with the same modelName to override the definition though.
+        """
+        kwargs: dict[str, Any]
+        if action == "models_create":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.models_create(**kwargs)
+        if action == "models_list":
+            kwargs = {"page": page, "limit": limit}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.models_list(**kwargs)
+        if action == "models_get":
+            kwargs = {"id": id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.models_get(**kwargs)
+        if action == "models_delete":
+            kwargs = {"id": id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.models_delete(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: models_create', 'models_list', 'models_get', 'models_delete"
+        )
 
 
 def register_observations_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-observations-get-many",
-        description="Get a list of observations with cursor-based pagination and flexible field selection.  ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response metadata and should be passed in subsequent requests to retrieve the next page of results.  ## Field Selection Use the `fields` parameter to control which observation fields are returned: - `core` - Always included: id, traceId, startTime, endTime, projectId, parentObservationId, type - `basic` - name, level, statusMessage, version, environment, bookmarked, public, userId, sessionId - `time` - completionStartTime, createdAt, updatedAt - `io` - input, output - `metadata` - metadata (truncated to 200 chars by default, use `expandMetadata` to get full values) - `model` - providedModelName, internalModelId, modelParameters - `usage` - usageDetails, costDetails, totalCost - `prompt` - promptId, promptName, promptVersion - `metrics` - latency, timeToFirstToken  If not specified, `core` and `basic` field groups are returned.  ## Filters Multiple filtering options are available via query parameters or the structured `filter` parameter. When using the `filter` parameter, it takes precedence over individual query parameter filters.",
-        tags={"observations"},
-    )
-    def observations_get_many(
-        fields: str | None = None,
-        expand_metadata: str | None = None,
-        limit: int | None = None,
-        cursor: str | None = None,
-        parse_io_as_json: bool | None = None,
-        name: str | None = None,
-        user_id: str | None = None,
-        type: str | None = None,
-        trace_id: str | None = None,
-        level: Any | None = None,
-        parent_observation_id: str | None = None,
-        environment: list | None = None,
-        from_start_time: str | None = None,
-        to_start_time: str | None = None,
-        version: str | None = None,
-        filter: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"observations"})
+    async def langfuse_observations(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'observations_get_many'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().observations_get_many(
-            fields,
-            expand_metadata,
-            limit,
-            cursor,
-            parse_io_as_json,
-            name,
-            user_id,
-            type,
-            trace_id,
-            level,
-            parent_observation_id,
-            environment,
-            from_start_time,
-            to_start_time,
-            version,
-            filter,
+        fields: str | None = Field(default=None, description="fields"),
+        expand_metadata: str | None = Field(
+            default=None, description="expand metadata"
+        ),
+        limit: int | None = Field(default=None, description="limit"),
+        cursor: str | None = Field(default=None, description="cursor"),
+        parse_io_as_json: bool | None = Field(
+            default=None, description="parse io as json"
+        ),
+        name: str | None = Field(default=None, description="name"),
+        user_id: str | None = Field(default=None, description="user id"),
+        type: str | None = Field(default=None, description="type"),
+        trace_id: str | None = Field(default=None, description="trace id"),
+        level: Any | None = Field(default=None, description="level"),
+        parent_observation_id: str | None = Field(
+            default=None, description="parent observation id"
+        ),
+        environment: list | None = Field(default=None, description="environment"),
+        from_start_time: str | None = Field(
+            default=None, description="from start time"
+        ),
+        to_start_time: str | None = Field(default=None, description="to start time"),
+        version: str | None = Field(default=None, description="version"),
+        filter: str | None = Field(default=None, description="filter"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage observations operations.
+
+        Actions:
+          - 'observations_get_many': Get a list of observations with cursor-based pagination and flexible field selection.  ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response metadata and should be passed in subsequent requests to retrieve the next page of results.  ## Field Selection Use the `fields` parameter to control which observation fields are returned: - `core` - Always included: id, traceId, startTime, endTime, projectId, parentObservationId, type - `basic` - name, level, statusMessage, version, environment, bookmarked, public, userId, sessionId - `time` - completionStartTime, createdAt, updatedAt - `io` - input, output - `metadata` - metadata (truncated to 200 chars by default, use `expandMetadata` to get full values) - `model` - providedModelName, internalModelId, modelParameters - `usage` - usageDetails, costDetails, totalCost - `prompt` - promptId, promptName, promptVersion - `metrics` - latency, timeToFirstToken  If not specified, `core` and `basic` field groups are returned.  ## Filters Multiple filtering options are available via query parameters or the structured `filter` parameter. When using the `filter` parameter, it takes precedence over individual query parameter filters.
+        """
+        kwargs: dict[str, Any]
+        if action == "observations_get_many":
+            kwargs = {
+                "fields": fields,
+                "expand_metadata": expand_metadata,
+                "limit": limit,
+                "cursor": cursor,
+                "parse_io_as_json": parse_io_as_json,
+                "name": name,
+                "user_id": user_id,
+                "type": type,
+                "trace_id": trace_id,
+                "level": level,
+                "parent_observation_id": parent_observation_id,
+                "environment": environment,
+                "from_start_time": from_start_time,
+                "to_start_time": to_start_time,
+                "version": version,
+                "filter": filter,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.observations_get_many(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: observations_get_many"
         )
 
 
 def register_opentelemetry_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-opentelemetry-export-traces",
-        description="**OpenTelemetry Traces Ingestion Endpoint**  This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability.  **Supported Formats:** - Binary Protobuf: `Content-Type: application/x-protobuf` - JSON Protobuf: `Content-Type: application/json` - Supports gzip compression via `Content-Encoding: gzip` header  **Specification Compliance:** - Conforms to [OTLP/HTTP Trace Export](https://opentelemetry.io/docs/specs/otlp/#otlphttp) - Implements `ExportTraceServiceRequest` message format  **Documentation:** - Integration guide: https://langfuse.com/integrations/native/opentelemetry - Data model: https://langfuse.com/docs/observability/data-model",
-        tags={"opentelemetry"},
-    )
-    def opentelemetry_export_traces(
-        resource_spans: list,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"opentelemetry"})
+    async def langfuse_opentelemetry(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'opentelemetry_export_traces'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().opentelemetry_export_traces(resource_spans)
+        resource_spans: list | None = Field(default=None, description="resource spans"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage opentelemetry operations.
+
+        Actions:
+          - 'opentelemetry_export_traces': **OpenTelemetry Traces Ingestion Endpoint**  This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability.  **Supported Formats:** - Binary Protobuf: `Content-Type: application/x-protobuf` - JSON Protobuf: `Content-Type: application/json` - Supports gzip compression via `Content-Encoding: gzip` header  **Specification Compliance:** - Conforms to [OTLP/HTTP Trace Export](https://opentelemetry.io/docs/specs/otlp/#otlphttp) - Implements `ExportTraceServiceRequest` message format  **Documentation:** - Integration guide: https://langfuse.com/integrations/native/opentelemetry - Data model: https://langfuse.com/docs/observability/data-model
+        """
+        kwargs: dict[str, Any]
+        if action == "opentelemetry_export_traces":
+            kwargs = {"resource_spans": resource_spans}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.opentelemetry_export_traces(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: opentelemetry_export_traces"
+        )
 
 
 def register_organizations_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-organizations-get-organization-memberships",
-        description="Get all memberships for the organization associated with the API key (requires organization-scoped API key)",
-        tags={"organizations"},
-    )
-    def organizations_get_organization_memberships(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"organizations"})
+    async def langfuse_organizations(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'organizations_get_organization_memberships', 'organizations_update_organization_membership', 'organizations_delete_organization_membership', 'organizations_get_project_memberships', 'organizations_update_project_membership', 'organizations_delete_project_membership', 'organizations_get_organization_projects', 'organizations_get_organization_api_keys'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().organizations_get_organization_memberships()
+        body: dict | None = Field(default=None, description="body"),
+        project_id: str | None = Field(default=None, description="project id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage organizations operations.
 
-    @mcp.tool(
-        name="langfuse-organizations-update-organization-membership",
-        description="Create or update a membership for the organization associated with the API key (requires organization-scoped API key)",
-        tags={"organizations"},
-    )
-    def organizations_update_organization_membership(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().organizations_update_organization_membership(body)
-
-    @mcp.tool(
-        name="langfuse-organizations-delete-organization-membership",
-        description="Delete a membership from the organization associated with the API key (requires organization-scoped API key)",
-        tags={"organizations"},
-    )
-    async def organizations_delete_organization_membership(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx, "langfuse organizations delete organization membership"
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().organizations_delete_organization_membership(body)
-
-    @mcp.tool(
-        name="langfuse-organizations-get-project-memberships",
-        description="Get all memberships for a specific project (requires organization-scoped API key)",
-        tags={"organizations"},
-    )
-    def organizations_get_project_memberships(
-        project_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().organizations_get_project_memberships(project_id)
-
-    @mcp.tool(
-        name="langfuse-organizations-update-project-membership",
-        description="Create or update a membership for a specific project (requires organization-scoped API key). The user must already be a member of the organization.",
-        tags={"organizations"},
-    )
-    def organizations_update_project_membership(
-        project_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().organizations_update_project_membership(project_id, body)
-
-    @mcp.tool(
-        name="langfuse-organizations-delete-project-membership",
-        description="Delete a membership from a specific project (requires organization-scoped API key). The user must be a member of the organization.",
-        tags={"organizations"},
-    )
-    async def organizations_delete_project_membership(
-        project_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(
-            ctx, "langfuse organizations delete project membership"
-        ):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().organizations_delete_project_membership(project_id, body)
-
-    @mcp.tool(
-        name="langfuse-organizations-get-organization-projects",
-        description="Get all projects for the organization associated with the API key (requires organization-scoped API key)",
-        tags={"organizations"},
-    )
-    def organizations_get_organization_projects(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().organizations_get_organization_projects()
-
-    @mcp.tool(
-        name="langfuse-organizations-get-organization-api-keys",
-        description="Get all API keys for the organization associated with the API key (requires organization-scoped API key)",
-        tags={"organizations"},
-    )
-    def organizations_get_organization_api_keys(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().organizations_get_organization_api_keys()
+        Actions:
+          - 'organizations_get_organization_memberships': Get all memberships for the organization associated with the API key (requires organization-scoped API key)
+          - 'organizations_update_organization_membership': Create or update a membership for the organization associated with the API key (requires organization-scoped API key)
+          - 'organizations_delete_organization_membership': Delete a membership from the organization associated with the API key (requires organization-scoped API key)
+          - 'organizations_get_project_memberships': Get all memberships for a specific project (requires organization-scoped API key)
+          - 'organizations_update_project_membership': Create or update a membership for a specific project (requires organization-scoped API key). The user must already be a member of the organization.
+          - 'organizations_delete_project_membership': Delete a membership from a specific project (requires organization-scoped API key). The user must be a member of the organization.
+          - 'organizations_get_organization_projects': Get all projects for the organization associated with the API key (requires organization-scoped API key)
+          - 'organizations_get_organization_api_keys': Get all API keys for the organization associated with the API key (requires organization-scoped API key)
+        """
+        kwargs: dict[str, Any]
+        if action == "organizations_get_organization_memberships":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_get_organization_memberships(**kwargs)
+        if action == "organizations_update_organization_membership":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_update_organization_membership(**kwargs)
+        if action == "organizations_delete_organization_membership":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_delete_organization_membership(**kwargs)
+        if action == "organizations_get_project_memberships":
+            kwargs = {"project_id": project_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_get_project_memberships(**kwargs)
+        if action == "organizations_update_project_membership":
+            kwargs = {"project_id": project_id, "body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_update_project_membership(**kwargs)
+        if action == "organizations_delete_project_membership":
+            kwargs = {"project_id": project_id, "body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_delete_project_membership(**kwargs)
+        if action == "organizations_get_organization_projects":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_get_organization_projects(**kwargs)
+        if action == "organizations_get_organization_api_keys":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.organizations_get_organization_api_keys(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: organizations_get_organization_memberships', 'organizations_update_organization_membership', 'organizations_delete_organization_membership', 'organizations_get_project_memberships', 'organizations_update_project_membership', 'organizations_delete_project_membership', 'organizations_get_organization_projects', 'organizations_get_organization_api_keys"
+        )
 
 
 def register_projects_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-projects-get",
-        description="Get Project associated with API key (requires project-scoped API key). You can use GET /api/public/organizations/projects to get all projects with an organization-scoped key.",
-        tags={"projects"},
-    )
-    def projects_get(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"projects"})
+    async def langfuse_projects(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'projects_get', 'projects_create', 'projects_update', 'projects_delete', 'projects_get_api_keys', 'projects_create_api_key', 'projects_delete_api_key'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().projects_get()
+        name: str | None = Field(default=None, description="name"),
+        retention: Any | None = Field(default=None, description="retention"),
+        metadata: dict | None = Field(default=None, description="metadata"),
+        project_id: str | None = Field(default=None, description="project id"),
+        note: str | None = Field(default=None, description="note"),
+        public_key: str | None = Field(default=None, description="public key"),
+        secret_key: str | None = Field(default=None, description="secret key"),
+        api_key_id: str | None = Field(default=None, description="api key id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage projects operations.
 
-    @mcp.tool(
-        name="langfuse-projects-create",
-        description="Create a new project (requires organization-scoped API key)",
-        tags={"projects"},
-    )
-    def projects_create(
-        name: str,
-        retention: int,
-        metadata: dict | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().projects_create(name, retention, metadata)
-
-    @mcp.tool(
-        name="langfuse-projects-update",
-        description="Update a project by ID (requires organization-scoped API key).",
-        tags={"projects"},
-    )
-    def projects_update(
-        project_id: str,
-        name: str,
-        metadata: dict | None = None,
-        retention: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().projects_update(project_id, name, metadata, retention)
-
-    @mcp.tool(
-        name="langfuse-projects-delete",
-        description="Delete a project by ID (requires organization-scoped API key). Project deletion is processed asynchronously.",
-        tags={"projects"},
-    )
-    async def projects_delete(
-        project_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse projects delete"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().projects_delete(project_id)
-
-    @mcp.tool(
-        name="langfuse-projects-get-api-keys",
-        description="Get all API keys for a project (requires organization-scoped API key)",
-        tags={"projects"},
-    )
-    def projects_get_api_keys(
-        project_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().projects_get_api_keys(project_id)
-
-    @mcp.tool(
-        name="langfuse-projects-create-api-key",
-        description="Create a new API key for a project (requires organization-scoped API key)",
-        tags={"projects"},
-    )
-    def projects_create_api_key(
-        project_id: str,
-        note: str | None = None,
-        public_key: str | None = None,
-        secret_key: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().projects_create_api_key(
-            project_id, note, public_key, secret_key
+        Actions:
+          - 'projects_get': Get Project associated with API key (requires project-scoped API key). You can use GET /api/public/organizations/projects to get all projects with an organization-scoped key.
+          - 'projects_create': Create a new project (requires organization-scoped API key)
+          - 'projects_update': Update a project by ID (requires organization-scoped API key).
+          - 'projects_delete': Delete a project by ID (requires organization-scoped API key). Project deletion is processed asynchronously.
+          - 'projects_get_api_keys': Get all API keys for a project (requires organization-scoped API key)
+          - 'projects_create_api_key': Create a new API key for a project (requires organization-scoped API key)
+          - 'projects_delete_api_key': Delete an API key for a project (requires organization-scoped API key)
+        """
+        kwargs: dict[str, Any]
+        if action == "projects_get":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_get(**kwargs)
+        if action == "projects_create":
+            kwargs = {
+                "name": name,
+                "retention": retention,
+                "metadata": metadata,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_create(**kwargs)
+        if action == "projects_update":
+            kwargs = {
+                "project_id": project_id,
+                "name": name,
+                "metadata": metadata,
+                "retention": retention,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_update(**kwargs)
+        if action == "projects_delete":
+            kwargs = {"project_id": project_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_delete(**kwargs)
+        if action == "projects_get_api_keys":
+            kwargs = {"project_id": project_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_get_api_keys(**kwargs)
+        if action == "projects_create_api_key":
+            kwargs = {
+                "project_id": project_id,
+                "note": note,
+                "public_key": public_key,
+                "secret_key": secret_key,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_create_api_key(**kwargs)
+        if action == "projects_delete_api_key":
+            kwargs = {
+                "project_id": project_id,
+                "api_key_id": api_key_id,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.projects_delete_api_key(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: projects_get', 'projects_create', 'projects_update', 'projects_delete', 'projects_get_api_keys', 'projects_create_api_key', 'projects_delete_api_key"
         )
-
-    @mcp.tool(
-        name="langfuse-projects-delete-api-key",
-        description="Delete an API key for a project (requires organization-scoped API key)",
-        tags={"projects"},
-    )
-    async def projects_delete_api_key(
-        project_id: str,
-        api_key_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse projects delete api key"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().projects_delete_api_key(project_id, api_key_id)
 
 
 def register_prompt_version_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-prompt-version-prompt-version-update",
-        description="Update labels for a specific prompt version",
-        tags={"prompt_version"},
-    )
-    def prompt_version_update(
-        name: str,
-        version: int,
-        new_labels: list,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"prompt_version"})
+    async def langfuse_prompt_version(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'prompt_version_update'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().prompt_version_update(name, version, new_labels)
+        name: str | None = Field(default=None, description="name"),
+        version: int | None = Field(default=None, description="version"),
+        new_labels: list | None = Field(default=None, description="new labels"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage prompt version operations.
+
+        Actions:
+          - 'prompt_version_update': Update labels for a specific prompt version
+        """
+        kwargs: dict[str, Any]
+        if action == "prompt_version_update":
+            kwargs = {
+                "name": name,
+                "version": version,
+                "new_labels": new_labels,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.prompt_version_update(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: prompt_version_update"
+        )
 
 
 def register_prompts_tools(mcp: FastMCP):
-    @mcp.tool(name="langfuse-prompts-get", description="Get a prompt", tags={"prompts"})
-    def prompts_get(
-        prompt_name: str,
-        version: int | None = None,
-        label: str | None = None,
-        resolve: bool | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"prompts"})
+    async def langfuse_prompts(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'prompts_get', 'prompts_delete', 'prompts_list', 'prompts_create'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().prompts_get(prompt_name, version, label, resolve)
+        prompt_name: str | None = Field(default=None, description="prompt name"),
+        version: int | None = Field(default=None, description="version"),
+        label: str | None = Field(default=None, description="label"),
+        resolve: bool | None = Field(default=None, description="resolve"),
+        name: str | None = Field(default=None, description="name"),
+        tag: str | None = Field(default=None, description="tag"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        from_updated_at: str | None = Field(
+            default=None, description="from updated at"
+        ),
+        to_updated_at: str | None = Field(default=None, description="to updated at"),
+        body: dict | None = Field(default=None, description="body"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage prompts operations.
 
-    @mcp.tool(
-        name="langfuse-prompts-delete",
-        description="Delete prompt versions. If neither version nor label is specified, all versions of the prompt are deleted.",
-        tags={"prompts"},
-    )
-    async def prompts_delete(
-        prompt_name: str,
-        label: str | None = None,
-        version: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse prompts delete"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().prompts_delete(prompt_name, label, version)
-
-    @mcp.tool(
-        name="langfuse-prompts-list",
-        description="Get a list of prompt names with versions and labels",
-        tags={"prompts"},
-    )
-    def prompts_list(
-        name: str | None = None,
-        label: str | None = None,
-        tag: str | None = None,
-        page: int | None = None,
-        limit: int | None = None,
-        from_updated_at: str | None = None,
-        to_updated_at: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().prompts_list(
-            name, label, tag, page, limit, from_updated_at, to_updated_at
+        Actions:
+          - 'prompts_get': Get a prompt
+          - 'prompts_delete': Delete prompt versions. If neither version nor label is specified, all versions of the prompt are deleted.
+          - 'prompts_list': Get a list of prompt names with versions and labels
+          - 'prompts_create': Create a new version for the prompt with the given `name`
+        """
+        kwargs: dict[str, Any]
+        if action == "prompts_get":
+            kwargs = {
+                "prompt_name": prompt_name,
+                "version": version,
+                "label": label,
+                "resolve": resolve,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.prompts_get(**kwargs)
+        if action == "prompts_delete":
+            kwargs = {
+                "prompt_name": prompt_name,
+                "label": label,
+                "version": version,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.prompts_delete(**kwargs)
+        if action == "prompts_list":
+            kwargs = {
+                "name": name,
+                "label": label,
+                "tag": tag,
+                "page": page,
+                "limit": limit,
+                "from_updated_at": from_updated_at,
+                "to_updated_at": to_updated_at,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.prompts_list(**kwargs)
+        if action == "prompts_create":
+            kwargs = {"body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.prompts_create(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: prompts_get', 'prompts_delete', 'prompts_list', 'prompts_create"
         )
-
-    @mcp.tool(
-        name="langfuse-prompts-create",
-        description="Create a new version for the prompt with the given `name`",
-        tags={"prompts"},
-    )
-    def prompts_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().prompts_create(body)
 
 
 def register_scim_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-scim-get-service-provider-config",
-        description="Get SCIM Service Provider Configuration (requires organization-scoped API key)",
-        tags={"scim"},
-    )
-    def scim_get_service_provider_config(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"scim"})
+    async def langfuse_scim(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'scim_get_service_provider_config', 'scim_get_resource_types', 'scim_get_schemas', 'scim_list_users', 'scim_create_user', 'scim_get_user', 'scim_delete_user'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().scim_get_service_provider_config()
+        filter: str | None = Field(default=None, description="filter"),
+        start_index: int | None = Field(default=None, description="start index"),
+        count: int | None = Field(default=None, description="count"),
+        user_name: str | None = Field(default=None, description="user name"),
+        name: Any | None = Field(default=None, description="name"),
+        emails: list | None = Field(default=None, description="emails"),
+        active: bool | None = Field(default=None, description="active"),
+        password: str | None = Field(default=None, description="password"),
+        user_id: str | None = Field(default=None, description="user id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage scim operations.
 
-    @mcp.tool(
-        name="langfuse-scim-get-resource-types",
-        description="Get SCIM Resource Types (requires organization-scoped API key)",
-        tags={"scim"},
-    )
-    def scim_get_resource_types(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().scim_get_resource_types()
-
-    @mcp.tool(
-        name="langfuse-scim-get-schemas",
-        description="Get SCIM Schemas (requires organization-scoped API key)",
-        tags={"scim"},
-    )
-    def scim_get_schemas(
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().scim_get_schemas()
-
-    @mcp.tool(
-        name="langfuse-scim-list-users",
-        description="List users in the organization (requires organization-scoped API key)",
-        tags={"scim"},
-    )
-    def scim_list_users(
-        filter: str | None = None,
-        start_index: int | None = None,
-        count: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().scim_list_users(filter, start_index, count)
-
-    @mcp.tool(
-        name="langfuse-scim-create-user",
-        description="Create a new user in the organization (requires organization-scoped API key)",
-        tags={"scim"},
-    )
-    def scim_create_user(
-        user_name: str,
-        name: Any,
-        emails: list | None = None,
-        active: bool | None = None,
-        password: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().scim_create_user(user_name, name, emails, active, password)
-
-    @mcp.tool(
-        name="langfuse-scim-get-user",
-        description="Get a specific user by ID (requires organization-scoped API key)",
-        tags={"scim"},
-    )
-    def scim_get_user(
-        user_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().scim_get_user(user_id)
-
-    @mcp.tool(
-        name="langfuse-scim-delete-user",
-        description="Remove a user from the organization (requires organization-scoped API key). Note that this only removes the user from the organization but does not delete the user entity itself.",
-        tags={"scim"},
-    )
-    async def scim_delete_user(
-        user_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse scim delete user"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().scim_delete_user(user_id)
+        Actions:
+          - 'scim_get_service_provider_config': Get SCIM Service Provider Configuration (requires organization-scoped API key)
+          - 'scim_get_resource_types': Get SCIM Resource Types (requires organization-scoped API key)
+          - 'scim_get_schemas': Get SCIM Schemas (requires organization-scoped API key)
+          - 'scim_list_users': List users in the organization (requires organization-scoped API key)
+          - 'scim_create_user': Create a new user in the organization (requires organization-scoped API key)
+          - 'scim_get_user': Get a specific user by ID (requires organization-scoped API key)
+          - 'scim_delete_user': Remove a user from the organization (requires organization-scoped API key). Note that this only removes the user from the organization but does not delete the user entity itself.
+        """
+        kwargs: dict[str, Any]
+        if action == "scim_get_service_provider_config":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_get_service_provider_config(**kwargs)
+        if action == "scim_get_resource_types":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_get_resource_types(**kwargs)
+        if action == "scim_get_schemas":
+            kwargs = {}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_get_schemas(**kwargs)
+        if action == "scim_list_users":
+            kwargs = {
+                "filter": filter,
+                "start_index": start_index,
+                "count": count,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_list_users(**kwargs)
+        if action == "scim_create_user":
+            kwargs = {
+                "user_name": user_name,
+                "name": name,
+                "emails": emails,
+                "active": active,
+                "password": password,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_create_user(**kwargs)
+        if action == "scim_get_user":
+            kwargs = {"user_id": user_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_get_user(**kwargs)
+        if action == "scim_delete_user":
+            kwargs = {"user_id": user_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scim_delete_user(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: scim_get_service_provider_config', 'scim_get_resource_types', 'scim_get_schemas', 'scim_list_users', 'scim_create_user', 'scim_get_user', 'scim_delete_user"
+        )
 
 
 def register_score_configs_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-score-configs-score-configs-create",
-        description="Create a score configuration (config). Score configs are used to define the structure of scores",
-        tags={"score_configs"},
-    )
-    def score_configs_create(
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"score_configs"})
+    async def langfuse_score_configs(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'score_configs_create', 'score_configs_get', 'score_configs_get_by_id', 'score_configs_update'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().score_configs_create(body)
+        body: dict | None = Field(default=None, description="body"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        config_id: str | None = Field(default=None, description="config id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage score configs operations.
 
-    @mcp.tool(
-        name="langfuse-score-configs-score-configs-get",
-        description="Get all score configs",
-        tags={"score_configs"},
-    )
-    def score_configs_get(
-        page: int | None = None,
-        limit: int | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().score_configs_get(page, limit)
-
-    @mcp.tool(
-        name="langfuse-score-configs-score-configs-get-by-id",
-        description="Get a score config",
-        tags={"score_configs"},
-    )
-    def score_configs_get_by_id(
-        config_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().score_configs_get_by_id(config_id)
-
-    @mcp.tool(
-        name="langfuse-score-configs-score-configs-update",
-        description="Update a score config",
-        tags={"score_configs"},
-    )
-    def score_configs_update(
-        config_id: str,
-        body: dict,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().score_configs_update(config_id, body)
+        Actions:
+          - 'score_configs_create': Create a score configuration (config). Score configs are used to define the structure of scores
+          - 'score_configs_get': Get all score configs
+          - 'score_configs_get_by_id': Get a score config
+          - 'score_configs_update': Update a score config
+        """
+        kwargs: dict[str, Any]
+        if action == "score_configs_create":
+            kwargs = {"body": body}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.score_configs_create(**kwargs)
+        if action == "score_configs_get":
+            kwargs = {"page": page, "limit": limit}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.score_configs_get(**kwargs)
+        if action == "score_configs_get_by_id":
+            kwargs = {"config_id": config_id}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.score_configs_get_by_id(**kwargs)
+        if action == "score_configs_update":
+            kwargs = {"config_id": config_id, "body": body}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.score_configs_update(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: score_configs_create', 'score_configs_get', 'score_configs_get_by_id', 'score_configs_update"
+        )
 
 
 def register_scores_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-scores-get-many",
-        description="Get a list of scores (supports both trace and session scores)",
-        tags={"scores"},
-    )
-    def scores_get_many(
-        page: int | None = None,
-        limit: int | None = None,
-        user_id: str | None = None,
-        name: str | None = None,
-        from_timestamp: str | None = None,
-        to_timestamp: str | None = None,
-        environment: list | None = None,
-        source: Any | None = None,
-        operator: str | None = None,
-        value: int | None = None,
-        score_ids: str | None = None,
-        config_id: str | None = None,
-        session_id: str | None = None,
-        dataset_run_id: str | None = None,
-        trace_id: str | None = None,
-        observation_id: str | None = None,
-        queue_id: str | None = None,
-        data_type: Any | None = None,
-        trace_tags: list | None = None,
-        fields: str | None = None,
-        filter: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"scores"})
+    async def langfuse_scores(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'scores_get_many', 'scores_get_by_id'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().scores_get_many(
-            page,
-            limit,
-            user_id,
-            name,
-            from_timestamp,
-            to_timestamp,
-            environment,
-            source,
-            operator,
-            value,
-            score_ids,
-            config_id,
-            session_id,
-            dataset_run_id,
-            trace_id,
-            observation_id,
-            queue_id,
-            data_type,
-            trace_tags,
-            fields,
-            filter,
-        )
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        user_id: str | None = Field(default=None, description="user id"),
+        name: str | None = Field(default=None, description="name"),
+        from_timestamp: str | None = Field(default=None, description="from timestamp"),
+        to_timestamp: str | None = Field(default=None, description="to timestamp"),
+        environment: list | None = Field(default=None, description="environment"),
+        source: Any | None = Field(default=None, description="source"),
+        operator: str | None = Field(default=None, description="operator"),
+        value: int | None = Field(default=None, description="value"),
+        score_ids: str | None = Field(default=None, description="score ids"),
+        config_id: str | None = Field(default=None, description="config id"),
+        session_id: str | None = Field(default=None, description="session id"),
+        dataset_run_id: str | None = Field(default=None, description="dataset run id"),
+        trace_id: str | None = Field(default=None, description="trace id"),
+        observation_id: str | None = Field(default=None, description="observation id"),
+        queue_id: str | None = Field(default=None, description="queue id"),
+        data_type: Any | None = Field(default=None, description="data type"),
+        trace_tags: list | None = Field(default=None, description="trace tags"),
+        fields: str | None = Field(default=None, description="fields"),
+        filter: str | None = Field(default=None, description="filter"),
+        score_id: str | None = Field(default=None, description="score id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage scores operations.
 
-    @mcp.tool(
-        name="langfuse-scores-get-by-id",
-        description="Get a score (supports both trace and session scores)",
-        tags={"scores"},
-    )
-    def scores_get_by_id(
-        score_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().scores_get_by_id(score_id)
+        Actions:
+          - 'scores_get_many': Get a list of scores (supports both trace and session scores)
+          - 'scores_get_by_id': Get a score (supports both trace and session scores)
+        """
+        kwargs: dict[str, Any]
+        if action == "scores_get_many":
+            kwargs = {
+                "page": page,
+                "limit": limit,
+                "user_id": user_id,
+                "name": name,
+                "from_timestamp": from_timestamp,
+                "to_timestamp": to_timestamp,
+                "environment": environment,
+                "source": source,
+                "operator": operator,
+                "value": value,
+                "score_ids": score_ids,
+                "config_id": config_id,
+                "session_id": session_id,
+                "dataset_run_id": dataset_run_id,
+                "trace_id": trace_id,
+                "observation_id": observation_id,
+                "queue_id": queue_id,
+                "data_type": data_type,
+                "trace_tags": trace_tags,
+                "fields": fields,
+                "filter": filter,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scores_get_many(**kwargs)
+        if action == "scores_get_by_id":
+            kwargs = {"score_id": score_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.scores_get_by_id(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: scores_get_many', 'scores_get_by_id"
+        )
 
 
 def register_sessions_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-sessions-list", description="Get sessions", tags={"sessions"}
-    )
-    def sessions_list(
-        page: int | None = None,
-        limit: int | None = None,
-        from_timestamp: str | None = None,
-        to_timestamp: str | None = None,
-        environment: list | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"sessions"})
+    async def langfuse_sessions(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'sessions_list', 'sessions_get'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().sessions_list(
-            page, limit, from_timestamp, to_timestamp, environment
-        )
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        from_timestamp: str | None = Field(default=None, description="from timestamp"),
+        to_timestamp: str | None = Field(default=None, description="to timestamp"),
+        environment: list | None = Field(default=None, description="environment"),
+        session_id: str | None = Field(default=None, description="session id"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage sessions operations.
 
-    @mcp.tool(
-        name="langfuse-sessions-get",
-        description="Get a session. Please note that `traces` on this endpoint are not paginated, if you plan to fetch large sessions, consider `GET /api/public/traces?sessionId=<sessionId>`",
-        tags={"sessions"},
-    )
-    def sessions_get(
-        session_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().sessions_get(session_id)
+        Actions:
+          - 'sessions_list': Get sessions
+          - 'sessions_get': Get a session. Please note that `traces` on this endpoint are not paginated, if you plan to fetch large sessions, consider `GET /api/public/traces?sessionId=<sessionId>`
+        """
+        kwargs: dict[str, Any]
+        if action == "sessions_list":
+            kwargs = {
+                "page": page,
+                "limit": limit,
+                "from_timestamp": from_timestamp,
+                "to_timestamp": to_timestamp,
+                "environment": environment,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.sessions_list(**kwargs)
+        if action == "sessions_get":
+            kwargs = {"session_id": session_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.sessions_get(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: sessions_list', 'sessions_get"
+        )
 
 
 def register_trace_tools(mcp: FastMCP):
-    @mcp.tool(
-        name="langfuse-trace-get", description="Get a specific trace", tags={"trace"}
-    )
-    def trace_get(
-        trace_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
+    @mcp.tool(tags={"trace"})
+    async def langfuse_trace(
+        action: str = Field(
+            description="Action to perform. Must be one of: 'trace_get', 'trace_delete', 'trace_list', 'trace_delete_multiple'"
         ),
-    ) -> dict[str, Any]:
-        return get_client().trace_get(trace_id)
+        trace_id: str | None = Field(default=None, description="trace id"),
+        page: int | None = Field(default=None, description="page"),
+        limit: int | None = Field(default=None, description="limit"),
+        user_id: str | None = Field(default=None, description="user id"),
+        name: str | None = Field(default=None, description="name"),
+        session_id: str | None = Field(default=None, description="session id"),
+        from_timestamp: str | None = Field(default=None, description="from timestamp"),
+        to_timestamp: str | None = Field(default=None, description="to timestamp"),
+        order_by: str | None = Field(default=None, description="order by"),
+        tags: list | None = Field(default=None, description="tags"),
+        version: str | None = Field(default=None, description="version"),
+        release: str | None = Field(default=None, description="release"),
+        environment: list | None = Field(default=None, description="environment"),
+        fields: str | None = Field(default=None, description="fields"),
+        filter: str | None = Field(default=None, description="filter"),
+        trace_ids: list | None = Field(default=None, description="trace ids"),
+        client=Depends(get_client),
+    ) -> dict:
+        """Manage trace operations.
 
-    @mcp.tool(
-        name="langfuse-trace-delete",
-        description="Delete a specific trace",
-        tags={"trace"},
-    )
-    async def trace_delete(
-        trace_id: str,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse trace delete"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().trace_delete(trace_id)
-
-    @mcp.tool(
-        name="langfuse-trace-list", description="Get list of traces", tags={"trace"}
-    )
-    def trace_list(
-        page: int | None = None,
-        limit: int | None = None,
-        user_id: str | None = None,
-        name: str | None = None,
-        session_id: str | None = None,
-        from_timestamp: str | None = None,
-        to_timestamp: str | None = None,
-        order_by: str | None = None,
-        tags: list | None = None,
-        version: str | None = None,
-        release: str | None = None,
-        environment: list | None = None,
-        fields: str | None = None,
-        filter: str | None = None,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        return get_client().trace_list(
-            page,
-            limit,
-            user_id,
-            name,
-            session_id,
-            from_timestamp,
-            to_timestamp,
-            order_by,
-            tags,
-            version,
-            release,
-            environment,
-            fields,
-            filter,
+        Actions:
+          - 'trace_get': Get a specific trace
+          - 'trace_delete': Delete a specific trace
+          - 'trace_list': Get list of traces
+          - 'trace_delete_multiple': Delete multiple traces
+        """
+        kwargs: dict[str, Any]
+        if action == "trace_get":
+            kwargs = {"trace_id": trace_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.trace_get(**kwargs)
+        if action == "trace_delete":
+            kwargs = {"trace_id": trace_id}
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.trace_delete(**kwargs)
+        if action == "trace_list":
+            kwargs = {
+                "page": page,  # type: ignore
+                "limit": limit,  # type: ignore
+                "user_id": user_id,
+                "name": name,
+                "session_id": session_id,
+                "from_timestamp": from_timestamp,
+                "to_timestamp": to_timestamp,
+                "order_by": order_by,
+                "tags": tags,  # type: ignore
+                "version": version,
+                "release": release,
+                "environment": environment,  # type: ignore
+                "fields": fields,
+                "filter": filter,
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.trace_list(**kwargs)
+        if action == "trace_delete_multiple":
+            kwargs = {"trace_ids": trace_ids}  # type: ignore
+            kwargs = {k: v for k, v in kwargs.items() if v is not None}
+            return client.trace_delete_multiple(**kwargs)
+        raise ValueError(
+            f"Unknown action: {action}. Must be one of: trace_get', 'trace_delete', 'trace_list', 'trace_delete_multiple"
         )
 
-    @mcp.tool(
-        name="langfuse-trace-delete-multiple",
-        description="Delete multiple traces",
-        tags={"trace"},
-    )
-    async def trace_delete_multiple(
-        trace_ids: list,
-        ctx: Context = Field(
-            description="MCP context for progress reporting", default=None
-        ),
-    ) -> dict[str, Any]:
-        if not await ctx_confirm_destructive(ctx, "langfuse trace delete multiple"):
-            return {"status": "cancelled", "message": "Operation cancelled by user"}
-        await ctx_progress(ctx, 0, 100)
-        return get_client().trace_delete_multiple(trace_ids)
 
-
-def register_all_tools(mcp: FastMCP) -> list[str]:
-    registered_tags = []
-    if to_boolean(os.getenv("ANNOTATION_QUEUES_TOOL", "True")):
-        register_annotation_queues_tools(mcp)
-        registered_tags.append("annotationqueues")
-    if to_boolean(os.getenv("BLOB_STORAGE_INTEGRATIONS_TOOL", "True")):
-        register_blob_storage_integrations_tools(mcp)
-        registered_tags.append("blobstorageintegrations")
-    if to_boolean(os.getenv("COMMENTS_TOOL", "True")):
-        register_comments_tools(mcp)
-        registered_tags.append("comments")
-    if to_boolean(os.getenv("DATASET_ITEMS_TOOL", "True")):
-        register_dataset_items_tools(mcp)
-        registered_tags.append("datasetitems")
-    if to_boolean(os.getenv("DATASET_RUN_ITEMS_TOOL", "True")):
-        register_dataset_run_items_tools(mcp)
-        registered_tags.append("datasetrunitems")
-    if to_boolean(os.getenv("DATASETS_TOOL", "True")):
-        register_datasets_tools(mcp)
-        registered_tags.append("datasets")
-    if to_boolean(os.getenv("HEALTH_TOOL", "True")):
-        register_health_tools(mcp)
-        registered_tags.append("health")
-    if to_boolean(os.getenv("INGESTION_TOOL", "True")):
-        register_ingestion_tools(mcp)
-        registered_tags.append("ingestion")
-    if to_boolean(os.getenv("LEGACY_METRICS_V1_TOOL", "True")):
-        register_legacy_metrics_v1_tools(mcp)
-        registered_tags.append("legacymetricsv1")
-    if to_boolean(os.getenv("LEGACY_OBSERVATIONS_V1_TOOL", "True")):
-        register_legacy_observations_v1_tools(mcp)
-        registered_tags.append("legacyobservationsv1")
-    if to_boolean(os.getenv("LEGACY_SCORE_V1_TOOL", "True")):
-        register_legacy_score_v1_tools(mcp)
-        registered_tags.append("legacyscorev1")
-    if to_boolean(os.getenv("LLM_CONNECTIONS_TOOL", "True")):
-        register_llm_connections_tools(mcp)
-        registered_tags.append("llmconnections")
-    if to_boolean(os.getenv("MEDIA_TOOL", "True")):
-        register_media_tools(mcp)
-        registered_tags.append("media")
-    if to_boolean(os.getenv("METRICS_TOOL", "True")):
-        register_metrics_tools(mcp)
-        registered_tags.append("metrics")
-    if to_boolean(os.getenv("MODELS_TOOL", "True")):
-        register_models_tools(mcp)
-        registered_tags.append("models")
-    if to_boolean(os.getenv("OBSERVATIONS_TOOL", "True")):
-        register_observations_tools(mcp)
-        registered_tags.append("observations")
-    if to_boolean(os.getenv("OPENTELEMETRY_TOOL", "True")):
-        register_opentelemetry_tools(mcp)
-        registered_tags.append("opentelemetry")
-    if to_boolean(os.getenv("ORGANIZATIONS_TOOL", "True")):
-        register_organizations_tools(mcp)
-        registered_tags.append("organizations")
-    if to_boolean(os.getenv("PROJECTS_TOOL", "True")):
-        register_projects_tools(mcp)
-        registered_tags.append("projects")
-    if to_boolean(os.getenv("PROMPT_VERSION_TOOL", "True")):
-        register_prompt_version_tools(mcp)
-        registered_tags.append("promptversion")
-    if to_boolean(os.getenv("PROMPTS_TOOL", "True")):
-        register_prompts_tools(mcp)
-        registered_tags.append("prompts")
-    if to_boolean(os.getenv("SCIM_TOOL", "True")):
-        register_scim_tools(mcp)
-        registered_tags.append("scim")
-    if to_boolean(os.getenv("SCORE_CONFIGS_TOOL", "True")):
-        register_score_configs_tools(mcp)
-        registered_tags.append("scoreconfigs")
-    if to_boolean(os.getenv("SCORES_TOOL", "True")):
-        register_scores_tools(mcp)
-        registered_tags.append("scores")
-    if to_boolean(os.getenv("SESSIONS_TOOL", "True")):
-        register_sessions_tools(mcp)
-        registered_tags.append("sessions")
-    if to_boolean(os.getenv("TRACE_TOOL", "True")):
-        register_trace_tools(mcp)
-        registered_tags.append("trace")
-    return registered_tags
-
-
-### END GENERATED TOOL REGISTRATION ###
-def get_mcp_instance() -> tuple[Any, Any, Any, Any]:
+def get_mcp_instance() -> tuple[Any, ...]:
+    """Initialize and return the MCP instance."""
+    load_dotenv(find_dotenv())
     args, mcp, middlewares = create_mcp_server(
-        name="langfuse",
+        name="langfuse-agent MCP",
         version=__version__,
-        instructions="Langfuse Agent MCP Server",
+        instructions="langfuse-agent MCP Server — Condensed Action-Routed Tools.",
     )
 
-    registered_tags = register_all_tools(mcp)
-    register_prompts(mcp)
+    @mcp.custom_route("/health", methods=["GET"])
+    async def health_check(request: Request) -> JSONResponse:
+        return JSONResponse({"status": "OK"})
+
+    DEFAULT_ANNOTATION_QUEUESTOOL = to_boolean(
+        os.getenv("ANNOTATION_QUEUESTOOL", "True")
+    )
+    if DEFAULT_ANNOTATION_QUEUESTOOL:
+        register_annotation_queues_tools(mcp)
+    DEFAULT_BLOB_STORAGE_INTEGRATIONSTOOL = to_boolean(
+        os.getenv("BLOB_STORAGE_INTEGRATIONSTOOL", "True")
+    )
+    if DEFAULT_BLOB_STORAGE_INTEGRATIONSTOOL:
+        register_blob_storage_integrations_tools(mcp)
+    DEFAULT_COMMENTSTOOL = to_boolean(os.getenv("COMMENTSTOOL", "True"))
+    if DEFAULT_COMMENTSTOOL:
+        register_comments_tools(mcp)
+    DEFAULT_DATASET_ITEMSTOOL = to_boolean(os.getenv("DATASET_ITEMSTOOL", "True"))
+    if DEFAULT_DATASET_ITEMSTOOL:
+        register_dataset_items_tools(mcp)
+    DEFAULT_DATASET_RUN_ITEMSTOOL = to_boolean(
+        os.getenv("DATASET_RUN_ITEMSTOOL", "True")
+    )
+    if DEFAULT_DATASET_RUN_ITEMSTOOL:
+        register_dataset_run_items_tools(mcp)
+    DEFAULT_DATASETSTOOL = to_boolean(os.getenv("DATASETSTOOL", "True"))
+    if DEFAULT_DATASETSTOOL:
+        register_datasets_tools(mcp)
+    DEFAULT_HEALTHTOOL = to_boolean(os.getenv("HEALTHTOOL", "True"))
+    if DEFAULT_HEALTHTOOL:
+        register_health_tools(mcp)
+    DEFAULT_INGESTIONTOOL = to_boolean(os.getenv("INGESTIONTOOL", "True"))
+    if DEFAULT_INGESTIONTOOL:
+        register_ingestion_tools(mcp)
+    DEFAULT_LEGACY_METRICS_V1TOOL = to_boolean(
+        os.getenv("LEGACY_METRICS_V1TOOL", "True")
+    )
+    if DEFAULT_LEGACY_METRICS_V1TOOL:
+        register_legacy_metrics_v1_tools(mcp)
+    DEFAULT_LEGACY_OBSERVATIONS_V1TOOL = to_boolean(
+        os.getenv("LEGACY_OBSERVATIONS_V1TOOL", "True")
+    )
+    if DEFAULT_LEGACY_OBSERVATIONS_V1TOOL:
+        register_legacy_observations_v1_tools(mcp)
+    DEFAULT_LEGACY_SCORE_V1TOOL = to_boolean(os.getenv("LEGACY_SCORE_V1TOOL", "True"))
+    if DEFAULT_LEGACY_SCORE_V1TOOL:
+        register_legacy_score_v1_tools(mcp)
+    DEFAULT_LLM_CONNECTIONSTOOL = to_boolean(os.getenv("LLM_CONNECTIONSTOOL", "True"))
+    if DEFAULT_LLM_CONNECTIONSTOOL:
+        register_llm_connections_tools(mcp)
+    DEFAULT_MEDIATOOL = to_boolean(os.getenv("MEDIATOOL", "True"))
+    if DEFAULT_MEDIATOOL:
+        register_media_tools(mcp)
+    DEFAULT_METRICSTOOL = to_boolean(os.getenv("METRICSTOOL", "True"))
+    if DEFAULT_METRICSTOOL:
+        register_metrics_tools(mcp)
+    DEFAULT_MODELSTOOL = to_boolean(os.getenv("MODELSTOOL", "True"))
+    if DEFAULT_MODELSTOOL:
+        register_models_tools(mcp)
+    DEFAULT_OBSERVATIONSTOOL = to_boolean(os.getenv("OBSERVATIONSTOOL", "True"))
+    if DEFAULT_OBSERVATIONSTOOL:
+        register_observations_tools(mcp)
+    DEFAULT_OPENTELEMETRYTOOL = to_boolean(os.getenv("OPENTELEMETRYTOOL", "True"))
+    if DEFAULT_OPENTELEMETRYTOOL:
+        register_opentelemetry_tools(mcp)
+    DEFAULT_ORGANIZATIONSTOOL = to_boolean(os.getenv("ORGANIZATIONSTOOL", "True"))
+    if DEFAULT_ORGANIZATIONSTOOL:
+        register_organizations_tools(mcp)
+    DEFAULT_PROJECTSTOOL = to_boolean(os.getenv("PROJECTSTOOL", "True"))
+    if DEFAULT_PROJECTSTOOL:
+        register_projects_tools(mcp)
+    DEFAULT_PROMPT_VERSIONTOOL = to_boolean(os.getenv("PROMPT_VERSIONTOOL", "True"))
+    if DEFAULT_PROMPT_VERSIONTOOL:
+        register_prompt_version_tools(mcp)
+    DEFAULT_PROMPTSTOOL = to_boolean(os.getenv("PROMPTSTOOL", "True"))
+    if DEFAULT_PROMPTSTOOL:
+        register_prompts_tools(mcp)
+    DEFAULT_SCIMTOOL = to_boolean(os.getenv("SCIMTOOL", "True"))
+    if DEFAULT_SCIMTOOL:
+        register_scim_tools(mcp)
+    DEFAULT_SCORE_CONFIGSTOOL = to_boolean(os.getenv("SCORE_CONFIGSTOOL", "True"))
+    if DEFAULT_SCORE_CONFIGSTOOL:
+        register_score_configs_tools(mcp)
+    DEFAULT_SCORESTOOL = to_boolean(os.getenv("SCORESTOOL", "True"))
+    if DEFAULT_SCORESTOOL:
+        register_scores_tools(mcp)
+    DEFAULT_SESSIONSTOOL = to_boolean(os.getenv("SESSIONSTOOL", "True"))
+    if DEFAULT_SESSIONSTOOL:
+        register_sessions_tools(mcp)
+    DEFAULT_TRACETOOL = to_boolean(os.getenv("TRACETOOL", "True"))
+    if DEFAULT_TRACETOOL:
+        register_trace_tools(mcp)
 
     for mw in middlewares:
         mcp.add_middleware(mw)
+    return mcp, args, middlewares
 
-    return mcp, args, middlewares, registered_tags
 
-
-def mcp_server():
-    mcp, args, middlewares, registered_tags = get_mcp_instance()
-
-    print(f"Langfuse Agent MCP v{__version__}", file=sys.stderr)
+def mcp_server() -> None:
+    mcp, args, middlewares = get_mcp_instance()
+    print(f"langfuse-agent MCP v{__version__}", file=sys.stderr)
     print("\nStarting MCP Server", file=sys.stderr)
     print(f"  Transport: {args.transport.upper()}", file=sys.stderr)
     print(f"  Auth: {args.auth_type}", file=sys.stderr)
-    print(f"  Dynamic Tags Loaded: {registered_tags}", file=sys.stderr)
 
     if args.transport == "stdio":
         mcp.run(transport="stdio")
@@ -1603,7 +1400,7 @@ def mcp_server():
     elif args.transport == "sse":
         mcp.run(transport="sse", host=args.host, port=args.port)
     else:
-        logger.error(f"Invalid transport: {args.transport}")
+        logger.error("Invalid transport", extra={"transport": args.transport})
         sys.exit(1)
 
 

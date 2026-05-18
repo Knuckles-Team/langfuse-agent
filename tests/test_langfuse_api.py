@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 from agent_utilities.core.exceptions import ApiError, AuthError
 
-from langfuse_agent.langfuse_api import LangfuseApi
+from langfuse_agent.api_client import LangfuseApi
 
 
 class TestLangfuseApiInitialization:

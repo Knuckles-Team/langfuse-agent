@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore", message=".*urllib3.*or chardet.*")
 __all__: list[str] = []
 
 CORE_MODULES = [
-    "langfuse_agent.langfuse_api",
+    "langfuse_agent.api_client",
 ]
 
 OPTIONAL_MODULES = {

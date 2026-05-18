@@ -1,0 +1,212 @@
+{
+  "feature_id": "code-enhancement-20260512",
+  "title": "Code Enhancement: langfuse-agent",
+  "created": "2026-05-12T14:14:41.000201+00:00",
+  "overview": "Automated code enhancement review for langfuse-agent. Covers 17 analysis domains.",
+  "user_stories": [
+    {
+      "role": "developer",
+      "action": "address Project Analysis findings (grade: C, score: 74)",
+      "value": "improve project project analysis from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Architecture & Design Patterns findings (grade: D, score: 65)",
+      "value": "improve project architecture & design patterns from D to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Concept Traceability findings (grade: F, score: 30)",
+      "value": "improve project concept traceability from F to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Linting & Formatting findings (grade: F, score: 0)",
+      "value": "improve project linting & formatting from F to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Changelog Audit findings (grade: C, score: 75)",
+      "value": "improve project changelog audit from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Pytest Quality findings (grade: C, score: 73)",
+      "value": "improve project pytest quality from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Environment Variables findings (grade: C, score: 75)",
+      "value": "improve project environment variables from C to at least B (80+)"
+    }
+  ],
+  "functional_requirements": [
+    {
+      "id": "FR-001",
+      "description": "Minor update: requests 2.33.1 (installed) -> 2.34.0",
+      "testable": true
+    },
+    {
+      "id": "FR-002",
+      "description": "Minor update: langfuse 4.5.1 (installed) -> 4.6.1",
+      "testable": true
+    },
+    {
+      "id": "FR-003",
+      "description": "Monolithic: mcp_server.py (1611L) \u2014 1 functions with high complexity (worst: register_all_tools at 81L, CC=27); Low cohesion: 33 distinct concepts in one file",
+      "testable": true
+    },
+    {
+      "id": "FR-004",
+      "description": "Needs attention: langfuse_api.py (976L) \u2014 God class: LangfuseApi (89 methods) \u2014 consider mixins/composition",
+      "testable": true
+    },
+    {
+      "id": "FR-005",
+      "description": "11 potential doc-test drift items",
+      "testable": true
+    },
+    {
+      "id": "FR-006",
+      "description": "README.md missing sections: installation, usage|quick start",
+      "testable": true
+    },
+    {
+      "id": "FR-007",
+      "description": "README missing: Has a Table of Contents",
+      "testable": true
+    },
+    {
+      "id": "FR-008",
+      "description": "README missing: Has usage examples with code blocks",
+      "testable": true
+    },
+    {
+      "id": "FR-009",
+      "description": "README missing: References /docs directory material",
+      "testable": true
+    },
+    {
+      "id": "FR-010",
+      "description": "SRP: 4 modules exceed 500 lines (god modules)",
+      "testable": true
+    },
+    {
+      "id": "FR-011",
+      "description": "SRP: 2 classes have >15 methods",
+      "testable": true
+    },
+    {
+      "id": "FR-012",
+      "description": "No discernible layer architecture (no domain/service/adapter separation)",
+      "testable": true
+    },
+    {
+      "id": "FR-013",
+      "description": "Low dependency injection ratio: 2%",
+      "testable": true
+    },
+    {
+      "id": "FR-014",
+      "description": "Low traceability ratio: 0% concepts fully traced",
+      "testable": true
+    },
+    {
+      "id": "FR-015",
+      "description": "180 test functions missing concept markers",
+      "testable": true
+    },
+    {
+      "id": "FR-016",
+      "description": "102 significant functions (>10 lines) missing concept markers in docstrings",
+      "testable": true
+    },
+    {
+      "id": "FR-017",
+      "description": "Total lint findings: 176 (high/error: 174, medium/warning: 0, low: 2)",
+      "testable": true
+    },
+    {
+      "id": "FR-018",
+      "description": "1 hook(s) may be outdated: ruff-pre-commit",
+      "testable": true
+    },
+    {
+      "id": "FR-019",
+      "description": "CHANGELOG.md exists but could not be parsed \u2014 check format compliance",
+      "testable": true
+    },
+    {
+      "id": "FR-020",
+      "description": "No changelog entries within the last 30 days",
+      "testable": true
+    },
+    {
+      "id": "FR-021",
+      "description": "keepachangelog not installed \u2014 pip install 'universal-skills[code-enhancer]'",
+      "testable": true
+    },
+    {
+      "id": "FR-022",
+      "description": "2 test files exceed 500 lines \u2014 split into focused modules",
+      "testable": true
+    },
+    {
+      "id": "FR-023",
+      "description": "2 test files have >30 tests \u2014 too dense",
+      "testable": true
+    },
+    {
+      "id": "FR-024",
+      "description": "Test directory lacks subdirectory organization (consider unit/, integration/, e2e/)",
+      "testable": true
+    },
+    {
+      "id": "FR-025",
+      "description": "No @pytest.mark.parametrize usage \u2014 consider data-driven tests",
+      "testable": true
+    },
+    {
+      "id": "FR-026",
+      "description": "2 tests have no assertions",
+      "testable": true
+    },
+    {
+      "id": "FR-027",
+      "description": "76 tests use weak assertions (assert result is not None, assert True, etc.)",
+      "testable": true
+    },
+    {
+      "id": "FR-028",
+      "description": "Partial env var documentation: 57% coverage",
+      "testable": true
+    },
+    {
+      "id": "FR-029",
+      "description": "Undocumented env vars: ALLOWED_CLIENT_REDIRECT_URIS, AUTH_TYPE, ENABLE_OTEL, EUNOMIA_POLICY_FILE, EUNOMIA_REMOTE_URL, EUNOMIA_TYPE, LLM_API_KEY, LLM_BASE_URL, OAUTH_BASE_URL, OAUTH_UPSTREAM_AUTH_ENDPOINT",
+      "testable": true
+    },
+    {
+      "id": "FR-030",
+      "description": "30 Python env vars not in .env.example: ANNOTATION_QUEUES_TOOL, BLOB_STORAGE_INTEGRATIONS_TOOL, COMMENTS_TOOL, DATASETS_TOOL, DATASET_ITEMS_TOOL",
+      "testable": true
+    }
+  ],
+  "success_criteria": [
+    {
+      "metric": "Overall GPA",
+      "current": 2.71,
+      "target": 3.0
+    },
+    {
+      "metric": "Domains at B or above",
+      "current": 10,
+      "target": 17
+    },
+    {
+      "metric": "Actionable findings",
+      "current": 30,
+      "target": 0
+    }
+  ]
+}

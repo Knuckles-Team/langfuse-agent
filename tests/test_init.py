@@ -85,7 +85,7 @@ class TestModuleImportSafety:
         """Test _import_module_safely with valid module."""
         import langfuse_agent
 
-        result = langfuse_agent._import_module_safely("langfuse_agent.langfuse_api")
+        result = langfuse_agent._import_module_safely("langfuse_agent.api_client")
         assert result is not None
 
     def test_import_module_safely_with_invalid_module(self):
@@ -98,7 +98,7 @@ class TestModuleImportSafety:
     def test_expose_members_with_module(self):
         """Test _expose_members exposes module members."""
         import langfuse_agent
-        import langfuse_agent.langfuse_api as api_module
+        import langfuse_agent.api_client as api_module
 
         # Save current state
         original_all = langfuse_agent.__all__.copy()
@@ -122,7 +122,7 @@ class TestModuleImportSafety:
 
         assert hasattr(langfuse_agent, "CORE_MODULES")
         assert isinstance(langfuse_agent.CORE_MODULES, list)
-        assert "langfuse_agent.langfuse_api" in langfuse_agent.CORE_MODULES
+        assert "langfuse_agent.api_client" in langfuse_agent.CORE_MODULES
 
     def test_optional_modules_dict(self):
         """Test that OPTIONAL_MODULES is defined."""
