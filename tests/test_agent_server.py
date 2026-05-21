@@ -1,6 +1,5 @@
 """Tests for agent_server.py - Agent server implementation."""
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 
@@ -34,15 +33,16 @@ class TestAgentServer:
         assert logger is not None
         assert logger.name == "langfuse_agent.agent_server"
 
-    @patch("langfuse_agent.agent_server.create_graph_agent_server")
+    @patch("langfuse_agent.agent_server.create_agent_server")
     @patch("langfuse_agent.agent_server.create_agent_parser")
-    def test_agent_server_calls_create_graph_agent_server(
+    def test_agent_server_calls_create_agent_server(
         self, mock_parser, mock_create_server
     ):
-        """Test that agent_server calls create_graph_agent_server."""
-        from langfuse_agent.agent_server import agent_server
+        """Test that agent_server calls create_agent_server."""
         import sys
         from io import StringIO
+
+        from langfuse_agent.agent_server import agent_server
 
         # Mock the parser
         mock_args = MagicMock()
@@ -78,14 +78,14 @@ class TestAgentServer:
         finally:
             sys.stderr = old_stderr
 
-        # Verify that create_graph_agent_server was called
+        # Verify that create_agent_server was called
         mock_create_server.assert_called_once()
 
     def test_agent_server_default_constants(self):
         """Test that default constants are set."""
         from langfuse_agent.agent_server import (
-            DEFAULT_AGENT_NAME,
             DEFAULT_AGENT_DESCRIPTION,
+            DEFAULT_AGENT_NAME,
         )
 
         assert DEFAULT_AGENT_NAME is not None

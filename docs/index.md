@@ -192,15 +192,12 @@ uv pip install langfuse-agent
         "langfuse-mcp"
       ],
       "env": {
-        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
-        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
         "ANNOTATION_QUEUES_TOOL": "True",
         "BLOB_STORAGE_INTEGRATIONS_TOOL": "True",
         "COMMENTS_TOOL": "True",
         "DATASETS_TOOL": "True",
         "DATASET_ITEMS_TOOL": "True",
         "DATASET_RUN_ITEMS_TOOL": "True",
-        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
         "HEALTH_TOOL": "True",
         "INGESTION_TOOL": "True",
         "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
@@ -248,15 +245,12 @@ uv pip install langfuse-agent
         "8000"
       ],
       "env": {
-        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
-        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
         "ANNOTATION_QUEUES_TOOL": "True",
         "BLOB_STORAGE_INTEGRATIONS_TOOL": "True",
         "COMMENTS_TOOL": "True",
         "DATASETS_TOOL": "True",
         "DATASET_ITEMS_TOOL": "True",
         "DATASET_RUN_ITEMS_TOOL": "True",
-        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>",
         "HEALTH_TOOL": "True",
         "INGESTION_TOOL": "True",
         "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",

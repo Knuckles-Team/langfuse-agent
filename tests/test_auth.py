@@ -1,7 +1,6 @@
 """Tests for auth.py - Langfuse client authentication."""
 
 import os
-import pytest
 from unittest.mock import MagicMock, patch
 
 
@@ -20,10 +19,9 @@ class TestGetClient:
             mock_langfuse.return_value = mock_client
 
             # Import after setting env vars
-            from langfuse_agent.auth import get_client
-
             # Reset the global client to force re-initialization
             import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
 
             langfuse_agent.auth._client = None
 
@@ -47,10 +45,9 @@ class TestGetClient:
             mock_langfuse.return_value = mock_client
 
             # Import after setting env vars
-            from langfuse_agent.auth import get_client
-
             # Reset the global client to force re-initialization
             import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
 
             langfuse_agent.auth._client = None
 
@@ -71,10 +68,9 @@ class TestGetClient:
             mock_langfuse.return_value = mock_client
 
             # Import after setting env vars
-            from langfuse_agent.auth import get_client
-
             # Reset the global client to force re-initialization
             import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
 
             langfuse_agent.auth._client = None
 
@@ -94,10 +90,9 @@ class TestGetClient:
             mock_langfuse.return_value = mock_client
 
             # Import after setting env vars
-            from langfuse_agent.auth import get_client
-
             # Reset the global client to force re-initialization
             import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
 
             langfuse_agent.auth._client = None
 
@@ -120,10 +115,9 @@ class TestGetClient:
             mock_langfuse.return_value = mock_client
 
             # Import after setting env vars
-            from langfuse_agent.auth import get_client
-
             # Reset the global client to force re-initialization
             import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
 
             langfuse_agent.auth._client = None
 

@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from langfuse_agent.langfuse_models import LangfuseProjectConfig, AnnotationQueue
+from langfuse_agent.langfuse_models import AnnotationQueue, LangfuseProjectConfig
 
 
 class TestLangfuseProjectConfig:

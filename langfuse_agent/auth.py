@@ -1,45 +1,30 @@
-"""Langfuse Authentication Module.
+from typing import TYPE_CHECKING
 
-**Identity Passthrough Pattern**
+if TYPE_CHECKING:
+    from .api_client import LangfuseApi
 
-Langfuse uses API key pair authentication (``LANGFUSE_PUBLIC_KEY`` +
-``LANGFUSE_SECRET_KEY``) and does not support OIDC token exchange.
-
-When OIDC delegation is enabled on the MCP server, the SSO token
-secures the **MCP server layer** (only authenticated users can call
-tools).  The downstream Langfuse API call uses the service-account
-API keys.  The user's identity from the SSO token is logged for
-auditing purposes.
-
-This is the standard "identity passthrough" pattern documented in
-``docs/guides/oauth_sso.md`` in agent-utilities.
-"""
-
+import logging
 import os
 import threading
 
-from langfuse import Langfuse
-
 local = threading.local()
-
+logger = logging.getLogger(__name__)
 _client = None
 
 
-def get_client() -> Langfuse:
+def get_client() -> "LangfuseApi":
+    from .api_client import LangfuseApi
+
     """Get or create a singleton Langfuse client instance.
 
     Logs user identity when OIDC delegation is active for audit trail.
     """
     global _client
     if _client is None:
-        import logging
-
         from agent_utilities.mcp.delegated_auth import (
             get_user_identity,
             is_delegation_enabled,
         )
-
-        logger = logging.getLogger(__name__)
 
         host = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
         public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "")
@@ -58,5 +43,5 @@ def get_client() -> Langfuse:
                 },
             )
 
-        _client = Langfuse(public_key=public_key, secret_key=secret_key, host=host)
+        _client = LangfuseApi(public_key=public_key, secret_key=secret_key, host=host)
     return _client

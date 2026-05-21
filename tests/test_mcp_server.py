@@ -1,13 +1,15 @@
 """Tests for mcp_server.py - MCP server tool registration."""
 
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 
 class TestToolRegistration:
     def test_tools_registered(self):
-        from langfuse_agent.mcp_server import get_mcp_instance
         from unittest.mock import MagicMock, patch
+
+        from langfuse_agent.mcp_server import get_mcp_instance
 
         with patch("langfuse_agent.mcp_server.get_client", return_value=MagicMock()):
             with patch("langfuse_agent.mcp_server.create_mcp_server") as mock_create:

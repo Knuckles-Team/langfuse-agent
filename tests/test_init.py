@@ -1,8 +1,6 @@
 """Tests for __init__.py - Package initialization."""
 
-import sys
 import pytest
-from unittest.mock import MagicMock, patch
 
 
 class TestPackageInitialization:
@@ -47,13 +45,12 @@ class TestPackageInitialization:
 
     def test_module_exposes_models(self):
         """Test that models are exposed in package namespace."""
-        import langfuse_agent
 
         # Models are not exposed by default in __init__.py
         # They need to be imported directly from langfuse_models
         from langfuse_agent.langfuse_models import (
-            LangfuseProjectConfig,
             AnnotationQueue,
+            LangfuseProjectConfig,
         )
 
         assert LangfuseProjectConfig is not None
@@ -140,6 +137,7 @@ class TestModuleReload:
     def test_module_can_be_reloaded(self):
         """Test that module can be reloaded."""
         import importlib
+
         import langfuse_agent
 
         # Get initial state
@@ -178,7 +176,6 @@ class TestWarningsFiltering:
 
     def test_warnings_filtering_applied(self):
         """Test that warnings are filtered during import."""
-        import warnings
         import langfuse_agent
 
         # The module should have applied warning filters

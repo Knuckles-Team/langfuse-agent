@@ -1,8 +1,5 @@
 """Tests for __main__.py - Package entry point."""
 
-import pytest
-from unittest.mock import MagicMock, patch
-
 
 class TestMainModule:
     """Tests for __main__ module."""
