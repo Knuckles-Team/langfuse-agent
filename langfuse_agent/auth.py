@@ -1,20 +1,15 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .api_client import LangfuseApi
-
 import logging
 import os
 import threading
+
+from .api_client import LangfuseApi
 
 local = threading.local()
 logger = logging.getLogger(__name__)
 _client = None
 
 
-def get_client() -> "LangfuseApi":
-    from .api_client import LangfuseApi
-
+def get_client() -> LangfuseApi:
     """Get or create a singleton Langfuse client instance.
 
     Logs user identity when OIDC delegation is active for audit trail.
@@ -26,7 +21,7 @@ def get_client() -> "LangfuseApi":
             is_delegation_enabled,
         )
 
-        host = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
+        host = os.getenv("LANGFUSE_BASE_URL", "https://cloud.langfuse.com")
         public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "")
         secret_key = os.getenv("LANGFUSE_SECRET_KEY", "")
 
@@ -39,7 +34,7 @@ def get_client() -> "LangfuseApi":
                 extra={
                     "sso_user_email": identity.get("email"),
                     "sso_user_subject": identity.get("subject"),
-                    "langfuse_host": host,
+                    "langfuse_base_url": host,
                 },
             )
 

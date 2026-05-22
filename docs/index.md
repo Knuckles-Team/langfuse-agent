@@ -70,19 +70,19 @@ The MCP Server can be run in two modes: `stdio` (for local testing) or `http` (f
 
 #### Environment Variables
 
-*   `LANGFUSE_URL`: The URL of the target service.
+*   `LANGFUSE_BASE_URL`: The URL of the target service.
 *   `LANGFUSE_TOKEN`: The API token or access token.
 
 #### Run in stdio mode (default):
 ```bash
-export LANGFUSE_URL="http://localhost:8080"
+export LANGFUSE_BASE_URL="http://localhost:8080"
 export LANGFUSE_TOKEN="your_token"
 langfuse-mcp --transport "stdio"
 ```
 
 #### Run in HTTP mode:
 ```bash
-export LANGFUSE_URL="http://localhost:8080"
+export LANGFUSE_BASE_URL="http://localhost:8080"
 export LANGFUSE_TOKEN="your_token"
 langfuse-mcp --transport "http" --host "0.0.0.0" --port "8000"
 ```
@@ -91,7 +91,7 @@ langfuse-mcp --transport "http" --host "0.0.0.0" --port "8000"
 
 ### Run A2A Server
 ```bash
-export LANGFUSE_URL="http://localhost:8080"
+export LANGFUSE_BASE_URL="http://localhost:8080"
 export LANGFUSE_TOKEN="your_token"
 langfuse-agent --provider openai --model-id gpt-4o --api-key sk-...
 ```
@@ -118,7 +118,7 @@ docker run -d \
   --name langfuse-agent \
   -p 8000:8000 \
   -e TRANSPORT=http \
-  -e LANGFUSE_URL="http://your-service:8080" \
+  -e LANGFUSE_BASE_URL="http://your-service:8080" \
   -e LANGFUSE_TOKEN="your_token" \
   knucklessg1/langfuse-agent:latest
 ```
@@ -133,7 +133,7 @@ services:
       - HOST=0.0.0.0
       - PORT=8000
       - TRANSPORT=http
-      - LANGFUSE_URL=http://your-service:8080
+      - LANGFUSE_BASE_URL=http://your-service:8080
       - LANGFUSE_TOKEN=your_token
     ports:
       - 8000:8000
@@ -153,7 +153,7 @@ services:
         "langfuse-mcp"
       ],
       "env": {
-        "LANGFUSE_URL": "http://your-service:8080",
+        "LANGFUSE_BASE_URL": "http://your-service:8080",
         "LANGFUSE_TOKEN": "your_token"
       }
     }
@@ -200,7 +200,7 @@ uv pip install langfuse-agent
         "DATASET_RUN_ITEMS_TOOL": "True",
         "HEALTH_TOOL": "True",
         "INGESTION_TOOL": "True",
-        "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
+        "LANGFUSE_BASE_URL": "<YOUR_LANGFUSE_BASE_URL>",
         "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
         "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>",
         "LEGACY_METRICS_V1_TOOL": "True",
@@ -253,7 +253,7 @@ uv pip install langfuse-agent
         "DATASET_RUN_ITEMS_TOOL": "True",
         "HEALTH_TOOL": "True",
         "INGESTION_TOOL": "True",
-        "LANGFUSE_HOST": "<YOUR_LANGFUSE_HOST>",
+        "LANGFUSE_BASE_URL": "<YOUR_LANGFUSE_BASE_URL>",
         "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
         "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>",
         "LEGACY_METRICS_V1_TOOL": "True",

@@ -10,11 +10,11 @@ class TestGetClient:
     def test_get_client_with_env_vars(self, clean_env):
         _ = clean_env
         """Test get_client with environment variables set."""
-        os.environ["LANGFUSE_HOST"] = "https://test.langfuse.com"
+        os.environ["LANGFUSE_BASE_URL"] = "https://test.langfuse.com"
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
-        with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
             mock_client = MagicMock()
             mock_langfuse.return_value = mock_client
 
@@ -40,7 +40,7 @@ class TestGetClient:
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
-        with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
             mock_client = MagicMock()
             mock_langfuse.return_value = mock_client
 
@@ -63,7 +63,7 @@ class TestGetClient:
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
-        with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
             mock_client = MagicMock()
             mock_langfuse.return_value = mock_client
 
@@ -77,7 +77,7 @@ class TestGetClient:
             client1 = get_client()
             client2 = get_client()
 
-            # Should only call Langfuse once due to caching
+            # Should only call LangfuseApi once due to caching
             mock_langfuse.assert_called_once()
             assert client1 == mock_client
             assert client2 == mock_client
@@ -85,7 +85,7 @@ class TestGetClient:
     def test_get_client_empty_credentials(self, clean_env):
         _ = clean_env
         """Test get_client with empty credentials."""
-        with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
             mock_client = MagicMock()
             mock_langfuse.return_value = mock_client
 
@@ -106,11 +106,11 @@ class TestGetClient:
     def test_get_client_custom_host(self, clean_env):
         _ = clean_env
         """Test get_client with custom host."""
-        os.environ["LANGFUSE_HOST"] = "https://custom.langfuse.com"
+        os.environ["LANGFUSE_BASE_URL"] = "https://custom.langfuse.com"
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
-        with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
             mock_client = MagicMock()
             mock_langfuse.return_value = mock_client
 

@@ -9,7 +9,7 @@ import pytest
 @pytest.fixture
 def mock_langfuse_client():
     """Mock Langfuse client for testing."""
-    with patch("langfuse_agent.auth.Langfuse") as mock_langfuse:
+    with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
         mock_client = MagicMock()
         mock_langfuse.return_value = mock_client
         yield mock_client
@@ -78,7 +78,7 @@ def clean_env():
 
     # Clear relevant env vars
     env_vars_to_clear = [
-        "LANGFUSE_HOST",
+        "LANGFUSE_BASE_URL",
         "LANGFUSE_PUBLIC_KEY",
         "LANGFUSE_SECRET_KEY",
         "LANGFUSE_URL",
@@ -101,7 +101,7 @@ def mock_env_vars():
     """Set up mock environment variables."""
     original_env = os.environ.copy()
 
-    os.environ["LANGFUSE_HOST"] = "https://test.langfuse.com"
+    os.environ["LANGFUSE_BASE_URL"] = "https://test.langfuse.com"
     os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
     os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
