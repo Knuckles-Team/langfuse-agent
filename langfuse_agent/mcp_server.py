@@ -28,7 +28,7 @@ from agent_utilities.mcp_utilities import create_mcp_server
 
 from langfuse_agent.auth import get_client
 
-__version__ = "0.13.0"
+__version__ = "0.14.0"
 
 logger = get_logger(name="langfuse-agent")
 logger.setLevel(logging.INFO)
