@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""langfuse-agent package.
+
+CONCEPT:LA_1.0 — Langfuse MCP Integration
+"""
 
 import importlib
 import inspect

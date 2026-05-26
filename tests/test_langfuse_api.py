@@ -74,19 +74,26 @@ class TestLangfuseApiRequest:
 
         assert result == {"success": True}
 
-    def test_request_401_unauthorized(self, mock_api_client):
+    def test_request_401_unauthorized(self, mock_api_client, mock_requests):
         """Test 401 error raises AuthError."""
+        mock_requests.request.return_value.status_code = 401
+        mock_requests.request.return_value.text = "Unauthorized test"
 
-        # Test that AuthError can be raised
-        with pytest.raises(AuthError):
-            raise AuthError("Unauthorized: test")
+        with pytest.raises(AuthError) as exc_info:
+            mock_api_client._request("GET", "/test/endpoint")
+        assert "Unauthorized test" in str(exc_info.value)
 
-    def test_request_network_error(self, mock_api_client):
+    def test_request_network_error(self, mock_api_client, mock_requests):
         """Test network error raises ApiError."""
+        import requests
 
-        # Test that ApiError can be raised
-        with pytest.raises(ApiError):
-            raise ApiError("API request failed: test")
+        mock_requests.request.side_effect = requests.exceptions.RequestException(
+            "Connection error"
+        )
+
+        with pytest.raises(ApiError) as exc_info:
+            mock_api_client._request("GET", "/test/endpoint")
+        assert "Connection error" in str(exc_info.value)
 
     def test_request_with_params(self, mock_api_client, mock_requests):
         """Test request with query parameters."""

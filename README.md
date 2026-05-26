@@ -43,7 +43,7 @@
 
 This agent wraps the Langfuse API. You can interact with it programmatically or via its integrated execution entrypoints.
 
-Detailed instructions on how to use the underlying API wrappers, extended schema bindings, and developer SDK references are maintained in [docs/index.md](file:///home/apps/workspace/agent-packages/agents/langfuse-agent/docs/index.md).
+Detailed instructions on how to use the underlying API wrappers, extended schema bindings, and developer SDK references are maintained in [docs/index.md](docs/index.md).
 
 ---
 
@@ -54,12 +54,33 @@ This server utilizes dynamic Action-Routed tools to optimize token overhead and 
 ### Available MCP Tools
 | Tool Module | Toggle Env Var | Enabled by Default | Description & Nested Methods |
 |-------------|----------------|--------------------|------------------------------|
-| **Observability Tools** | `OBSERVABILITY_TOOL` | `True` | Trace, metrics, observations, and sessions tracking tools. Action-routed methods: `metrics`, `observations`, `scores`, `sessions`, `trace`, `opentelemetry`, `legacy_metrics_v1`, `legacy_observations_v1`, `legacy_score_v1`. |
-| **Datasets Tools** | `DATASETS_TOOL` | `True` | Manage datasets, dataset items, runs, and annotation queues. Action-routed methods: `datasets`, `dataset_items`, `dataset_run_items`, `annotation_queues`. |
-| **Prompts & Models Tools** | `PROMPTS_MODELS_TOOL` | `True` | Manage prompt versions, media attachments, and model registries. Action-routed methods: `prompts`, `prompt_version`, `models`, `llm_connections`, `media`. |
-| **Management Tools** | `MANAGEMENT_TOOL` | `True` | Manage organizations, projects, API keys, SCIM provisioning, comments, and blob storage integrations. Action-routed methods: `projects`, `organizations`, `scim`, `comments`, `blob_storage_integrations`, `health`. |
+| **Langfuse Observability** | `LANGFUSE_OBSERVABILITY_TOOL` | `True` | Perform langfuse_observability operations. Action-routed methods: `ingestion_batch`, `legacy_metrics_v1_metrics`, `legacy_observations_v1_get`, `legacy_observations_v1_get_many`, `legacy_score_v1_create`, `legacy_score_v1_delete`, `metrics_metrics`, `observations_get_many`, `opentelemetry_export_traces`, `score_configs_create`, `score_configs_get`, `score_configs_get_by_id`, `score_configs_update`, `scores_get_by_id`, `scores_get_many`, `sessions_get`, `sessions_list`, `trace_delete`, `trace_delete_multiple`, `trace_get`, `trace_list`. |
+| **Langfuse Datasets** | `LANGFUSE_DATASETS_TOOL` | `True` | Perform langfuse_datasets operations. Action-routed methods: `annotation_queues_create_queue`, `annotation_queues_create_queue_assignment`, `annotation_queues_create_queue_item`, `annotation_queues_delete_queue_assignment`, `annotation_queues_delete_queue_item`, `annotation_queues_get_queue`, `annotation_queues_get_queue_item`, `annotation_queues_list_queue_items`, `annotation_queues_list_queues`, `annotation_queues_update_queue_item`, `dataset_items_create`, `dataset_items_delete`, `dataset_items_get`, `dataset_items_list`, `dataset_run_items_create`, `dataset_run_items_list`, `datasets_create`, `datasets_delete_run`, `datasets_get`, `datasets_get_run`, `datasets_get_runs`, `datasets_list`. |
+| **Langfuse Prompts Models** | `LANGFUSE_PROMPTS_MODELS_TOOL` | `True` | Perform langfuse_prompts_models operations. Action-routed methods: `llm_connections_list`, `llm_connections_upsert`, `media_get`, `media_get_upload_url`, `media_patch`, `models_create`, `models_delete`, `models_get`, `models_list`, `prompt_version_update`, `prompts_create`, `prompts_delete`, `prompts_get`, `prompts_list`. |
+| **Langfuse Management** | `LANGFUSE_MANAGEMENT_TOOL` | `True` | Perform langfuse_management operations. Action-routed methods: `blob_storage_integrations_delete_blob_storage_integration`, `blob_storage_integrations_get_blob_storage_integration_status`, `blob_storage_integrations_get_blob_storage_integrations`, `blob_storage_integrations_upsert_blob_storage_integration`, `comments_create`, `comments_get`, `comments_get_by_id`, `health_health`, `organizations_delete_organization_membership`, `organizations_delete_project_membership`, `organizations_get_organization_api_keys`, `organizations_get_organization_memberships`, `organizations_get_organization_projects`, `organizations_get_project_memberships`, `organizations_update_organization_membership`, `organizations_update_project_membership`, `projects_create`, `projects_create_api_key`, `projects_delete`, `projects_delete_api_key`, `projects_get`, `projects_get_api_keys`, `projects_update`, `scim_create_user`, `scim_delete_user`, `scim_get_resource_types`, `scim_get_schemas`, `scim_get_service_provider_config`, `scim_get_user`, `scim_list_users`. |
 
-Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/mcp.md](file:///home/apps/workspace/agent-packages/agents/langfuse-agent/docs/mcp.md).
+Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/mcp.md](docs/mcp.md).
+
+### Dynamic Tool Selection & Visibility
+
+This MCP server supports dynamic toolset selection and visibility filtering at runtime. This allows you to restrict the set of exposed tools in order to prevent blowing up the LLM's context window.
+
+You can configure tool filtering via multiple input channels:
+
+- **CLI Arguments:** Pass `--tools` or `--toolsets` (or their disabled counterparts `--disabled-tools` and `--disabled-toolsets`) during startup.
+- **Environment Variables:** Define standard environment variables:
+  - `MCP_ENABLED_TOOLS` / `MCP_DISABLED_TOOLS`
+  - `MCP_ENABLED_TAGS` / `MCP_DISABLED_TAGS`
+- **HTTP SSE Request Headers:** Pass custom headers during transport initialization:
+  - `x-mcp-enabled-tools` / `x-mcp-disabled-tools`
+  - `x-mcp-enabled-tags` / `x-mcp-disabled-tags`
+- **HTTP SSE Request Query Parameters:** Append query parameters directly to your transport connection URL:
+  - `?tools=tool1,tool2`
+  - `?tags=tag1`
+
+When query strings or parameters are supplied, an LLM-free **Knowledge Graph resolution layer** (using `DynamicToolOrchestrator`) matches query intents against known tool tags, names, or descriptions, with safe fallback and automated 24-hour background cache refreshing.
+
+---
 
 ### MCP Configuration Examples
 
@@ -186,7 +207,7 @@ services:
       start_period: 10s
 ```
 
-Detailed graph node architecture explanations, custom skill configurations, and agentic trace guides are available in [docs/agent.md](file:///home/apps/workspace/agent-packages/agents/langfuse-agent/docs/agent.md).
+Detailed graph node architecture explanations, custom skill configurations, and agentic trace guides are available in [docs/agent.md](docs/agent.md).
 
 ---
 
@@ -205,6 +226,42 @@ Built directly upon the enterprise-ready [`agent-utilities`](https://github.com/
 | **Tool Guard** | Sensitivity inspection with human-in-the-loop validation | Enabled by default |
 | **Prompt Injection Defense** | Input scanning, repetition monitoring, and recursive loop blocks | Enabled by default |
 | **Context Safety Guard** | Stuck-loop detectors and contextual overflow preemptive alerts | Enabled by default |
+
+---
+
+## Configuration & Environment Variables
+
+The agent can be fully configured using environment variables or a `.env` file. Below is the list of all supported variables:
+
+### Core API & Credentials
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `LANGFUSE_BASE_URL` | Langfuse instance base URL. | `https://cloud.langfuse.com` |
+| `LANGFUSE_PUBLIC_KEY` | Langfuse public API key. | `""` |
+| `LANGFUSE_SECRET_KEY` | Langfuse secret API key. | `""` |
+| `LANGFUSE_TOKEN` | Consolidated authentication token. | `""` |
+
+### Server Configuration
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `HOST` | The hostname/address the server binds to. | `0.0.0.0` |
+| `PORT` | The port the server listens on. | `8004` |
+| `TRANSPORT` | The communication protocol (`stdio`, `streamable-http`, `sse`). | `stdio` |
+| `AUTH_TYPE` | Server authentication strategy (`key`, `delegated`, `none`). | `key` |
+
+### Agent Customization
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DEFAULT_AGENT_NAME` | Custom name displayed for the Pydantic AI Graph Agent. | `"Langfuse Agent"` |
+| `AGENT_DESCRIPTION` | Short description of the agent's responsibilities. | `"AI agent for Langfuse Agent operations."` |
+| `AGENT_SYSTEM_PROMPT` | Custom system instructions override for the agent. | `""` |
+
+### Tool Toggle Switches
+Individual tool modules can be enabled or disabled to minimize client context size:
+- `OBSERVABILITY_TOOL` (Default: `True`): Toggles observation/tracing tools.
+- `DATASETS_TOOL` (Default: `True`): Toggles datasets and annotation queue tools.
+- `PROMPTS_MODELS_TOOL` (Default: `True`): Toggles prompt template and model connectivity tools.
+- `MANAGEMENT_TOOL` (Default: `True`): Toggles comments, SCIM, and project management tools.
 
 ---
 

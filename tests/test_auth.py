@@ -125,3 +125,34 @@ class TestGetClient:
 
             call_kwargs = mock_langfuse.call_args[1]
             assert call_kwargs["host"] == "https://custom.langfuse.com"
+
+    def test_get_client_oidc_delegation(self, clean_env):
+        _ = clean_env
+        """Test get_client when OIDC delegation is enabled."""
+        os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
+        os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
+
+        with (
+            patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse,
+            patch(
+                "agent_utilities.mcp.delegated_auth.is_delegation_enabled",
+                return_value=True,
+            ),
+            patch(
+                "agent_utilities.mcp.delegated_auth.get_user_identity",
+                return_value={"email": "test@example.com", "subject": "user-123"},
+            ),
+            patch("langfuse_agent.auth.logger") as mock_logger,
+        ):
+            mock_client = MagicMock()
+            mock_langfuse.return_value = mock_client
+
+            import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
+
+            langfuse_agent.auth._client = None
+
+            client = get_client()
+
+            mock_logger.info.assert_called_once()
+            assert client == mock_client

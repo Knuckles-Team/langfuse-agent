@@ -1,0 +1,71 @@
+# Tasks: Code Enhancement: langfuse-agent
+
+Generated: 2026-05-24T04:17:16.195862+00:00
+Skipped informational: 5
+
+- [ ] [P] **T001** [Dependency Audit] Minor update: requests 2.32.5 (installed) -> 2.34.2
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T002** [Dependency Audit] Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T003** [Dependency Audit] Minor update: pytest-xdist 3.6.0 (constraint — not installed) -> 3.8.0
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T004** [Dependency Audit] MAJOR update: langfuse 2.36.0 (constraint — not installed) -> 4.6.1
+  - Priority: P2-Medium | Effort: Small
+- [ ] [P] **T005** [Codebase Optimization] 6 functions exceed 200 lines (actionable refactoring targets): register_langfuse
+  - Priority: P2-Medium | Effort: Large
+- [ ] [P] **T006** [Codebase Optimization] 20 functions with nesting depth >4
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T007** [Test Coverage] 14 potential doc-test drift items
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T008** [Documentation & Governance] README.md missing sections: usage|quick start
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T009** [Documentation & Governance] 2 broken internal links in README.md
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T010** [Documentation & Governance] README missing: Has a Table of Contents
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T011** [Documentation & Governance] README missing: Has usage examples with code blocks
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T012** [Architecture & Design Patterns] SRP: 1 modules exceed 500 lines (god modules)
+  - Priority: P2-Medium | Effort: Large
+- [ ] [P] **T013** [Architecture & Design Patterns] SRP: 2 classes have >15 methods
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T014** [Architecture & Design Patterns] No discernible layer architecture (no domain/service/adapter separation)
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T015** [Architecture & Design Patterns] Low dependency injection ratio: 2%
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T016** [Concept Traceability] Low traceability ratio: 0% concepts fully traced
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T017** [Concept Traceability] 12 orphaned concepts (only in one source)
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T018** [Concept Traceability] 154 test functions missing concept markers
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T019** [Concept Traceability] 64 significant functions (>10 lines) missing concept markers in docstrings
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T020** [Linting & Formatting] Total lint findings: 0 (high/error: 0, medium/warning: 0, low: 0)
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T021** [Pre-Commit Compliance] 1 hook(s) may be outdated: ruff-pre-commit
+  - Priority: P2-Medium | Effort: Small
+- [ ] [P] **T022** [Changelog Audit] CHANGELOG.md exists but could not be parsed — check format compliance
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T023** [Changelog Audit] No changelog entries within the last 30 days
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T024** [Changelog Audit] keepachangelog not installed — pip install 'universal-skills[code-enhancer]'
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T025** [Pytest Quality] 1 test files exceed 500 lines — split into focused modules
+  - Priority: P2-Medium | Effort: Large
+- [ ] [P] **T026** [Pytest Quality] 1 test files have >30 tests — too dense
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T027** [Pytest Quality] Test directory lacks subdirectory organization (consider unit/, integration/, e2
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T028** [Pytest Quality] No @pytest.mark.parametrize usage — consider data-driven tests
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T029** [Pytest Quality] 4 tests have no assertions
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T030** [Pytest Quality] 72 tests use weak assertions (assert result is not None, assert True, etc.)
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T031** [Pytest Quality] 1 tests exceed 100 lines — likely doing too much per test
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T032** [Environment Variables] Undocumented env vars: EUNOMIA_POLICY_FILE, EUNOMIA_TYPE, OTEL_EXPORTER_OTLP_END
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T033** [analyze_xdg_kg] Analysis error: No module named 'agent_utilities.knowledge_graph'
+  - Priority: P1-High | Effort: Medium

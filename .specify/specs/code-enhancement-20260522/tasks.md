@@ -1,0 +1,75 @@
+# Tasks: Code Enhancement: langfuse-agent
+
+Generated: 2026-05-22T22:13:18.329540+00:00
+Skipped informational: 4
+
+- [ ] [P] **T001** [Dependency Audit] Minor update: requests 2.33.1 (installed) -> 2.34.2
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T002** [Dependency Audit] Minor update: agent-utilities 0.2.42 (installed) -> 0.16.0
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T003** [Dependency Audit] Minor update: pytest-xdist 3.6.0 (constraint — not installed) -> 3.8.0
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T004** [Dependency Audit] Minor update: langfuse 4.5.1 (installed) -> 4.6.1
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T005** [Codebase Optimization] 3 functions exceed 200 lines (actionable refactoring targets): register_langfuse
+  - Priority: P2-Medium | Effort: Large
+- [ ] [P] **T006** [Codebase Optimization] Monolithic: mcp_server.py (869L) — 4 functions with high complexity (worst: regi
+  - Priority: P1-High | Effort: Large
+- [ ] [P] **T007** [Codebase Optimization] 12 functions with nesting depth >4
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T008** [Test Coverage] 12 potential doc-test drift items
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T009** [Documentation & Governance] README.md missing sections: usage|quick start
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T010** [Documentation & Governance] 2 broken internal links in README.md
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T011** [Documentation & Governance] README missing: Has a Table of Contents
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T012** [Documentation & Governance] README missing: Has usage examples with code blocks
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T013** [Architecture & Design Patterns] SRP: 2 modules exceed 500 lines (god modules)
+  - Priority: P2-Medium | Effort: Large
+- [ ] [P] **T014** [Architecture & Design Patterns] SRP: 2 classes have >15 methods
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T015** [Architecture & Design Patterns] No discernible layer architecture (no domain/service/adapter separation)
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T016** [Architecture & Design Patterns] Low dependency injection ratio: 2%
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T017** [Concept Traceability] Low traceability ratio: 0% concepts fully traced
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T018** [Concept Traceability] 151 test functions missing concept markers
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T019** [Concept Traceability] 56 significant functions (>10 lines) missing concept markers in docstrings
+  - Priority: P4-Enhancement | Effort: Small
+- [ ] [P] **T020** [Linting & Formatting] Total lint findings: 0 (high/error: 0, medium/warning: 0, low: 0)
+  - Priority: P4-Enhancement | Effort: Medium
+- [ ] [P] **T021** [Pre-Commit Compliance] 1 hook(s) may be outdated: ruff-pre-commit
+  - Priority: P2-Medium | Effort: Small
+- [ ] [P] **T022** [Test Execution] 93 test execution error(s)
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T023** [Changelog Audit] CHANGELOG.md exists but could not be parsed — check format compliance
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T024** [Changelog Audit] No changelog entries within the last 30 days
+  - Priority: P3-Low | Effort: Medium
+- [ ] [P] **T025** [Changelog Audit] keepachangelog not installed — pip install 'universal-skills[code-enhancer]'
+  - Priority: P3-Low | Effort: Small
+- [ ] [P] **T026** [Pytest Quality] 1 test files exceed 500 lines — split into focused modules
+  - Priority: P2-Medium | Effort: Large
+- [ ] [P] **T027** [Pytest Quality] 1 test files have >30 tests — too dense
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T028** [Pytest Quality] Test directory lacks subdirectory organization (consider unit/, integration/, e2
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T029** [Pytest Quality] No @pytest.mark.parametrize usage — consider data-driven tests
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T030** [Pytest Quality] 4 tests have no assertions
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T031** [Pytest Quality] 72 tests use weak assertions (assert result is not None, assert True, etc.)
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T032** [Pytest Quality] 1 tests exceed 100 lines — likely doing too much per test
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T033** [Environment Variables] Partial env var documentation: 50% coverage
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T034** [Environment Variables] Undocumented env vars: AUTH_TYPE, DEFAULT_AGENT_NAME, EUNOMIA_POLICY_FILE, EUNOM
+  - Priority: P2-Medium | Effort: Medium
+- [ ] [P] **T035** [Environment Variables] 3 Python env vars not in .env.example: DEFAULT_AGENT_NAME, LANGFUSE_PUBLIC_KEY,
+  - Priority: P2-Medium | Effort: Medium

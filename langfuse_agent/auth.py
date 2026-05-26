@@ -1,3 +1,8 @@
+"""Authentication and client factory for langfuse-agent.
+
+CONCEPT:LA_1.0 — Langfuse MCP Integration
+"""
+
 import logging
 import os
 import threading
@@ -11,6 +16,8 @@ _client = None
 
 def get_client() -> LangfuseApi:
     """Get or create a singleton Langfuse client instance.
+
+    CONCEPT:LA_1.0 — Langfuse MCP Integration
 
     Logs user identity when OIDC delegation is active for audit trail.
     """

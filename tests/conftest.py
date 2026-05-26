@@ -1,7 +1,25 @@
-"""Pytest configuration and fixtures for langfuse-agent tests."""
+"""Pytest configuration and fixtures for langfuse-agent tests.
+
+CONCEPT:LA_1.0 — Langfuse MCP Integration
+"""
 
 import os
+import sys
 from unittest.mock import MagicMock, patch
+
+# Mock agent_utilities.mcp.delegated_auth module before any tests import it
+mock_delegated_auth = MagicMock()
+mock_delegated_auth.is_delegation_enabled.return_value = False
+mock_delegated_auth.get_user_identity.return_value = {}
+sys.modules["agent_utilities.mcp.delegated_auth"] = mock_delegated_auth
+
+# Mock tree_sitter_javascript which is a dynamic dependency of agent_utilities
+sys.modules["tree_sitter_javascript"] = MagicMock()
+sys.modules["tree_sitter_python"] = MagicMock()
+sys.modules["tree_sitter_typescript"] = MagicMock()
+sys.modules["tree_sitter_go"] = MagicMock()
+sys.modules["tree_sitter_rust"] = MagicMock()
+sys.modules["tree_sitter"] = MagicMock()
 
 import pytest
 
@@ -31,8 +49,15 @@ def mock_api_client():
 
 @pytest.fixture
 def mock_requests():
-    """Mock requests module for HTTP request testing."""
-    with patch("langfuse_agent.api_client.requests") as mock_req:
+    """Mock requests module for HTTP request testing.
+
+    CONCEPT:LA_1.0 — Langfuse MCP Integration
+    """
+    import requests
+
+    with patch("langfuse_agent.api.api_client_base.requests") as mock_req:
+        # Setup real exception for try-except block in client
+        mock_req.exceptions.RequestException = requests.exceptions.RequestException
         # Setup default mock response
         mock_response = MagicMock()
         mock_response.status_code = 200

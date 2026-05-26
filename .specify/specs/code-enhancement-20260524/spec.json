@@ -1,0 +1,232 @@
+{
+  "feature_id": "code-enhancement-20260524",
+  "title": "Code Enhancement: langfuse-agent",
+  "created": "2026-05-24T04:17:16.195862+00:00",
+  "overview": "Automated code enhancement review for langfuse-agent. Covers 17 analysis domains.",
+  "user_stories": [
+    {
+      "role": "developer",
+      "action": "address Project Analysis findings (grade: C, score: 74)",
+      "value": "improve project project analysis from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Codebase Optimization findings (grade: D, score: 62)",
+      "value": "improve project codebase optimization from D to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Architecture & Design Patterns findings (grade: D, score: 65)",
+      "value": "improve project architecture & design patterns from D to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Concept Traceability findings (grade: F, score: 25)",
+      "value": "improve project concept traceability from F to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Test Execution findings (grade: F, score: 25)",
+      "value": "improve project test execution from F to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Changelog Audit findings (grade: C, score: 75)",
+      "value": "improve project changelog audit from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address Pytest Quality findings (grade: C, score: 72)",
+      "value": "improve project pytest quality from C to at least B (80+)"
+    },
+    {
+      "role": "developer",
+      "action": "address analyze_xdg_kg findings (grade: F, score: 0)",
+      "value": "improve project analyze_xdg_kg from F to at least B (80+)"
+    }
+  ],
+  "functional_requirements": [
+    {
+      "id": "FR-001",
+      "description": "Minor update: requests 2.32.5 (installed) -> 2.34.2",
+      "testable": true
+    },
+    {
+      "id": "FR-002",
+      "description": "Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0",
+      "testable": true
+    },
+    {
+      "id": "FR-003",
+      "description": "Minor update: pytest-xdist 3.6.0 (constraint \u2014 not installed) -> 3.8.0",
+      "testable": true
+    },
+    {
+      "id": "FR-004",
+      "description": "MAJOR update: langfuse 2.36.0 (constraint \u2014 not installed) -> 4.6.1",
+      "testable": true
+    },
+    {
+      "id": "FR-005",
+      "description": "6 functions exceed 200 lines (actionable refactoring targets): register_langfuse_observability_tools (300L), register_langfuse_observability_tools (300L), langfuse_observability (293L), langfuse_observability (293L), register_langfuse_management_tools (207L)",
+      "testable": true
+    },
+    {
+      "id": "FR-006",
+      "description": "20 functions with nesting depth >4",
+      "testable": true
+    },
+    {
+      "id": "FR-007",
+      "description": "14 potential doc-test drift items",
+      "testable": true
+    },
+    {
+      "id": "FR-008",
+      "description": "README.md missing sections: usage|quick start",
+      "testable": true
+    },
+    {
+      "id": "FR-009",
+      "description": "2 broken internal links in README.md",
+      "testable": true
+    },
+    {
+      "id": "FR-010",
+      "description": "README missing: Has a Table of Contents",
+      "testable": true
+    },
+    {
+      "id": "FR-011",
+      "description": "README missing: Has usage examples with code blocks",
+      "testable": true
+    },
+    {
+      "id": "FR-012",
+      "description": "SRP: 1 modules exceed 500 lines (god modules)",
+      "testable": true
+    },
+    {
+      "id": "FR-013",
+      "description": "SRP: 2 classes have >15 methods",
+      "testable": true
+    },
+    {
+      "id": "FR-014",
+      "description": "No discernible layer architecture (no domain/service/adapter separation)",
+      "testable": true
+    },
+    {
+      "id": "FR-015",
+      "description": "Low dependency injection ratio: 2%",
+      "testable": true
+    },
+    {
+      "id": "FR-016",
+      "description": "Low traceability ratio: 0% concepts fully traced",
+      "testable": true
+    },
+    {
+      "id": "FR-017",
+      "description": "12 orphaned concepts (only in one source)",
+      "testable": true
+    },
+    {
+      "id": "FR-018",
+      "description": "154 test functions missing concept markers",
+      "testable": true
+    },
+    {
+      "id": "FR-019",
+      "description": "64 significant functions (>10 lines) missing concept markers in docstrings",
+      "testable": true
+    },
+    {
+      "id": "FR-020",
+      "description": "Total lint findings: 0 (high/error: 0, medium/warning: 0, low: 0)",
+      "testable": true
+    },
+    {
+      "id": "FR-021",
+      "description": "1 hook(s) may be outdated: ruff-pre-commit",
+      "testable": true
+    },
+    {
+      "id": "FR-022",
+      "description": "CHANGELOG.md exists but could not be parsed \u2014 check format compliance",
+      "testable": true
+    },
+    {
+      "id": "FR-023",
+      "description": "No changelog entries within the last 30 days",
+      "testable": true
+    },
+    {
+      "id": "FR-024",
+      "description": "keepachangelog not installed \u2014 pip install 'universal-skills[code-enhancer]'",
+      "testable": true
+    },
+    {
+      "id": "FR-025",
+      "description": "1 test files exceed 500 lines \u2014 split into focused modules",
+      "testable": true
+    },
+    {
+      "id": "FR-026",
+      "description": "1 test files have >30 tests \u2014 too dense",
+      "testable": true
+    },
+    {
+      "id": "FR-027",
+      "description": "Test directory lacks subdirectory organization (consider unit/, integration/, e2e/)",
+      "testable": true
+    },
+    {
+      "id": "FR-028",
+      "description": "No @pytest.mark.parametrize usage \u2014 consider data-driven tests",
+      "testable": true
+    },
+    {
+      "id": "FR-029",
+      "description": "4 tests have no assertions",
+      "testable": true
+    },
+    {
+      "id": "FR-030",
+      "description": "72 tests use weak assertions (assert result is not None, assert True, etc.)",
+      "testable": true
+    },
+    {
+      "id": "FR-031",
+      "description": "1 tests exceed 100 lines \u2014 likely doing too much per test",
+      "testable": true
+    },
+    {
+      "id": "FR-032",
+      "description": "Undocumented env vars: EUNOMIA_POLICY_FILE, EUNOMIA_TYPE, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_PROTOCOL, OTEL_EXPORTER_OTLP_PUBLIC_KEY, OTEL_EXPORTER_OTLP_SECRET_KEY",
+      "testable": true
+    },
+    {
+      "id": "FR-033",
+      "description": "Analysis error: No module named 'agent_utilities.knowledge_graph'",
+      "testable": true
+    }
+  ],
+  "success_criteria": [
+    {
+      "metric": "Overall GPA",
+      "current": 2.47,
+      "target": 3.0
+    },
+    {
+      "metric": "Domains at B or above",
+      "current": 9,
+      "target": 17
+    },
+    {
+      "metric": "Actionable findings",
+      "current": 33,
+      "target": 0
+    }
+  ]
+}
