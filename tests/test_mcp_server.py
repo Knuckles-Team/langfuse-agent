@@ -11,7 +11,7 @@ class TestToolRegistration:
 
         from langfuse_agent.mcp_server import get_mcp_instance
 
-        with patch("langfuse_agent.mcp_server.get_client", return_value=MagicMock()):
+        with patch("langfuse_agent.auth.get_client", return_value=MagicMock()):
             with patch("langfuse_agent.mcp_server.create_mcp_server") as mock_create:
                 mcp_mock = MagicMock()
                 mock_create.return_value = (mcp_mock, MagicMock(), [MagicMock()])
@@ -34,7 +34,7 @@ class TestGetMcpInstance:
         """Test get_mcp_instance returns correct components."""
         from langfuse_agent.mcp_server import get_mcp_instance
 
-        with patch("langfuse_agent.mcp_server.get_client", return_value=mock_client):
+        with patch("langfuse_agent.auth.get_client", return_value=mock_client):
             with patch("langfuse_agent.mcp_server.create_mcp_server") as mock_create:
                 mock_create.return_value = (MagicMock(), MagicMock(), [MagicMock()])
 

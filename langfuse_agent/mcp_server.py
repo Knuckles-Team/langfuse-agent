@@ -33,15 +33,16 @@ from langfuse_agent.tools.management import register_langfuse_management_tools
 from langfuse_agent.tools.observability import register_langfuse_observability_tools
 from langfuse_agent.tools.prompts import register_langfuse_prompts_models_tools
 
-__version__ = "0.14.0"
+__version__ = "0.15.0"
 
 logger = get_logger(name="langfuse-agent")
 logger.setLevel(logging.INFO)
 
+
 def get_mcp_instance():
     """Get the configured FastMCP instance.
 
-_1.0 — Langfuse MCP Integration
+    _1.0 — Langfuse MCP Integration
     """
     args, mcp, middlewares = create_mcp_server(
         name="langfuse",
@@ -65,10 +66,11 @@ _1.0 — Langfuse MCP Integration
         mcp.add_middleware(mw)
     return mcp, args, middlewares
 
+
 def mcp_server() -> None:
     """Run the MCP server.
 
-_1.0 — Langfuse MCP Integration
+    _1.0 — Langfuse MCP Integration
     """
     mcp, args, middlewares = get_mcp_instance()
     print(f"langfuse-agent MCP v{__version__}", file=sys.stderr)
@@ -85,6 +87,7 @@ _1.0 — Langfuse MCP Integration
     else:
         logger.error("Invalid transport", extra={"transport": args.transport})
         sys.exit(1)
+
 
 if __name__ == "__main__":
     mcp_server()

@@ -145,7 +145,7 @@ async def test_mcp_tools_brute_force():
 
     registered_tools = {tool.name: tool.fn for tool in tool_objs}
 
-    with patch("langfuse_agent.mcp_server.get_client", return_value=mock_client):
+    with patch("langfuse_agent.auth.get_client", return_value=mock_client):
         for tool_name, tool_fn in registered_tools.items():
             if tool_name not in actions_map:
                 continue

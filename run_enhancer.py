@@ -2,19 +2,24 @@ import json
 import sys
 from pathlib import Path
 
-# Add scripts directory to path
-sys.path.append("/home/genius/.gemini/antigravity/skills/code-enhancer/scripts")
+# Add scripts directory to path dynamically
+sys.path.append(
+    str(
+        Path.home() / ".gemini" / "antigravity" / "skills" / "code-enhancer" / "scripts"
+    )
+)
 
 from generate_report import generate_report
 from generate_sdd_handoff import generate_sdd_handoff
 from run_multi_project import _run_single_project
 
-project_dir = "/home/apps/workspace/agent-packages/agents/langfuse-agent"
+project_dir = str(Path(__file__).parent.resolve())
 print("Running code-enhancer against langfuse-agent...")
 result = _run_single_project(project_dir)
 
 print("Writing results...")
-output_dir = Path("/home/apps/workspace/reports/code-enhancer-langfuse")
+workspace_dir = Path(__file__).parent.parent.parent.parent
+output_dir = workspace_dir / "reports" / "code-enhancer-langfuse"
 output_dir.mkdir(parents=True, exist_ok=True)
 (output_dir / "results.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
 
