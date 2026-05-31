@@ -33,7 +33,7 @@ from langfuse_agent.tools.management import register_langfuse_management_tools
 from langfuse_agent.tools.observability import register_langfuse_observability_tools
 from langfuse_agent.tools.prompts import register_langfuse_prompts_models_tools
 
-__version__ = "0.23.1"
+__version__ = "0.23.2"
 
 logger = get_logger(name="langfuse-agent")
 logger.setLevel(logging.INFO)
