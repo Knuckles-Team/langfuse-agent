@@ -31,8 +31,8 @@ This project implements or inherits the following ecosystem concepts:
 | Concept ID | Description | Source |
 |:-----------|:------------|:-------|
 | ECO-4.1 | MCP & Universal Skills | `agent-utilities` (inherited) |
-| OS-5.6 | **Token Usage Tracker** | `agent-utilities` (inherited) |
-| OS-5.9 | **Telemetry & Observability** | `agent-utilities` (inherited) |
+| OS-5.5 | **Token Usage Tracker** | `agent-utilities` (inherited) |
+| OS-5.8 | **Telemetry & Observability** | `agent-utilities` (inherited) |
 
 > 📖 **Full Registry**: See [`agent-utilities/docs/overview.md`](https://github.com/Knuckles-Team/agent-utilities/blob/main/docs/overview.md) for the complete 5-Pillar concept index.
 
