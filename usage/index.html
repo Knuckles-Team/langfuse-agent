@@ -10,11 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://knuckles-team.github.io/langfuse-agent/concepts/">
+        <link rel="canonical" href="https://knuckles-team.github.io/langfuse-agent/usage/">
       
       
-        <link rel="prev" href="../platform/">
+        <link rel="prev" href="../deployment/">
       
+      
+        <link rel="next" href="../platform/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>Concepts - langfuse-agent</title>
+        <title>Usage (API / CLI / MCP) - langfuse-agent</title>
       
     
     
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#concept-registry-langfuse-agent" class="md-skip">
+        <a href="#usage-api-cli-mcp" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concepts
+              Usage (API / CLI / MCP)
             
           </span>
         </div>
@@ -308,9 +310,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../usage/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -346,11 +350,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../concepts/" class="md-tabs__link">
         
   
   
@@ -526,10 +528,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../usage/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage (API / CLI / MCP)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -545,6 +574,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#as-an-mcp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As an MCP server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as-a-python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As a Python API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as-a-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As a CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -580,37 +662,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Concepts
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
         
   
   
@@ -626,59 +681,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#project-specific-concepts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Project-Specific Concepts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cross-project-references-from-agent-utilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Cross-Project References (from agent-utilities)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#synergy-with-agent-utilities" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Synergy with agent-utilities
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -710,10 +712,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#project-specific-concepts" class="md-nav__link">
+  <a href="#as-an-mcp-server" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Project-Specific Concepts
+        As an MCP server
       
     </span>
   </a>
@@ -721,10 +723,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cross-project-references-from-agent-utilities" class="md-nav__link">
+  <a href="#as-a-python-api" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cross-Project References (from agent-utilities)
+        As a Python API
       
     </span>
   </a>
@@ -732,10 +734,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#synergy-with-agent-utilities" class="md-nav__link">
+  <a href="#as-a-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Synergy with agent-utilities
+        As a CLI
       
     </span>
   </a>
@@ -762,94 +764,89 @@
   
 
 
-<h1 id="concept-registry-langfuse-agent">Concept Registry — langfuse-agent<a class="headerlink" href="#concept-registry-langfuse-agent" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Prefix</strong>: <code>CONCEPT:LF-*</code>
-<strong>Version</strong>: 0.14.0
-<strong>Bridge</strong>: <a href="https://github.com/Knuckles-Team/agent-utilities/blob/main/docs/concepts.md"><code>CONCEPT:ECO-4.0</code></a> (Unified Toolkit Ingestion)</p>
-</blockquote>
-<hr />
-<h2 id="project-specific-concepts">Project-Specific Concepts<a class="headerlink" href="#project-specific-concepts" title="Permanent link">&para;</a></h2>
+<h1 id="usage-api-cli-mcp">Usage — API / CLI / MCP<a class="headerlink" href="#usage-api-cli-mcp" title="Permanent link">&para;</a></h1>
+<p><code>langfuse-agent</code> exposes the same capability three ways: as <strong>MCP tools</strong> an agent
+calls, as a <strong>Python API</strong> (<code>LangfuseApi</code>) you import, and as a <strong>CLI</strong>. The complete
+tool surface and ecosystem role are in <a href="../overview/">Overview</a>.</p>
+<h2 id="as-an-mcp-server">As an MCP server<a class="headerlink" href="#as-an-mcp-server" title="Permanent link">&para;</a></h2>
+<p>Once <a href="../deployment/">deployed</a>, the server registers 87 tools across 26 categories.
+Reads work with the platform connection and a valid API key pair. Each domain is
+toggled with its <code>*_TOOL</code> environment switch.</p>
 <table>
 <thead>
 <tr>
-<th>Concept ID</th>
-<th>Name</th>
-<th>Description</th>
+<th>Group</th>
+<th>Tools</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>CONCEPT:LF-001</code></td>
-<td>Langfuse Datasets Operations</td>
-<td>MCP tool domain <code>langfuse_datasets</code> — Action-routed dynamic tool registration</td>
+<td>Observability</td>
+<td><code>trace_list</code>, <code>trace_get</code>, <code>observations_get_many</code>, <code>scores_get_many</code>, <code>sessions_list</code>, <code>metrics_metrics</code></td>
 </tr>
 <tr>
-<td><code>CONCEPT:LF-002</code></td>
-<td>Langfuse Management Operations</td>
-<td>MCP tool domain <code>langfuse_management</code> — Action-routed dynamic tool registration</td>
+<td>Datasets</td>
+<td><code>datasets_list</code>, <code>datasets_get</code>, <code>dataset_items_list</code>, <code>dataset_run_items_list</code></td>
 </tr>
 <tr>
-<td><code>CONCEPT:LF-003</code></td>
-<td>Langfuse Observability Operations</td>
-<td>MCP tool domain <code>langfuse_observability</code> — Action-routed dynamic tool registration</td>
+<td>Prompts &amp; Models</td>
+<td><code>prompts_list</code>, <code>prompts_get</code>, <code>models_list</code>, <code>models_get</code></td>
 </tr>
 <tr>
-<td><code>CONCEPT:LF-004</code></td>
-<td>Langfuse Prompts Models Operations</td>
-<td>MCP tool domain <code>langfuse_prompts_models</code> — Action-routed dynamic tool registration</td>
+<td>Management</td>
+<td><code>projects_get</code>, <code>organizations_get_organization_memberships</code>, <code>comments_get</code>, <code>health_health</code></td>
+</tr>
+<tr>
+<td>Annotation queues</td>
+<td><code>annotation_queues_list</code>, <code>annotation_queues_get</code></td>
+</tr>
+<tr>
+<td>OpenTelemetry</td>
+<td><code>opentelemetry_export_traces</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="cross-project-references-from-agent-utilities">Cross-Project References (from agent-utilities)<a class="headerlink" href="#cross-project-references-from-agent-utilities" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Concept ID</th>
-<th>Name</th>
-<th>Origin</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CONCEPT:ECO-4.0</code></td>
-<td>Unified Toolkit Ingestion</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:ORCH-1.2</code></td>
-<td>Confidence-Gated Router</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.1</code></td>
-<td>Prompt Injection Defense</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.2</code></td>
-<td>Cognitive Scheduler</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.3</code></td>
-<td>Guardrail Engine</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.4</code></td>
-<td>Audit Logging</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:KG-2.0</code></td>
-<td>Knowledge Graph Core</td>
-<td>agent-utilities</td>
-</tr>
-</tbody>
-</table>
-<h2 id="synergy-with-agent-utilities">Synergy with agent-utilities<a class="headerlink" href="#synergy-with-agent-utilities" title="Permanent link">&para;</a></h2>
-<p>This project integrates with <code>agent-utilities</code> via <code>CONCEPT:ECO-4.0</code> (Unified Toolkit Ingestion). The <code>langfuse_agent</code> MCP server registers its tools with the agent-utilities FastMCP middleware, enabling automatic discovery, telemetry, and Knowledge Graph ingestion of all LF-* concepts.</p>
+<p>Example agent prompts that map onto these tools:</p>
+<ul>
+<li><em>"List the most recent traces for this project"</em> → <code>trace_list</code></li>
+<li><em>"Show the scores attached to trace <code>&lt;id&gt;</code>"</em> → <code>scores_get_many</code></li>
+<li><em>"What datasets are configured?"</em> → <code>datasets_list</code></li>
+</ul>
+<h2 id="as-a-python-api">As a Python API<a class="headerlink" href="#as-a-python-api" title="Permanent link">&para;</a></h2>
+<p><code>LangfuseApi</code> is a <code>requests</code>-based facade composed from the per-domain clients. It
+authenticates with the project public/secret key pair.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">langfuse_agent.api_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">LangfuseApi</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">api</span> <span class="o">=</span> <span class="n">LangfuseApi</span><span class="p">(</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">public_key</span><span class="o">=</span><span class="s2">&quot;pk-...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">secret_key</span><span class="o">=</span><span class="s2">&quot;sk-...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># Reads</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">health</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">health_health</span><span class="p">()</span>                 <span class="c1"># service health</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">traces</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">trace_list</span><span class="p">()</span>                     <span class="c1"># recent traces</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">datasets</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">datasets_list</span><span class="p">()</span>                <span class="c1"># configured datasets</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">sessions</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">sessions_list</span><span class="p">()</span>                <span class="c1"># session records</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">scores_get_many</span><span class="p">()</span>               <span class="c1"># evaluation scores</span>
+</span></code></pre></div>
+<p>Build a client straight from the environment:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">langfuse_agent.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_client</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">api</span> <span class="o">=</span> <span class="n">get_client</span><span class="p">()</span>        <span class="c1"># reads LANGFUSE_* from the environment / .env</span>
+</span></code></pre></div>
+<h2 id="as-a-cli">As a CLI<a class="headerlink" href="#as-a-cli" title="Permanent link">&para;</a></h2>
+<p>The package installs two console scripts:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># MCP server</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>langfuse-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8004</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># A2A agent server (Pydantic-AI graph agent + web UI)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>langfuse-agent<span class="w"> </span>--provider<span class="w"> </span>openai<span class="w"> </span>--model-id<span class="w"> </span>gpt-4o<span class="w"> </span>--api-key<span class="w"> </span>sk-...
+</span></code></pre></div>
+<p>Both read their configuration from the environment (or a sibling <code>.env</code>). Each
+connector reads its own credentials and remains inactive when those credentials are
+absent. The full environment surface is documented in
+<a href="https://github.com/Knuckles-Team/langfuse-agent/blob/main/.env.example"><code>.env.example</code></a>
+and on the <a href="../deployment/#configuration-environment">Deployment</a> page.</p>
 
 
 
@@ -887,7 +884,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../platform/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Backing Platform (Langfuse)">
+          <a href="../deployment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Deployment">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -897,11 +894,27 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Backing Platform (Langfuse)
+                Deployment
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../platform/" class="md-footer__link md-footer__link--next" aria-label="Next: Backing Platform (Langfuse)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Backing Platform (Langfuse)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
         
       </nav>
     

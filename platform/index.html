@@ -10,11 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://knuckles-team.github.io/langfuse-agent/concepts/">
+        <link rel="canonical" href="https://knuckles-team.github.io/langfuse-agent/platform/">
       
       
-        <link rel="prev" href="../platform/">
+        <link rel="prev" href="../usage/">
       
+      
+        <link rel="next" href="../concepts/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>Concepts - langfuse-agent</title>
+        <title>Backing Platform (Langfuse) - langfuse-agent</title>
       
     
     
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#concept-registry-langfuse-agent" class="md-skip">
+        <a href="#backing-platform-langfuse" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concepts
+              Backing Platform (Langfuse)
             
           </span>
         </div>
@@ -327,9 +329,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../platform/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -346,11 +350,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../concepts/" class="md-tabs__link">
         
   
   
@@ -553,33 +555,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Backing Platform (Langfuse)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -599,7 +574,7 @@
   <span class="md-ellipsis">
     
   
-    Concepts
+    Backing Platform (Langfuse)
   
 
     
@@ -617,7 +592,7 @@
   <span class="md-ellipsis">
     
   
-    Concepts
+    Backing Platform (Langfuse)
   
 
     
@@ -643,10 +618,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#project-specific-concepts" class="md-nav__link">
+  <a href="#single-node-deployment-compose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Project-Specific Concepts
+        Single-node deployment (Compose)
       
     </span>
   </a>
@@ -654,10 +629,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cross-project-references-from-agent-utilities" class="md-nav__link">
+  <a href="#connect-langfuse-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cross-Project References (from agent-utilities)
+        Connect langfuse-agent
       
     </span>
   </a>
@@ -665,10 +640,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#synergy-with-agent-utilities" class="md-nav__link">
+  <a href="#combined-deployment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Synergy with agent-utilities
+        Combined deployment
       
     </span>
   </a>
@@ -679,6 +654,33 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -710,10 +712,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#project-specific-concepts" class="md-nav__link">
+  <a href="#single-node-deployment-compose" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Project-Specific Concepts
+        Single-node deployment (Compose)
       
     </span>
   </a>
@@ -721,10 +723,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cross-project-references-from-agent-utilities" class="md-nav__link">
+  <a href="#connect-langfuse-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cross-Project References (from agent-utilities)
+        Connect langfuse-agent
       
     </span>
   </a>
@@ -732,10 +734,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#synergy-with-agent-utilities" class="md-nav__link">
+  <a href="#combined-deployment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Synergy with agent-utilities
+        Combined deployment
       
     </span>
   </a>
@@ -762,94 +764,122 @@
   
 
 
-<h1 id="concept-registry-langfuse-agent">Concept Registry — langfuse-agent<a class="headerlink" href="#concept-registry-langfuse-agent" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Prefix</strong>: <code>CONCEPT:LF-*</code>
-<strong>Version</strong>: 0.14.0
-<strong>Bridge</strong>: <a href="https://github.com/Knuckles-Team/agent-utilities/blob/main/docs/concepts.md"><code>CONCEPT:ECO-4.0</code></a> (Unified Toolkit Ingestion)</p>
-</blockquote>
-<hr />
-<h2 id="project-specific-concepts">Project-Specific Concepts<a class="headerlink" href="#project-specific-concepts" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Concept ID</th>
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CONCEPT:LF-001</code></td>
-<td>Langfuse Datasets Operations</td>
-<td>MCP tool domain <code>langfuse_datasets</code> — Action-routed dynamic tool registration</td>
-</tr>
-<tr>
-<td><code>CONCEPT:LF-002</code></td>
-<td>Langfuse Management Operations</td>
-<td>MCP tool domain <code>langfuse_management</code> — Action-routed dynamic tool registration</td>
-</tr>
-<tr>
-<td><code>CONCEPT:LF-003</code></td>
-<td>Langfuse Observability Operations</td>
-<td>MCP tool domain <code>langfuse_observability</code> — Action-routed dynamic tool registration</td>
-</tr>
-<tr>
-<td><code>CONCEPT:LF-004</code></td>
-<td>Langfuse Prompts Models Operations</td>
-<td>MCP tool domain <code>langfuse_prompts_models</code> — Action-routed dynamic tool registration</td>
-</tr>
-</tbody>
-</table>
-<h2 id="cross-project-references-from-agent-utilities">Cross-Project References (from agent-utilities)<a class="headerlink" href="#cross-project-references-from-agent-utilities" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Concept ID</th>
-<th>Name</th>
-<th>Origin</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CONCEPT:ECO-4.0</code></td>
-<td>Unified Toolkit Ingestion</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:ORCH-1.2</code></td>
-<td>Confidence-Gated Router</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.1</code></td>
-<td>Prompt Injection Defense</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.2</code></td>
-<td>Cognitive Scheduler</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.3</code></td>
-<td>Guardrail Engine</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:OS-5.4</code></td>
-<td>Audit Logging</td>
-<td>agent-utilities</td>
-</tr>
-<tr>
-<td><code>CONCEPT:KG-2.0</code></td>
-<td>Knowledge Graph Core</td>
-<td>agent-utilities</td>
-</tr>
-</tbody>
-</table>
-<h2 id="synergy-with-agent-utilities">Synergy with agent-utilities<a class="headerlink" href="#synergy-with-agent-utilities" title="Permanent link">&para;</a></h2>
-<p>This project integrates with <code>agent-utilities</code> via <code>CONCEPT:ECO-4.0</code> (Unified Toolkit Ingestion). The <code>langfuse_agent</code> MCP server registers its tools with the agent-utilities FastMCP middleware, enabling automatic discovery, telemetry, and Knowledge Graph ingestion of all LF-* concepts.</p>
+<h1 id="backing-platform-langfuse">Backing Platform — Langfuse<a class="headerlink" href="#backing-platform-langfuse" title="Permanent link">&para;</a></h1>
+<p><code>langfuse-agent</code> is a <strong>client</strong> of a <a href="https://langfuse.com/">Langfuse</a> instance. This
+page provides a Docker recipe for deploying one locally to serve as the target of
+<code>LANGFUSE_BASE_URL</code>. For production topologies, follow the upstream
+<a href="https://langfuse.com/self-hosting">Langfuse self-hosting documentation</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Backing-system recipe</p>
+<p>Each connector in the ecosystem follows the same convention — a
+<code>docs/platform.md</code> recipe for the system it integrates with, accompanied by a
+sample Compose stack that mirrors <a href="https://github.com/Knuckles-Team"><code>services/</code></a>.
+Systems offered only as a managed service have no local recipe.</p>
+</div>
+<h2 id="single-node-deployment-compose">Single-node deployment (Compose)<a class="headerlink" href="#single-node-deployment-compose" title="Permanent link">&para;</a></h2>
+<p>Langfuse v3 is composed of a web service plus its data plane — PostgreSQL,
+ClickHouse, Redis, and an S3-compatible object store (MinIO). The following stack
+runs the web service on <code>:3000</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># docker/langfuse-platform.compose.yml</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">services</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">langfuse-web</span><span class="p">:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/langfuse/langfuse:3</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">postgres</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">clickhouse</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">redis</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">minio</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;3000:3000&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="nt">DATABASE_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgresql://postgres:postgres@postgres:5432/postgres</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">NEXTAUTH_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://localhost:3000</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">      </span><span class="nt">NEXTAUTH_SECRET</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecret</span><span class="w">            </span><span class="c1"># CHANGEME</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="nt">SALT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysalt</span><span class="w">                          </span><span class="c1"># CHANGEME</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="nt">ENCRYPTION_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0000000000000000000000000000000000000000000000000000000000000000</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="nt">CLICKHOUSE_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://clickhouse:8123</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="nt">CLICKHOUSE_MIGRATION_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clickhouse://clickhouse:9000</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="nt">CLICKHOUSE_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clickhouse</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">      </span><span class="nt">CLICKHOUSE_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clickhouse</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="nt">REDIS_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="nt">REDIS_PORT</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;6379&quot;</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">      </span><span class="nt">REDIS_AUTH</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myredissecret</span><span class="w">             </span><span class="c1"># CHANGEME</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">      </span><span class="nt">LANGFUSE_S3_EVENT_UPLOAD_BUCKET</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">langfuse</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">      </span><span class="nt">LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://minio:9000</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">      </span><span class="nt">LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">      </span><span class="nt">LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">miniosecret</span><span class="w">   </span><span class="c1"># CHANGEME</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">      </span><span class="nt">LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/postgres:17</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span><span class="w">           </span><span class="c1"># CHANGEME</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;langfuse_postgres_data:/var/lib/postgresql/data&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">  </span><span class="nt">clickhouse</span><span class="p">:</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/clickhouse/clickhouse-server</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">      </span><span class="nt">CLICKHOUSE_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clickhouse</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">      </span><span class="nt">CLICKHOUSE_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clickhouse</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;langfuse_clickhouse_data:/var/lib/clickhouse&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/redis:7</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;--requirepass&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;myredissecret&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">  </span><span class="nt">minio</span><span class="p">:</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/minio/minio</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">server /data --console-address &quot;:9001&quot;</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="w">      </span><span class="nt">MINIO_ROOT_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="w">      </span><span class="nt">MINIO_ROOT_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">miniosecret</span><span class="w">      </span><span class="c1"># CHANGEME</span>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;langfuse_minio_data:/data&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a><span class="w">  </span><span class="nt">langfuse_postgres_data</span><span class="p">:</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="w">  </span><span class="nt">langfuse_clickhouse_data</span><span class="p">:</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a><span class="w">  </span><span class="nt">langfuse_minio_data</span><span class="p">:</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/langfuse-platform.compose.yml<span class="w"> </span>up<span class="w"> </span>-d
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Wait for the web service to answer</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>curl<span class="w"> </span>-fsS<span class="w"> </span>http://localhost:3000/api/public/health
+</span></code></pre></div>
+<p>After the web UI is reachable, create an organization and project, then mint a
+public/secret API key pair under <strong>Project Settings → API Keys</strong>.</p>
+<h2 id="connect-langfuse-agent">Connect langfuse-agent<a class="headerlink" href="#connect-langfuse-agent" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_BASE_URL</span><span class="o">=</span>http://localhost:3000
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_PUBLIC_KEY</span><span class="o">=</span>pk-...
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_SECRET_KEY</span><span class="o">=</span>sk-...
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>langfuse-mcp<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8004</span>
+</span></code></pre></div>
+<h2 id="combined-deployment">Combined deployment<a class="headerlink" href="#combined-deployment" title="Permanent link">&para;</a></h2>
+<p>A combined stack places Langfuse and the MCP server on one Docker network, so the
+server reaches Langfuse by container name:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># docker/stack.compose.yml</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">services</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">langfuse-web</span><span class="p">:</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker.io/langfuse/langfuse:3</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;3000:3000&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="c1"># …data-plane services as above…</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nt">langfuse-agent-mcp</span><span class="p">:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">knucklessg1/langfuse-agent:latest</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">langfuse-web</span><span class="p p-Indicator">]</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LANGFUSE_BASE_URL=http://langfuse-web:3000</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LANGFUSE_PUBLIC_KEY=pk-...</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LANGFUSE_SECRET_KEY=sk-...</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TRANSPORT=streamable-http</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOST=0.0.0.0</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT=8004</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;8004:8004&quot;</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/stack.compose.yml<span class="w"> </span>up<span class="w"> </span>-d
+</span></code></pre></div>
+<p>The complete production-grade Langfuse stack used in this ecosystem — with ClickHouse,
+Redis, MinIO, and PostgreSQL wired for Docker Swarm — is maintained under
+<a href="https://github.com/Knuckles-Team"><code>services/langfuse/compose.yml</code></a>.</p>
 
 
 
@@ -887,7 +917,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../platform/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Backing Platform (Langfuse)">
+          <a href="../usage/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Usage (API / CLI / MCP)">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -897,11 +927,27 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Backing Platform (Langfuse)
+                Usage (API / CLI / MCP)
               </div>
             </div>
           </a>
         
+        
+          
+          <a href="../concepts/" class="md-footer__link md-footer__link--next" aria-label="Next: Concepts">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Concepts
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
         
       </nav>
     
