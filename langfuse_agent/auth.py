@@ -28,7 +28,13 @@ def get_client() -> LangfuseApi:
             is_delegation_enabled,
         )
 
-        host = os.getenv("LANGFUSE_BASE_URL", "https://cloud.langfuse.com")
+        # LANGFUSE_HOST is the official Langfuse SDK variable; LANGFUSE_BASE_URL
+        # is kept as a deprecated fallback.
+        host = (
+            os.getenv("LANGFUSE_HOST")
+            or os.getenv("LANGFUSE_BASE_URL")
+            or "https://cloud.langfuse.com"
+        )
         public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "")
         secret_key = os.getenv("LANGFUSE_SECRET_KEY", "")
 
@@ -41,7 +47,7 @@ def get_client() -> LangfuseApi:
                 extra={
                     "sso_user_email": identity.get("email"),
                     "sso_user_subject": identity.get("subject"),
-                    "langfuse_base_url": host,
+                    "langfuse_host": host,
                 },
             )
 
