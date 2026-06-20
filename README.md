@@ -56,12 +56,18 @@ Detailed instructions on how to use the underlying API wrappers, extended schema
 This server utilizes dynamic Action-Routed tools to optimize token overhead and maximize IDE compatibility.
 
 ### Available MCP Tools
-| Tool Module | Toggle Env Var | Enabled by Default | Description & Nested Methods |
-|-------------|----------------|--------------------|------------------------------|
-| **Langfuse Observability** | `LANGFUSE_OBSERVABILITY_TOOL` | `True` | Perform langfuse_observability operations. Action-routed methods: `ingestion_batch`, `legacy_metrics_v1_metrics`, `legacy_observations_v1_get`, `legacy_observations_v1_get_many`, `legacy_score_v1_create`, `legacy_score_v1_delete`, `metrics_metrics`, `observations_get_many`, `opentelemetry_export_traces`, `score_configs_create`, `score_configs_get`, `score_configs_get_by_id`, `score_configs_update`, `scores_get_by_id`, `scores_get_many`, `sessions_get`, `sessions_list`, `trace_delete`, `trace_delete_multiple`, `trace_get`, `trace_list`. |
-| **Langfuse Datasets** | `LANGFUSE_DATASETS_TOOL` | `True` | Perform langfuse_datasets operations. Action-routed methods: `annotation_queues_create_queue`, `annotation_queues_create_queue_assignment`, `annotation_queues_create_queue_item`, `annotation_queues_delete_queue_assignment`, `annotation_queues_delete_queue_item`, `annotation_queues_get_queue`, `annotation_queues_get_queue_item`, `annotation_queues_list_queue_items`, `annotation_queues_list_queues`, `annotation_queues_update_queue_item`, `dataset_items_create`, `dataset_items_delete`, `dataset_items_get`, `dataset_items_list`, `dataset_run_items_create`, `dataset_run_items_list`, `datasets_create`, `datasets_delete_run`, `datasets_get`, `datasets_get_run`, `datasets_get_runs`, `datasets_list`. |
-| **Langfuse Prompts Models** | `LANGFUSE_PROMPTS_MODELS_TOOL` | `True` | Perform langfuse_prompts_models operations. Action-routed methods: `llm_connections_list`, `llm_connections_upsert`, `media_get`, `media_get_upload_url`, `media_patch`, `models_create`, `models_delete`, `models_get`, `models_list`, `prompt_version_update`, `prompts_create`, `prompts_delete`, `prompts_get`, `prompts_list`. |
-| **Langfuse Management** | `LANGFUSE_MANAGEMENT_TOOL` | `True` | Perform langfuse_management operations. Action-routed methods: `blob_storage_integrations_delete_blob_storage_integration`, `blob_storage_integrations_get_blob_storage_integration_status`, `blob_storage_integrations_get_blob_storage_integrations`, `blob_storage_integrations_upsert_blob_storage_integration`, `comments_create`, `comments_get`, `comments_get_by_id`, `health_health`, `organizations_delete_organization_membership`, `organizations_delete_project_membership`, `organizations_get_organization_api_keys`, `organizations_get_organization_memberships`, `organizations_get_organization_projects`, `organizations_get_project_memberships`, `organizations_update_organization_membership`, `organizations_update_project_membership`, `projects_create`, `projects_create_api_key`, `projects_delete`, `projects_delete_api_key`, `projects_get`, `projects_get_api_keys`, `projects_update`, `scim_create_user`, `scim_delete_user`, `scim_get_resource_types`, `scim_get_schemas`, `scim_get_service_provider_config`, `scim_get_user`, `scim_list_users`. |
+Auto-generated — do not edit between the markers below.
+<!-- MCP-TOOLS-TABLE:START -->
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `langfuse_datasets` | `LANGFUSETOOL` | Perform langfuse_datasets operations. |
+| `langfuse_management` | `LANGFUSETOOL` | Perform langfuse_management operations. |
+| `langfuse_observability` | `LANGFUSETOOL` | Perform langfuse_observability operations. |
+| `langfuse_prompts_models` | `LANGFUSETOOL` | Perform langfuse_prompts_models operations. |
+
+_4 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+<!-- MCP-TOOLS-TABLE:END -->
 
 Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/mcp.md](docs/mcp.md).
 
