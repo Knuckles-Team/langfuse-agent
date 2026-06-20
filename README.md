@@ -61,10 +61,10 @@ Auto-generated — do not edit between the markers below.
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
-| `langfuse_datasets` | `LANGFUSETOOL` | Perform langfuse_datasets operations. |
-| `langfuse_management` | `LANGFUSETOOL` | Perform langfuse_management operations. |
-| `langfuse_observability` | `LANGFUSETOOL` | Perform langfuse_observability operations. |
-| `langfuse_prompts_models` | `LANGFUSETOOL` | Perform langfuse_prompts_models operations. |
+| `langfuse_datasets` | `LANGFUSE_DATASETSTOOL` | Perform langfuse_datasets operations. |
+| `langfuse_management` | `LANGFUSE_MANAGEMENTTOOL` | Perform langfuse_management operations. |
+| `langfuse_observability` | `LANGFUSE_OBSERVABILITYTOOL` | Perform langfuse_observability operations. |
+| `langfuse_prompts_models` | `LANGFUSE_PROMPTS_MODELSTOOL` | Perform langfuse_prompts_models operations. |
 
 _4 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
