@@ -4,8 +4,9 @@ CONCEPT:LA_1.0 — Langfuse MCP Integration
 """
 
 import logging
-import os
 import threading
+
+from agent_utilities.core.config import setting
 
 from .api_client import LangfuseApi
 
@@ -29,9 +30,9 @@ def get_client() -> LangfuseApi:
         )
 
         # LANGFUSE_HOST is the official Langfuse SDK variable.
-        host = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
-        public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "")
-        secret_key = os.getenv("LANGFUSE_SECRET_KEY", "")
+        host = setting("LANGFUSE_HOST", "https://cloud.langfuse.com")
+        public_key = setting("LANGFUSE_PUBLIC_KEY", "")
+        secret_key = setting("LANGFUSE_SECRET_KEY", "")
 
         # Log OIDC user identity for audit (identity passthrough pattern)
         if is_delegation_enabled():
