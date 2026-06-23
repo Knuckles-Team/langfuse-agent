@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   langfuse-agent-mcp:
-    image: knucklessg1/langfuse-agent:latest
+    image: knucklessg1/langfuse-agent:mcp
     container_name: langfuse-agent-mcp
     hostname: langfuse-agent-mcp
     restart: always
