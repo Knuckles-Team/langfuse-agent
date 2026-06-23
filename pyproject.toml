@@ -51,7 +51,7 @@ dev = [
 ]
 
 [tool.setuptools.package-data]
-langfuse_agent = [ "mcp_config.json", "agent/**", "skills/**", "prompts/**",]
+langfuse_agent = [ "mcp_config.json", "skills/**", "prompts/**",]
 
 [tool.ruff.lint]
 select = [ "E", "F", "I", "UP", "B",]
