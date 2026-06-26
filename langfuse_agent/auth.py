@@ -29,8 +29,11 @@ def get_client() -> LangfuseApi:
             is_delegation_enabled,
         )
 
-        # LANGFUSE_HOST is the official Langfuse SDK variable.
-        host = setting("LANGFUSE_HOST", "https://cloud.langfuse.com")
+        # LANGFUSE_BASE_URL is the official Langfuse variable; LANGFUSE_HOST is
+        # the legacy name kept for backward-compat (BASE_URL wins when both set).
+        host = setting("LANGFUSE_BASE_URL", "") or setting(
+            "LANGFUSE_HOST", "https://cloud.langfuse.com"
+        )
         public_key = setting("LANGFUSE_PUBLIC_KEY", "")
         secret_key = setting("LANGFUSE_SECRET_KEY", "")
 
