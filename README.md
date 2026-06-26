@@ -59,6 +59,8 @@ This server utilizes dynamic Action-Routed tools to optimize token overhead and 
 Auto-generated — do not edit between the markers below.
 <!-- MCP-TOOLS-TABLE:START -->
 
+#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `langfuse_datasets` | `LANGFUSE_DATASETSTOOL` | Perform langfuse_datasets operations. |
@@ -66,7 +68,104 @@ Auto-generated — do not edit between the markers below.
 | `langfuse_observability` | `LANGFUSE_OBSERVABILITYTOOL` | Perform langfuse_observability operations. |
 | `langfuse_prompts_models` | `LANGFUSE_PROMPTS_MODELSTOOL` | Perform langfuse_prompts_models operations. |
 
-_4 action-routed tools (default `MCP_TOOL_MODE=condensed`). Each is enabled unless its toggle is set false; set `MCP_TOOL_MODE=verbose` (or `both`) for the 1:1 per-operation surface. Auto-generated — do not edit._
+#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+
+<details>
+<summary>87 per-operation tools — one per public API method (click to expand)</summary>
+
+| MCP Tool | Toggle Env Var | Description |
+|----------|----------------|-------------|
+| `langfuse_annotation_queues_create_queue` | `APITOOL` | Create an annotation queue |
+| `langfuse_annotation_queues_create_queue_assignment` | `APITOOL` | Create an assignment for a user to an annotation queue |
+| `langfuse_annotation_queues_create_queue_item` | `APITOOL` | Add an item to an annotation queue |
+| `langfuse_annotation_queues_delete_queue_assignment` | `APITOOL` | Delete an assignment for a user to an annotation queue |
+| `langfuse_annotation_queues_delete_queue_item` | `APITOOL` | Remove an item from an annotation queue |
+| `langfuse_annotation_queues_get_queue` | `APITOOL` | Get an annotation queue by ID |
+| `langfuse_annotation_queues_get_queue_item` | `APITOOL` | Get a specific item from an annotation queue |
+| `langfuse_annotation_queues_list_queue_items` | `APITOOL` | Get items for a specific annotation queue |
+| `langfuse_annotation_queues_list_queues` | `APITOOL` | Get all annotation queues |
+| `langfuse_annotation_queues_update_queue_item` | `APITOOL` | Update an annotation queue item |
+| `langfuse_blob_storage_integrations_delete_blob_storage_integration` | `APITOOL` | Delete a blob storage integration by ID (requires organization-scoped API key) |
+| `langfuse_blob_storage_integrations_get_blob_storage_integration_status` | `APITOOL` | Get the sync status of a blob storage integration by integration ID (requires organization-scoped API key) |
+| `langfuse_blob_storage_integrations_get_blob_storage_integrations` | `APITOOL` | Get all blob storage integrations for the organization (requires organization-scoped API key) |
+| `langfuse_blob_storage_integrations_upsert_blob_storage_integration` | `APITOOL` | Create or update a blob storage integration for a specific project (requires organization-scoped API key). The configuration is validated by performing a test upload to the bucket. |
+| `langfuse_comments_create` | `APITOOL` | Create a comment. Comments may be attached to different object types (trace, observation, session, prompt). |
+| `langfuse_comments_get` | `APITOOL` | Get all comments |
+| `langfuse_comments_get_by_id` | `APITOOL` | Get a comment by id |
+| `langfuse_dataset_items_create` | `APITOOL` | Create a dataset item |
+| `langfuse_dataset_items_delete` | `APITOOL` | Delete a dataset item and all its run items. This action is irreversible. |
+| `langfuse_dataset_items_get` | `APITOOL` | Get a dataset item |
+| `langfuse_dataset_items_list` | `APITOOL` | Get dataset items. Optionally specify a version to get the items as they existed at that point in time. Note: If version parameter is provided, datasetName must also be provided. |
+| `langfuse_dataset_run_items_create` | `APITOOL` | Create a dataset run item |
+| `langfuse_dataset_run_items_list` | `APITOOL` | List dataset run items |
+| `langfuse_datasets_create` | `APITOOL` | Create a dataset |
+| `langfuse_datasets_delete_run` | `APITOOL` | Delete a dataset run and all its run items. This action is irreversible. |
+| `langfuse_datasets_get` | `APITOOL` | Get a dataset |
+| `langfuse_datasets_get_run` | `APITOOL` | Get a dataset run and its items |
+| `langfuse_datasets_get_runs` | `APITOOL` | Get dataset runs |
+| `langfuse_datasets_list` | `APITOOL` | Get all datasets |
+| `langfuse_health_health` | `APITOOL` | Check health of API and database |
+| `langfuse_ingestion_batch` | `APITOOL` | **Legacy endpoint for batch ingestion for Langfuse Observability.**  -> Please use the OpenTelemetry endpoint (`/api/public/otel/v1/traces`). Learn more: https://langfuse.com/integrations/native/opentelemetry  Within each batch, there can be multiple events. Each event has a type, an id, a timestamp, metadata and a body. Internally, we refer to this as the "event envelope" as it tells us something about the event but not the trace. We use the event id within this envelope to deduplicate messages to avoid processing the same event twice, i.e. the event id should be unique per request. The event.body.id is the ID of the actual trace and will be used for updates and will be visible within the Langfuse App. I.e. if you want to update a trace, you'd use the same body id, but separate event IDs.  Notes: - Introduction to data model: https://langfuse.com/docs/observability/data-model - Batch sizes are limited to 3.5 MB in total. You need to adjust the number of events per batch accordingly. - The API does not return a 4xx status code for input errors. Instead, it responds with a 207 status code, which includes a list of the encountered errors. |
+| `langfuse_legacy_metrics_v1_metrics` | `APITOOL` | Get metrics from the Langfuse project using a query object.  Consider using the [v2 metrics endpoint](/api-reference#tag/metricsv2/GET/api/public/v2/metrics) for better performance.  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api). |
+| `langfuse_legacy_observations_v1_get` | `APITOOL` | Get a observation |
+| `langfuse_legacy_observations_v1_get_many` | `APITOOL` | Get a list of observations.  Consider using the [v2 observations endpoint](/api-reference#tag/observationsv2/GET/api/public/v2/observations) for cursor-based pagination and field selection. |
+| `langfuse_legacy_score_v1_create` | `APITOOL` | Create a score (supports both trace and session scores) |
+| `langfuse_legacy_score_v1_delete` | `APITOOL` | Delete a score (supports both trace and session scores) |
+| `langfuse_llm_connections_list` | `APITOOL` | Get all LLM connections in a project |
+| `langfuse_llm_connections_upsert` | `APITOOL` | Create or update an LLM connection. The connection is upserted on provider. |
+| `langfuse_media_get` | `APITOOL` | Get a media record |
+| `langfuse_media_get_upload_url` | `APITOOL` | Get a presigned upload URL for a media record |
+| `langfuse_media_patch` | `APITOOL` | Patch a media record |
+| `langfuse_metrics_metrics` | `APITOOL` | Get metrics from the Langfuse project using a query object. V2 endpoint with optimized performance.  ## V2 Differences - Supports `observations`, `scores-numeric`, and `scores-categorical` views only (traces view not supported) - Direct access to tags and release fields on observations - Backwards-compatible: traceName, traceRelease, traceVersion dimensions are still available on observations view - High cardinality dimensions are not supported and will return a 400 error (see below)  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).  ## Available Views  ### observations Query observation-level data (spans, generations, events).  **Dimensions:** - `environment` - Deployment environment (e.g., production, staging) - `type` - Type of observation (SPAN, GENERATION, EVENT) - `name` - Name of the observation - `level` - Logging level of the observation - `version` - Version of the observation - `tags` - User-defined tags - `release` - Release version - `traceName` - Name of the parent trace (backwards-compatible) - `traceRelease` - Release version of the parent trace (backwards-compatible, maps to release) - `traceVersion` - Version of the parent trace (backwards-compatible, maps to version) - `providedModelName` - Name of the model used - `promptName` - Name of the prompt used - `promptVersion` - Version of the prompt used - `startTimeMonth` - Month of start_time in YYYY-MM format  **Measures:** - `count` - Total number of observations - `latency` - Observation latency (milliseconds) - `streamingLatency` - Generation latency from completion start to end (milliseconds) - `inputTokens` - Sum of input tokens consumed - `outputTokens` - Sum of output tokens produced - `totalTokens` - Sum of all tokens consumed - `outputTokensPerSecond` - Output tokens per second - `tokensPerSecond` - Total tokens per second - `inputCost` - Input cost (USD) - `outputCost` - Output cost (USD) - `totalCost` - Total cost (USD) - `timeToFirstToken` - Time to first token (milliseconds) - `countScores` - Number of scores attached to the observation  ### scores-numeric Query numeric and boolean score data.  **Dimensions:** - `environment` - Deployment environment - `name` - Name of the score (e.g., accuracy, toxicity) - `source` - Origin of the score (API, ANNOTATION, EVAL) - `dataType` - Data type (NUMERIC, BOOLEAN) - `configId` - Identifier of the score config - `timestampMonth` - Month in YYYY-MM format - `timestampDay` - Day in YYYY-MM-DD format - `value` - Numeric value of the score - `traceName` - Name of the parent trace - `tags` - Tags - `traceRelease` - Release version - `traceVersion` - Version - `observationName` - Name of the associated observation - `observationModelName` - Model name of the associated observation - `observationPromptName` - Prompt name of the associated observation - `observationPromptVersion` - Prompt version of the associated observation  **Measures:** - `count` - Total number of scores - `value` - Score value (for aggregations)  ### scores-categorical Query categorical score data. Same dimensions as scores-numeric except uses `stringValue` instead of `value`.  **Measures:** - `count` - Total number of scores  ## High Cardinality Dimensions The following dimensions cannot be used as grouping dimensions in v2 metrics API as they can cause performance issues. Use them in filters instead.  **observations view:** - `id` - Use traceId filter to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `parentObservationId` - Use parentObservationId filter instead  **scores-numeric / scores-categorical views:** - `id` - Use specific filters to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `observationId` - Use observationId filter instead  ## Aggregations Available aggregation functions: `sum`, `avg`, `count`, `max`, `min`, `p50`, `p75`, `p90`, `p95`, `p99`, `histogram`  ## Time Granularities Available granularities for timeDimension: `auto`, `minute`, `hour`, `day`, `week`, `month` - `auto` bins the data into approximately 50 buckets based on the time range |
+| `langfuse_models_create` | `APITOOL` | Create a model |
+| `langfuse_models_delete` | `APITOOL` | Delete a model. Cannot delete models managed by Langfuse. You can create your own definition with the same modelName to override the definition though. |
+| `langfuse_models_get` | `APITOOL` | Get a model |
+| `langfuse_models_list` | `APITOOL` | Get all models |
+| `langfuse_observations_get_many` | `APITOOL` | Get a list of observations with cursor-based pagination and flexible field selection.  ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response metadata and should be passed in subsequent requests to retrieve the next page of results.  ## Field Selection Use the `fields` parameter to control which observation fields are returned: - `core` - Always included: id, traceId, startTime, endTime, projectId, parentObservationId, type - `basic` - name, level, statusMessage, version, environment, bookmarked, public, userId, sessionId - `time` - completionStartTime, createdAt, updatedAt - `io` - input, output - `metadata` - metadata (truncated to 200 chars by default, use `expandMetadata` to get full values) - `model` - providedModelName, internalModelId, modelParameters - `usage` - usageDetails, costDetails, totalCost - `prompt` - promptId, promptName, promptVersion - `metrics` - latency, timeToFirstToken  If not specified, `core` and `basic` field groups are returned.  ## Filters Multiple filtering options are available via query parameters or the structured `filter` parameter. When using the `filter` parameter, it takes precedence over individual query parameter filters. |
+| `langfuse_opentelemetry_export_traces` | `APITOOL` | **OpenTelemetry Traces Ingestion Endpoint**  This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability.  **Supported Formats:** - Binary Protobuf: `Content-Type: application/x-protobuf` - JSON Protobuf: `Content-Type: application/json` - Supports gzip compression via `Content-Encoding: gzip` header  **Specification Compliance:** - Conforms to [OTLP/HTTP Trace Export](https://opentelemetry.io/docs/specs/otlp/#otlphttp) - Implements `ExportTraceServiceRequest` message format  **Documentation:** - Integration guide: https://langfuse.com/integrations/native/opentelemetry - Data model: https://langfuse.com/docs/observability/data-model |
+| `langfuse_organizations_delete_organization_membership` | `APITOOL` | Delete a membership from the organization associated with the API key (requires organization-scoped API key) |
+| `langfuse_organizations_delete_project_membership` | `APITOOL` | Delete a membership from a specific project (requires organization-scoped API key). The user must be a member of the organization. |
+| `langfuse_organizations_get_organization_api_keys` | `APITOOL` | Get all API keys for the organization associated with the API key (requires organization-scoped API key) |
+| `langfuse_organizations_get_organization_memberships` | `APITOOL` | Get all memberships for the organization associated with the API key (requires organization-scoped API key) |
+| `langfuse_organizations_get_organization_projects` | `APITOOL` | Get all projects for the organization associated with the API key (requires organization-scoped API key) |
+| `langfuse_organizations_get_project_memberships` | `APITOOL` | Get all memberships for a specific project (requires organization-scoped API key) |
+| `langfuse_organizations_update_organization_membership` | `APITOOL` | Create or update a membership for the organization associated with the API key (requires organization-scoped API key) |
+| `langfuse_organizations_update_project_membership` | `APITOOL` | Create or update a membership for a specific project (requires organization-scoped API key). The user must already be a member of the organization. |
+| `langfuse_projects_create` | `APITOOL` | Create a new project (requires organization-scoped API key) |
+| `langfuse_projects_create_api_key` | `APITOOL` | Create a new API key for a project (requires organization-scoped API key) |
+| `langfuse_projects_delete` | `APITOOL` | Delete a project by ID (requires organization-scoped API key). Project deletion is processed asynchronously. |
+| `langfuse_projects_delete_api_key` | `APITOOL` | Delete an API key for a project (requires organization-scoped API key) |
+| `langfuse_projects_get` | `APITOOL` | Get Project associated with API key (requires project-scoped API key). You can use GET /api/public/organizations/projects to get all projects with an organization-scoped key. |
+| `langfuse_projects_get_api_keys` | `APITOOL` | Get all API keys for a project (requires organization-scoped API key) |
+| `langfuse_projects_update` | `APITOOL` | Update a project by ID (requires organization-scoped API key). |
+| `langfuse_prompt_version_update` | `APITOOL` | Update labels for a specific prompt version |
+| `langfuse_prompts_create` | `APITOOL` | Create a new version for the prompt with the given `name` |
+| `langfuse_prompts_delete` | `APITOOL` | Delete prompt versions. If neither version nor label is specified, all versions of the prompt are deleted. |
+| `langfuse_prompts_get` | `APITOOL` | Get a prompt |
+| `langfuse_prompts_list` | `APITOOL` | Get a list of prompt names with versions and labels |
+| `langfuse_scim_create_user` | `APITOOL` | Create a new user in the organization (requires organization-scoped API key) |
+| `langfuse_scim_delete_user` | `APITOOL` | Remove a user from the organization (requires organization-scoped API key). Note that this only removes the user from the organization but does not delete the user entity itself. |
+| `langfuse_scim_get_resource_types` | `APITOOL` | Get SCIM Resource Types (requires organization-scoped API key) |
+| `langfuse_scim_get_schemas` | `APITOOL` | Get SCIM Schemas (requires organization-scoped API key) |
+| `langfuse_scim_get_service_provider_config` | `APITOOL` | Get SCIM Service Provider Configuration (requires organization-scoped API key) |
+| `langfuse_scim_get_user` | `APITOOL` | Get a specific user by ID (requires organization-scoped API key) |
+| `langfuse_scim_list_users` | `APITOOL` | List users in the organization (requires organization-scoped API key) |
+| `langfuse_score_configs_create` | `APITOOL` | Create a score configuration (config). Score configs are used to define the structure of scores |
+| `langfuse_score_configs_get` | `APITOOL` | Get all score configs |
+| `langfuse_score_configs_get_by_id` | `APITOOL` | Get a score config |
+| `langfuse_score_configs_update` | `APITOOL` | Update a score config |
+| `langfuse_scores_get_by_id` | `APITOOL` | Get a score (supports both trace and session scores) |
+| `langfuse_scores_get_many` | `APITOOL` | Get a list of scores (supports both trace and session scores) |
+| `langfuse_sessions_get` | `APITOOL` | Get a session. Please note that `traces` on this endpoint are not paginated, if you plan to fetch large sessions, consider `GET /api/public/traces?sessionId=<sessionId>` |
+| `langfuse_sessions_list` | `APITOOL` | Get sessions |
+| `langfuse_trace_delete` | `APITOOL` | Delete a specific trace |
+| `langfuse_trace_delete_multiple` | `APITOOL` | Delete multiple traces |
+| `langfuse_trace_get` | `APITOOL` | Get a specific trace |
+| `langfuse_trace_list` | `APITOOL` | Get list of traces |
+
+</details>
+
+_4 action-routed tool(s) (default) · 87 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/mcp.md](docs/mcp.md).
@@ -117,12 +216,19 @@ Configure your IDE's `mcp.json` to launch the MCP server via `uvx`:
       ],
       "env": {
         "LANGFUSE_BASE_URL": "http://localhost:8080",
-        "LANGFUSE_TOKEN": "your_token_here"
+        "LANGFUSE_PUBLIC_KEY": "pk-lf-...",
+        "LANGFUSE_SECRET_KEY": "sk-lf-...",
+        "MCP_TOOL_MODE": "condensed"
       }
     }
   }
 }
 ```
+
+> **Tool surface** — `MCP_TOOL_MODE` selects which tools are exposed:
+> `condensed` (default, 4 action-routed tools), `verbose` (1:1 per-operation
+> tools), or `both`. Set it in the `env` block above. See
+> [Configuration & Environment Variables](#configuration--environment-variables).
 
 #### Streamable-HTTP Transport (Recommended for production deployments)
 To run the server as a long-running Streamable-HTTP service:
@@ -146,7 +252,8 @@ docker run -d \
   -e TRANSPORT=streamable-http \
   -e PORT=8004 \
   -e LANGFUSE_BASE_URL="http://your-langfuse-instance:8080" \
-  -e LANGFUSE_TOKEN="your_token" \
+  -e LANGFUSE_PUBLIC_KEY="pk-lf-..." \
+  -e LANGFUSE_SECRET_KEY="sk-lf-..." \
   knucklessg1/langfuse-agent:mcp
 ```
 
@@ -184,7 +291,8 @@ To start the interactive command-line agent:
 ```bash
 # Set credentials
 export LANGFUSE_BASE_URL="http://localhost:8080"
-export LANGFUSE_TOKEN="your_token"
+export LANGFUSE_PUBLIC_KEY="pk-lf-..."
+export LANGFUSE_SECRET_KEY="sk-lf-..."
 
 # Run the agent server
 langfuse-agent --provider openai --model-id gpt-4o
@@ -276,10 +384,9 @@ The agent can be fully configured using environment variables or a `.env` file. 
 ### Core API & Credentials
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `LANGFUSE_BASE_URL` | Langfuse instance base URL. | `https://cloud.langfuse.com` |
+| `LANGFUSE_BASE_URL` | Langfuse instance base URL (legacy alias: `LANGFUSE_HOST`). | `https://cloud.langfuse.com` |
 | `LANGFUSE_PUBLIC_KEY` | Langfuse public API key. | `""` |
 | `LANGFUSE_SECRET_KEY` | Langfuse secret API key. | `""` |
-| `LANGFUSE_TOKEN` | Consolidated authentication token. | `""` |
 
 ### Server Configuration
 | Variable | Description | Default |
@@ -432,11 +539,11 @@ Secrets are read-existing + seeded via `vault_sync` — you are only prompted fo
 | `LANGFUSE_BASE_URL` | `http://localhost:8080` |  |
 | `LANGFUSE_PUBLIC_KEY` | `your_public_key_here` |  |
 | `LANGFUSE_SECRET_KEY` | `your_secret_key_here` |  |
-| `LANGFUSE_TOKEN` | `your_token_here` |  |
 | `AUTH_TYPE` | `key` | options: key, delegated, none |
 | `DEFAULT_AGENT_NAME` | `"Langfuse Agent"` |  |
 | `AGENT_DESCRIPTION` | `"AI agent for Langfuse Agent operations."` |  |
 | `AGENT_SYSTEM_PROMPT` | `""` |  |
+| `MCP_TOOL_MODE` | `condensed` | action-routed tools) | verbose (1:1 per-operation tools) | both. |
 | `LANGFUSE_OBSERVABILITYTOOL` | `True` | MCP tools table (condensed action-routed surface). |
 | `LANGFUSE_DATASETSTOOL` | `True` |  |
 | `LANGFUSE_PROMPTS_MODELSTOOL` | `True` |  |
@@ -446,7 +553,6 @@ Secrets are read-existing + seeded via `vault_sync` — you are only prompted fo
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `MCP_TOOL_MODE` | `condensed` | Tool surface: `condensed` | `verbose` | `both` |
 | `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
@@ -461,5 +567,5 @@ Secrets are read-existing + seeded via `vault_sync` — you are only prompted fo
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_23 package + 14 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_23 package + 13 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
