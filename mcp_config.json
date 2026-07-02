@@ -7,17 +7,14 @@
         "langfuse-mcp"
       ],
       "env": {
-        "LANGFUSE_BASE_URL": "<YOUR_LANGFUSE_BASE_URL>",
-        "LANGFUSE_PUBLIC_KEY": "<YOUR_LANGFUSE_PUBLIC_KEY>",
-        "LANGFUSE_SECRET_KEY": "<YOUR_LANGFUSE_SECRET_KEY>",
         "MCP_TOOL_MODE": "condensed",
-        "LANGFUSE_OBSERVABILITYTOOL": "True",
+        "LANGFUSE_BASE_URL": "http://localhost:8080",
         "LANGFUSE_DATASETSTOOL": "True",
-        "LANGFUSE_PROMPTS_MODELSTOOL": "True",
         "LANGFUSE_MANAGEMENTTOOL": "True",
-        "AGENT_DESCRIPTION": "<YOUR_AGENT_DESCRIPTION>",
-        "AGENT_SYSTEM_PROMPT": "<YOUR_AGENT_SYSTEM_PROMPT>",
-        "DEFAULT_AGENT_NAME": "<YOUR_DEFAULT_AGENT_NAME>"
+        "LANGFUSE_OBSERVABILITYTOOL": "True",
+        "LANGFUSE_PROMPTS_MODELSTOOL": "True",
+        "LANGFUSE_PUBLIC_KEY": "your_public_key_here",
+        "LANGFUSE_SECRET_KEY": "your_secret_key_here"
       }
     }
   }

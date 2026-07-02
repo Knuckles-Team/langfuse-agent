@@ -193,21 +193,20 @@ When query strings or parameters are supplied, an LLM-free **Knowledge Graph res
 
 ### MCP Configuration Examples
 
-> **Install the slim `[mcp]` extra.** All examples below install
-> `langfuse-agent[mcp]` — the MCP-server extra that pulls only the FastMCP /
-> FastAPI tooling (`agent-utilities[mcp]`). It deliberately **excludes** the heavy
-> agent runtime (the epistemic-graph engine, `pydantic-ai`, `dspy`, `llama-index`,
-> `tree-sitter`), so `uvx`/container installs are dramatically smaller and faster.
-> Use the full `[agent]` extra only when you need the integrated Pydantic AI agent
-> (see [Installation](#installation)).
+<!-- MCP-CONFIG-EXAMPLES:START -->
 
-#### stdio Transport (Recommended for local IDEs e.g., Cursor, Claude Desktop)
-Configure your IDE's `mcp.json` to launch the MCP server via `uvx`:
+> **Install the slim `[mcp]` extra.** All examples install `langfuse-agent[mcp]` — the
+> MCP-server extra that pulls only the FastMCP / FastAPI tooling (`agent-utilities[mcp]`).
+> It deliberately **excludes** the heavy agent runtime (`pydantic-ai`, the epistemic-graph
+> engine, `dspy`, `llama-index`), so `uvx` / container installs are far smaller. Use the
+> full `[agent]` extra only when you need the integrated Pydantic AI agent.
+
+#### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
 
 ```json
 {
   "mcpServers": {
-    "langfuse-agent": {
+    "langfuse-mcp": {
       "command": "uvx",
       "args": [
         "--from",
@@ -215,29 +214,61 @@ Configure your IDE's `mcp.json` to launch the MCP server via `uvx`:
         "langfuse-mcp"
       ],
       "env": {
+        "MCP_TOOL_MODE": "condensed",
         "LANGFUSE_BASE_URL": "http://localhost:8080",
-        "LANGFUSE_PUBLIC_KEY": "pk-lf-...",
-        "LANGFUSE_SECRET_KEY": "sk-lf-...",
-        "MCP_TOOL_MODE": "condensed"
+        "LANGFUSE_DATASETSTOOL": "True",
+        "LANGFUSE_MANAGEMENTTOOL": "True",
+        "LANGFUSE_OBSERVABILITYTOOL": "True",
+        "LANGFUSE_PROMPTS_MODELSTOOL": "True",
+        "LANGFUSE_PUBLIC_KEY": "your_public_key_here",
+        "LANGFUSE_SECRET_KEY": "your_secret_key_here"
       }
     }
   }
 }
 ```
 
-> **Tool surface** — `MCP_TOOL_MODE` selects which tools are exposed:
-> `condensed` (default, 4 action-routed tools), `verbose` (1:1 per-operation
-> tools), or `both`. Set it in the `env` block above. See
-> [Configuration & Environment Variables](#configuration--environment-variables).
-
-#### Streamable-HTTP Transport (Recommended for production deployments)
-To run the server as a long-running Streamable-HTTP service:
+#### Streamable-HTTP Transport (networked / production)
 
 ```json
 {
   "mcpServers": {
-    "langfuse-agent": {
-      "url": "http://localhost:8004/langfuse-agent/mcp"
+    "langfuse-mcp": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "langfuse-agent[mcp]",
+        "langfuse-mcp",
+        "--transport",
+        "streamable-http",
+        "--port",
+        "8000"
+      ],
+      "env": {
+        "TRANSPORT": "streamable-http",
+        "HOST": "0.0.0.0",
+        "PORT": "8000",
+        "MCP_TOOL_MODE": "condensed",
+        "LANGFUSE_BASE_URL": "http://localhost:8080",
+        "LANGFUSE_DATASETSTOOL": "True",
+        "LANGFUSE_MANAGEMENTTOOL": "True",
+        "LANGFUSE_OBSERVABILITYTOOL": "True",
+        "LANGFUSE_PROMPTS_MODELSTOOL": "True",
+        "LANGFUSE_PUBLIC_KEY": "your_public_key_here",
+        "LANGFUSE_SECRET_KEY": "your_secret_key_here"
+      }
+    }
+  }
+}
+```
+
+Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
+
+```json
+{
+  "mcpServers": {
+    "langfuse-mcp": {
+      "url": "http://localhost:8000/langfuse-mcp/mcp"
     }
   }
 }
@@ -247,24 +278,24 @@ Deploying the Streamable-HTTP server via Docker:
 
 ```bash
 docker run -d \
-  --name langfuse-agent-mcp \
-  -p 8004:8004 \
+  --name langfuse-mcp-mcp \
+  -p 8000:8000 \
   -e TRANSPORT=streamable-http \
-  -e PORT=8004 \
-  -e LANGFUSE_BASE_URL="http://your-langfuse-instance:8080" \
-  -e LANGFUSE_PUBLIC_KEY="pk-lf-..." \
-  -e LANGFUSE_SECRET_KEY="sk-lf-..." \
+  -e HOST=0.0.0.0 \
+  -e PORT=8000 \
+  -e MCP_TOOL_MODE=condensed \
+  -e LANGFUSE_BASE_URL=http://localhost:8080 \
+  -e LANGFUSE_DATASETSTOOL=True \
+  -e LANGFUSE_MANAGEMENTTOOL=True \
+  -e LANGFUSE_OBSERVABILITYTOOL=True \
+  -e LANGFUSE_PROMPTS_MODELSTOOL=True \
+  -e LANGFUSE_PUBLIC_KEY=your_public_key_here \
+  -e LANGFUSE_SECRET_KEY=your_secret_key_here \
   knucklessg1/langfuse-agent:mcp
 ```
 
-> The `:mcp` tag is the **slim MCP-server image** (built from
-> `docker/Dockerfile --target mcp`, installing `langfuse-agent[mcp]`). The default
-> `:latest` tag is the **full agent image** (`--target agent`, `langfuse-agent[agent]`)
-> which also bundles the Pydantic AI agent and the epistemic-graph engine — use it
-> when you run `langfuse-agent` (the agent), not just the MCP server. See
-> [Container images](#container-images-mcp-vs-agent).
-
----
+_Auto-generated from the code-read env surface (`MCP_TOOL_MODE` + package vars) — do not edit._
+<!-- MCP-CONFIG-EXAMPLES:END -->
 
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
