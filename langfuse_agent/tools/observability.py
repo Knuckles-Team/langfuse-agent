@@ -9,6 +9,7 @@ from fastmcp import FastMCP
 from pydantic import Field
 
 from langfuse_agent.auth import get_client
+from langfuse_agent.kg_ingest import auto_ingest
 
 
 def register_langfuse_observability_tools(mcp: FastMCP):
@@ -210,7 +211,9 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                     "filter",
                 ]
             }
-            return client.observations_get_many(**method_kwargs)
+            result = client.observations_get_many(**method_kwargs)
+            auto_ingest("observations_get_many", result)  # default-on KG ingestion
+            return result
         elif action == "opentelemetry_export_traces":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["resource_spans"]}
             return client.opentelemetry_export_traces(**method_kwargs)
@@ -257,7 +260,9 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                     "filter",
                 ]
             }
-            return client.scores_get_many(**method_kwargs)
+            result = client.scores_get_many(**method_kwargs)
+            auto_ingest("scores_get_many", result)  # default-on KG ingestion
+            return result
         elif action == "scores_get_by_id":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["score_id"]}
             return client.scores_get_by_id(**method_kwargs)
@@ -268,13 +273,17 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                 if k
                 in ["page", "limit", "from_timestamp", "to_timestamp", "environment"]
             }
-            return client.sessions_list(**method_kwargs)
+            result = client.sessions_list(**method_kwargs)
+            auto_ingest("sessions_list", result)  # default-on KG ingestion
+            return result
         elif action == "sessions_get":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["session_id"]}
             return client.sessions_get(**method_kwargs)
         elif action == "trace_get":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["trace_id"]}
-            return client.trace_get(**method_kwargs)
+            result = client.trace_get(**method_kwargs)
+            auto_ingest("trace_get", result)  # default-on KG ingestion
+            return result
         elif action == "trace_delete":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["trace_id"]}
             return client.trace_delete(**method_kwargs)
@@ -300,7 +309,9 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                     "filter",
                 ]
             }
-            return client.trace_list(**method_kwargs)
+            result = client.trace_list(**method_kwargs)
+            auto_ingest("trace_list", result)  # default-on KG ingestion
+            return result
         elif action == "trace_delete_multiple":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["trace_ids"]}
             return client.trace_delete_multiple(**method_kwargs)
