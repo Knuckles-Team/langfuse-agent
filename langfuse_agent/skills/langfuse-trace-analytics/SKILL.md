@@ -1,5 +1,6 @@
 ---
 name: langfuse-trace-analytics
+skill_type: skill
 description: >-
   LLM-observability analytics on Langfuse via the langfuse-agent MCP server —
   list and read traces, drill into their observations and generations, group by

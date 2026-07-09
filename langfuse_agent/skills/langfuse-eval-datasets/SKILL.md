@@ -1,5 +1,6 @@
 ---
 name: langfuse-eval-datasets
+skill_type: skill
 description: >-
   Evaluation datasets and scoring on Langfuse via the langfuse-agent MCP server —
   create and read datasets and dataset items, launch/read dataset runs, define

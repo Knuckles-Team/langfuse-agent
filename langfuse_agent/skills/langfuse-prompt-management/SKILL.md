@@ -1,5 +1,6 @@
 ---
 name: langfuse-prompt-management
+skill_type: skill
 description: >-
   Prompt registry and model definitions on Langfuse via the langfuse-agent MCP
   server — create, version, label, and fetch prompt templates, and manage the
