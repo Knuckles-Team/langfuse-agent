@@ -1,5 +1,6 @@
 ---
 name: langfuse-agent-operations
+skill_type: skill
 description: >-
   Operate langfuse-agent through its governed MCP and GraphOS capabilities, including langfuse eval datasets, langfuse prompt management, langfuse trace analytics. Use when a request requires this provider's read, change, automation, ingestion, troubleshooting, or evidence workflows.
 ---
