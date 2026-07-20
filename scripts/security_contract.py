@@ -23,7 +23,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 MAX_CONTRACT_BYTES = 128 * 1024
 MAX_EVIDENCE_BYTES = 128 * 1024
 MAX_SBOM_BYTES = 64 * 1024 * 1024
