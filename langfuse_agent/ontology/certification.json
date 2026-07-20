@@ -1,0 +1,37 @@
+{
+  "api_version": "graphos.io/v1",
+  "artifacts": {
+    "a2a.json": "548813afb399d818ac946157441c2aeefa8c41b31323e5cbe55c9bc9f99ff31e",
+    "connector_manifest.yml": "4d02c11aa85dd4220c12b980196c08b572a1f4430415cc2e5a389ed852abde03",
+    "langfuse_agent/connectors/mcp_source_presets.json": "6a917a9f7140ddf7cb14480be65c6719679187c61aef265046cf4b69fc418614",
+    "langfuse_agent/connectors/tool_schema_fingerprints.json": "c282471f16c93d8c0ef03139796b64a898a5792245d1a0fc90fb963c3b0f4a4d",
+    "langfuse_agent/ontology/fixtures/records.json": "45426db59590ddb6e6f72b2296ceefd87236209488199ca4ab36f700f5e08df2",
+    "langfuse_agent/ontology/langfuse.ttl": "443ac809e5801ca6bc88a600c4926e0373f26261eac132860794e0751a01a185",
+    "langfuse_agent/ontology/mappings/source.yaml": "8804fe4c1e42a1ab7c1c7441b9a19dff95ed9d8543102ed0f115a0a84aa820a0",
+    "langfuse_agent/ontology/migrations/manifest.json": "abb14bd6b4428d8365cc71c06dd61cb9ece43f0153d2a59b9b2285328bcf66b5",
+    "langfuse_agent/ontology/shapes/connector.shacl.ttl": "ca61d94426ce3e3e7d773f1dcb7f3086b0f9e5694f444721df1798e147a9ba01"
+  },
+  "checks": {
+    "declared_tool_schema": "passed",
+    "manifest_integrity": "passed",
+    "privacy_contract": "passed",
+    "shacl_parse": "passed",
+    "synthetic_fixture_contract": "passed"
+  },
+  "compatibility": {
+    "agent_utilities": ">=1.27.1,<2",
+    "bundle_schema": "2",
+    "epistemic_graph": ">=2.23.1,<3"
+  },
+  "connector": "langfuse-agent",
+  "kind": "ConnectorSourceAttestation",
+  "live_certified": false,
+  "mode": "offline-source",
+  "schema_version": "2",
+  "signature": "7bPbXM5Dx79SSM3o4JAZL_qAuC2nXn756z0JgnOdsHhnEEvDucVJY3jcyTsL06yUuixh-6beR7kq8NZKLzwMCQ",
+  "signature_algorithm": "ed25519",
+  "signer": "ontology-manifest-generator",
+  "signing_public_key": "og_h_qFaZsA0Pb-HDbSFTirN2Af2T1_N6x03YWQpFGM",
+  "status": "source-validated",
+  "validated_at": "2026-07-19T00:00:00Z"
+}

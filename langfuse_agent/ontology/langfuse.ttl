@@ -1,0 +1,192 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix : <http://knuckles.team/kg#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Langfuse LLM-observability ontology — traces, observations, generations, sessions,
+# scores, datasets, prompts and models over the Langfuse public API. All classes and
+# properties live in the shared `:` (kg#) namespace; only the owl:Ontology node gets the
+# per-package IRI. Backs the langfuse-agent MCP tool surface (langfuse_observability /
+# langfuse_datasets / langfuse_prompts_models / langfuse_management). The shared
+# :Person class models the end-user a trace is attributed to (userId).
+
+# --- classes (owl:Class) ---
+
+:Trace a owl:Class ;
+    rdfs:label "Trace" ;
+    rdfs:comment "A single top-level execution captured by Langfuse — the root of a tree of observations, attributed to a user and grouped into a session (langfuse_observability trace_list/trace_get)." .
+
+:Observation a owl:Class ;
+    rdfs:label "Observation" ;
+    rdfs:comment "A node inside a trace's execution tree — a SPAN, EVENT or GENERATION with a start/end time, level and status (langfuse_observability observations_get_many)." .
+
+:Generation a owl:Class ;
+    rdfs:subClassOf :Observation ;
+    rdfs:label "Generation" ;
+    rdfs:comment "An LLM generation observation (type=GENERATION): a model call carrying model name, model parameters, token usage and cost." .
+
+:Session a owl:Class ;
+    rdfs:label "Session" ;
+    rdfs:comment "A grouping of related traces representing one conversation or user session (langfuse_observability sessions_list/sessions_get)." .
+
+:Score a owl:Class ;
+    rdfs:label "Score" ;
+    rdfs:comment "An evaluation metric attached to a trace, observation or session — numeric, categorical or boolean, from a human, API, eval or annotation source (langfuse_observability scores_get_many)." .
+
+:ScoreConfig a owl:Class ;
+    rdfs:label "Score Config" ;
+    rdfs:comment "The schema/definition of a score: its name, data type and allowed range or categories (langfuse_observability score_configs_get)." .
+
+:Dataset a owl:Class ;
+    rdfs:label "Dataset" ;
+    rdfs:comment "A named collection of dataset items used as an evaluation/test set (langfuse_datasets datasets_list/datasets_get)." .
+
+:DatasetRun a owl:Class ;
+    rdfs:label "Dataset Run" ;
+    rdfs:comment "One execution of a dataset against a system under test, aggregating run items and their scores (langfuse_datasets datasets_get_runs)." .
+
+:Prompt a owl:Class ;
+    rdfs:label "Prompt" ;
+    rdfs:comment "A versioned, labelled prompt template managed in the Langfuse prompt registry (langfuse_prompts_models prompts_get/prompts_list)." .
+
+:Model a owl:Class ;
+    rdfs:label "Model" ;
+    rdfs:comment "A model definition with a match pattern and unit/pricing used to compute generation cost (langfuse_prompts_models models_list/models_get)." .
+
+# --- links (owl:ObjectProperty) ---
+
+:inSession a owl:ObjectProperty ;
+    rdfs:label "in session" ;
+    rdfs:comment "Links a Trace to the Session that groups it." ;
+    rdfs:domain :Trace ;
+    rdfs:range :Session .
+
+:tracedUser a owl:ObjectProperty ;
+    rdfs:label "traced user" ;
+    rdfs:comment "Links a Trace (or Session) to the Person it is attributed to (userId)." ;
+    rdfs:range :Person .
+
+:belongsToTrace a owl:ObjectProperty ;
+    rdfs:label "belongs to trace" ;
+    rdfs:comment "Links an Observation or Score to the Trace it was recorded under." ;
+    rdfs:range :Trace .
+
+:parentObservation a owl:ObjectProperty ;
+    rdfs:label "parent observation" ;
+    rdfs:comment "Links a child Observation to its parent Observation within a trace tree." ;
+    rdfs:domain :Observation ;
+    rdfs:range :Observation .
+
+:usedModel a owl:ObjectProperty ;
+    rdfs:label "used model" ;
+    rdfs:comment "Links a Generation to the Model that produced it." ;
+    rdfs:domain :Generation ;
+    rdfs:range :Model .
+
+:usedPrompt a owl:ObjectProperty ;
+    rdfs:label "used prompt" ;
+    rdfs:comment "Links a Generation to the Prompt version it rendered." ;
+    rdfs:domain :Generation ;
+    rdfs:range :Prompt .
+
+:scores a owl:ObjectProperty ;
+    rdfs:label "scores" ;
+    rdfs:comment "Links a Score to the Trace, Observation or Session it evaluates." ;
+    rdfs:domain :Score .
+
+:usesConfig a owl:ObjectProperty ;
+    rdfs:label "uses config" ;
+    rdfs:comment "Links a Score to the ScoreConfig that defines its schema." ;
+    rdfs:domain :Score ;
+    rdfs:range :ScoreConfig .
+
+:runOf a owl:ObjectProperty ;
+    rdfs:label "run of" ;
+    rdfs:comment "Links a DatasetRun to the Dataset it executed against." ;
+    rdfs:domain :DatasetRun ;
+    rdfs:range :Dataset .
+
+# --- fields (owl:DatatypeProperty) ---
+
+:observationType a owl:DatatypeProperty ;
+    rdfs:label "observation type" ;
+    rdfs:comment "Kind of observation: SPAN, EVENT or GENERATION." ;
+    rdfs:domain :Observation ;
+    rdfs:range xsd:string .
+
+:startTime a owl:DatatypeProperty ;
+    rdfs:label "start time" ;
+    rdfs:comment "ISO-8601 start timestamp of an Observation (timeseries anchor)." ;
+    rdfs:range xsd:dateTime .
+
+:endTime a owl:DatatypeProperty ;
+    rdfs:label "end time" ;
+    rdfs:comment "ISO-8601 end timestamp of an Observation." ;
+    rdfs:range xsd:dateTime .
+
+:timestamp a owl:DatatypeProperty ;
+    rdfs:label "timestamp" ;
+    rdfs:comment "ISO-8601 event time of a Trace or Score (timeseries anchor)." ;
+    rdfs:range xsd:dateTime .
+
+:latency a owl:DatatypeProperty ;
+    rdfs:label "latency" ;
+    rdfs:comment "Wall-clock duration of a Trace or Observation, in seconds." ;
+    rdfs:range xsd:decimal .
+
+:totalCost a owl:DatatypeProperty ;
+    rdfs:label "total cost" ;
+    rdfs:comment "Aggregated USD cost of a Trace or Generation." ;
+    rdfs:range xsd:decimal .
+
+:totalTokens a owl:DatatypeProperty ;
+    rdfs:label "total tokens" ;
+    rdfs:comment "Total token usage of a Generation (prompt + completion)." ;
+    rdfs:range xsd:integer .
+
+:modelName a owl:DatatypeProperty ;
+    rdfs:label "model name" ;
+    rdfs:comment "Name of the model that produced a Generation or defined by a Model." ;
+    rdfs:range xsd:string .
+
+:level a owl:DatatypeProperty ;
+    rdfs:label "level" ;
+    rdfs:comment "Severity level of an Observation (DEBUG, DEFAULT, WARNING, ERROR)." ;
+    rdfs:range xsd:string .
+
+:scoreValue a owl:DatatypeProperty ;
+    rdfs:label "score value" ;
+    rdfs:comment "The value of a Score (numeric, or the string value for categorical scores)." ;
+    rdfs:range xsd:string .
+
+:dataType a owl:DatatypeProperty ;
+    rdfs:label "data type" ;
+    rdfs:comment "Data type of a Score or ScoreConfig (NUMERIC, CATEGORICAL, BOOLEAN)." ;
+    rdfs:range xsd:string .
+
+:environment a owl:DatatypeProperty ;
+    rdfs:label "environment" ;
+    rdfs:comment "Deployment environment tag (e.g. production, staging) on a Trace/Observation." ;
+    rdfs:range xsd:string .
+
+:release a owl:DatatypeProperty ;
+    rdfs:label "release" ;
+    rdfs:comment "Release identifier of the code that produced a Trace." ;
+    rdfs:range xsd:string .
+
+:promptVersion a owl:DatatypeProperty ;
+    rdfs:label "prompt version" ;
+    rdfs:comment "Version number of a Prompt in the registry." ;
+    rdfs:range xsd:integer .
+
+<http://knuckles.team/kg/langfuse> a owl:Ontology ;
+    rdfs:label "Langfuse Observability Ontology" ;
+    rdfs:comment """Langfuse LLM-observability model — traces, observations, generations,
+    sessions, scores and score configs, datasets and dataset runs, prompts and models,
+    with their tree, attribution, evaluation and cost relationships — federated into the
+    agent-utilities knowledge-graph hub. Reuses the shared :Person class for the end-user
+    a trace is attributed to.""" ;
+    owl:imports <http://knuckles.team/kg> .

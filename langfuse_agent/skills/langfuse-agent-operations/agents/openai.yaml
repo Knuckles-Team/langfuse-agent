@@ -1,0 +1,4 @@
+interface:
+  display_name: "Langfuse Agent Operations"
+  short_description: "Help with Langfuse Agent Operations tasks"
+  default_prompt: "Use $langfuse-agent-operations to complete a governed provider workflow."

@@ -16,13 +16,13 @@ All agents in the ecosystem inherit enterprise-grade infrastructure from `agent-
 | **JWT/OIDC Authentication** | ✅ Built-in | `agent-utilities[auth]` — Authlib JWKS + API key middleware |
 | **OpenTelemetry Instrumentation** | ✅ Built-in | `agent-utilities[logfire]` — OTLP export, FastAPI auto-instrumentation |
 | **HashiCorp Vault Integration** | ✅ Built-in | `agent-utilities[vault]` — `secret://`, `env://`, `vault://` URI schemes |
-| **Audit Logging** | ✅ Built-in | Append-only compliance trail with 30+ action types (CONCEPT:OS-5.4) |
-| **Token Usage Analytics** | ✅ Built-in | 4-bucket tracking with budget alerting (CONCEPT:OS-5.4) |
-| **Prompt Injection Defense** | ✅ Built-in | 25+ pattern scanner + jailbreak taxonomy (CONCEPT:OS-5.1) |
-| **Guardrail Engine** | ✅ Built-in | Input/output interception with block/redact/warn (CONCEPT:OS-5.3) |
-| **Action Execution Pipeline** | ✅ Built-in | Token, cost, duration, and node transition limits Dry-run / commit / rollback phases (CONCEPT:ORCH-1.4) |
-| **Resource Scheduling** | ✅ Built-in | Priority queuing + preemption limits (CONCEPT:OS-5.2) |
-| **Session Concurrency** | ✅ Built-in | Enqueue/reject/interrupt/rollback (CONCEPT:OS-5.3) |
+| **Audit Logging** | ✅ Built-in | Append-only compliance trail with 30+ action types (CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox) |
+| **Token Usage Analytics** | ✅ Built-in | 4-bucket tracking with budget alerting (CONCEPT:AU-OS.governance.wasm-micro-agent-sandbox) |
+| **Prompt Injection Defense** | ✅ Built-in | 25+ pattern scanner + jailbreak taxonomy (CONCEPT:AU-OS.config.secrets-authentication) |
+| **Guardrail Engine** | ✅ Built-in | Input/output interception with block/redact/warn (CONCEPT:AU-OS.governance.reactive-multi-axis-budget) |
+| **Action Execution Pipeline** | ✅ Built-in | Token, cost, duration, and node transition limits Dry-run / commit / rollback phases (CONCEPT:AU-ORCH.adapter.kg-graph-materialization) |
+| **Resource Scheduling** | ✅ Built-in | Priority queuing + preemption limits (CONCEPT:AU-OS.state.cognitive-scheduler-preemption) |
+| **Session Concurrency** | ✅ Built-in | Enqueue/reject/interrupt/rollback (CONCEPT:AU-OS.governance.reactive-multi-axis-budget) |
 
 ## Concept Registry
 
@@ -42,35 +42,51 @@ This project follows the standardized agent-package pattern:
 
 ```
 langfuse-agent/
-├── langfuse_agent/        # Source code
-│   ├── __init__.py
-│   ├── agent_server.py      # Entry point (create_graph_agent_server)
-│   ├── api_client.py        # REST/GraphQL API wrapper
-│   └── mcp_server.py        # FastMCP tool definitions
+├── langfuse_agent/          # Provider source
+│   ├── api/                    # Per-domain REST clients
+│   ├── agent_server.py         # Optional A2A agent entry point
+│   ├── kg_ingest.py            # Governed graph materialization
+│   ├── runtime_posture.py      # Native-provider readiness proof
+│   ├── trace_projection.py     # Privacy-safe trace projection
+│   ├── mcp_server.py           # FastMCP provider entry point
+│   └── skills/                 # Consolidated operations workflow
 ├── tests/                   # Test suite
 ├── docs/                    # Documentation
+├── docker/Dockerfile        # Agent and MCP image targets
 ├── pyproject.toml           # Package metadata
 ├── mcp_config.json          # MCP server configuration
-├── main_agent.json          # Agent identity & system prompt
-└── Dockerfile               # Container deployment
+└── main_agent.json          # Agent identity and system prompt
 ```
 
-## MCP Configuration
+## Native GraphOS configuration
 
-### stdio Mode
+GraphOS registers the installed provider lazily from `AgentConfig`. Configure
+only the canonical service URL and runtime secret references on the parent:
+
 ```json
 {
   "mcpServers": {
-    "langfuse-agent": {
-      "command": "uv",
-      "args": ["run", "--with", "langfuse-agent", "langfuse-mcp"],
-      "env": {}
+    "graph-os": {
+      "command": "graph-os",
+      "env": {
+        "LANGFUSE_HOST": "https://langfuse.example.invalid",
+        "LANGFUSE_PUBLIC_KEY_REF": "env://LANGFUSE_PROJECT_PUBLIC_KEY",
+        "LANGFUSE_SECRET_KEY_REF": "env://LANGFUSE_PROJECT_SECRET_KEY"
+      }
     }
   }
 }
 ```
 
-### Streamable HTTP Mode
+The `env://` values are neutral schema examples; runtime configuration may use
+any supported reference provider. The parent resolves the references and starts the installed
+`langfuse_agent.mcp_server` module with its current interpreter. Startup does
+not invoke a package manager. For a direct, supervisor-managed HTTP child:
+
 ```bash
-langfuse-mcp --transport streamable-http --port 8001
+python -m langfuse_agent.mcp_server \
+  --transport streamable-http --host 127.0.0.1 --port 8001
 ```
+
+See [Deployment](deployment.md) for the secret-materialization and TLS trust
+boundaries.

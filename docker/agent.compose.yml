@@ -2,19 +2,34 @@ version: '3.8'
 
 services:
   langfuse-agent-mcp:
-    image: knucklessg1/langfuse-agent:latest
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: ${AGENT_CONTAINER_MEMORY_LIMIT:-4g}
+    cpus: ${AGENT_CONTAINER_CPU_LIMIT:-2.0}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+    image: ${LANGFUSE_AGENT_MCP_IMAGE:?set-LANGFUSE_AGENT_MCP_IMAGE-to-image@sha256-digest}
     container_name: langfuse-agent-mcp
     hostname: langfuse-agent-mcp
     restart: always
-    env_file:
-      - ../.env
     environment:
       - PYTHONUNBUFFERED=1
       - HOST=0.0.0.0
       - PORT=8004
       - TRANSPORT=streamable-http
+      - LANGFUSE_HOST
+      - LANGFUSE_PUBLIC_KEY
+      - LANGFUSE_SECRET_KEY
+      - REQUESTS_CA_BUNDLE
+      - SSL_CERT_FILE
     ports:
-      - "8004:8004"
+      - "127.0.0.1:8004:8004"
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/health')"]
       interval: 30s
@@ -28,14 +43,24 @@ services:
         max-file: "3"
 
   langfuse-agent-agent:
-    image: knucklessg1/langfuse-agent:latest
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: ${AGENT_CONTAINER_MEMORY_LIMIT:-4g}
+    cpus: ${AGENT_CONTAINER_CPU_LIMIT:-2.0}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+    image: ${LANGFUSE_AGENT_AGENT_IMAGE:?set-LANGFUSE_AGENT_AGENT_IMAGE-to-image@sha256-digest}
     container_name: langfuse-agent-agent
     hostname: langfuse-agent-agent
     restart: always
     depends_on:
       - langfuse-agent-mcp
-    env_file:
-      - ../.env
     command: [ "langfuse-agent" ]
     environment:
       - PYTHONUNBUFFERED=1
@@ -46,8 +71,13 @@ services:
       - MODEL_ID=${MODEL_ID:-gpt-4o}
       - ENABLE_WEB_UI=True
       - ENABLE_OTEL=True
+      - LANGFUSE_HOST
+      - LANGFUSE_PUBLIC_KEY
+      - LANGFUSE_SECRET_KEY
+      - REQUESTS_CA_BUNDLE
+      - SSL_CERT_FILE
     ports:
-      - "9004:9004"
+      - "127.0.0.1:9004:9004"
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9004/health')"]
       interval: 30s

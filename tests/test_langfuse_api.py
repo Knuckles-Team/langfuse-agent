@@ -81,7 +81,8 @@ class TestLangfuseApiRequest:
 
         with pytest.raises(AuthError) as exc_info:
             mock_api_client._request("GET", "/test/endpoint")
-        assert "Unauthorized test" in str(exc_info.value)
+        assert str(exc_info.value) == "langfuse_authentication_failed"
+        assert "Unauthorized test" not in str(exc_info.value)
 
     def test_request_network_error(self, mock_api_client, mock_requests):
         """Test network error raises ApiError."""
@@ -93,7 +94,9 @@ class TestLangfuseApiRequest:
 
         with pytest.raises(ApiError) as exc_info:
             mock_api_client._request("GET", "/test/endpoint")
-        assert "Connection error" in str(exc_info.value)
+        assert str(exc_info.value) == "langfuse_api_request_failed:RequestException"
+        assert "Connection error" not in str(exc_info.value)
+        assert exc_info.value.__cause__ is None
 
     def test_request_with_params(self, mock_api_client, mock_requests):
         """Test request with query parameters."""
@@ -107,6 +110,47 @@ class TestLangfuseApiRequest:
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["params"] == {"page": 1, "limit": 10}
+        assert call_kwargs["timeout"] == 30.0
+
+    def test_request_applies_verified_mtls_transport(self, mock_requests):
+        api = LangfuseApi(
+            public_key="synthetic-public",
+            secret_key="dummy-secret",
+            host="https://telemetry.example.test",
+            transport_kwargs={
+                "verify": "synthetic-ca-bundle.pem",
+                "cert": "synthetic-client-bundle.pem",
+            },
+        )
+
+        api._request("GET", "/test/endpoint")
+
+        call_kwargs = mock_requests.request.call_args.kwargs
+        assert call_kwargs["verify"] == "synthetic-ca-bundle.pem"
+        assert call_kwargs["cert"] == "synthetic-client-bundle.pem"
+
+    def test_request_rejects_non_transport_kwargs(self):
+        with pytest.raises(ValueError, match="langfuse_transport_contract_invalid"):
+            LangfuseApi(
+                public_key="synthetic-public",
+                secret_key="dummy-secret",
+                host="https://telemetry.example.test",
+                transport_kwargs={"timeout": 0},
+            )
+
+    @pytest.mark.parametrize(
+        ("configured", "expected"),
+        [(-1.0, 1.0), (10.0, 10.0), (999.0, 120.0), (float("inf"), 30.0)],
+    )
+    def test_request_timeout_is_bounded(self, configured, expected):
+        api = LangfuseApi(
+            public_key="synthetic-public",
+            secret_key="dummy-secret",
+            host="https://telemetry.example.test",
+            timeout=configured,
+        )
+
+        assert api.timeout == expected
 
 
 class TestAnnotationQueues:
@@ -149,7 +193,7 @@ class TestAnnotationQueues:
         """Test listing queue items."""
         mock_requests.request.return_value.json.return_value = {"items": []}
 
-        result = mock_api_client.annotation_queues_list_queue_items(
+        mock_api_client.annotation_queues_list_queue_items(
             "queue-1", status="pending", page=1, limit=10
         )
 
@@ -160,9 +204,7 @@ class TestAnnotationQueues:
         """Test creating a queue item."""
         mock_requests.request.return_value.json.return_value = {"id": "item-1"}
 
-        result = mock_api_client.annotation_queues_create_queue_item(
-            "queue-1", {"data": "test"}
-        )
+        mock_api_client.annotation_queues_create_queue_item("queue-1", {"data": "test"})
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["json"] == {"data": "test"}
@@ -171,7 +213,7 @@ class TestAnnotationQueues:
         """Test getting a queue item."""
         mock_requests.request.return_value.json.return_value = {"id": "item-1"}
 
-        result = mock_api_client.annotation_queues_get_queue_item("queue-1", "item-1")
+        mock_api_client.annotation_queues_get_queue_item("queue-1", "item-1")
 
         call_args = mock_requests.request.call_args[0]
         assert (
@@ -183,7 +225,7 @@ class TestAnnotationQueues:
         """Test updating a queue item."""
         mock_requests.request.return_value.json.return_value = {"id": "item-1"}
 
-        result = mock_api_client.annotation_queues_update_queue_item(
+        mock_api_client.annotation_queues_update_queue_item(
             "queue-1", "item-1", {"status": "completed"}
         )
 
@@ -206,7 +248,7 @@ class TestAnnotationQueues:
         """Test creating a queue assignment."""
         mock_requests.request.return_value.json.return_value = {"id": "assignment-1"}
 
-        result = mock_api_client.annotation_queues_create_queue_assignment(
+        mock_api_client.annotation_queues_create_queue_assignment(
             "queue-1", {"user_id": "user-1"}
         )
 
@@ -247,7 +289,7 @@ class TestBlobStorageIntegrations:
         """Test upserting blob storage integration."""
         mock_requests.request.return_value.json.return_value = {"id": "integration-1"}
 
-        result = (
+        (
             mock_api_client.blob_storage_integrations_upsert_blob_storage_integration(
                 {"type": "s3", "config": {}}
             )
@@ -298,7 +340,7 @@ class TestComments:
         """Test getting comments."""
         mock_requests.request.return_value.json.return_value = {"comments": []}
 
-        result = mock_api_client.comments_get(
+        mock_api_client.comments_get(
             page=1, limit=10, object_type="trace", object_id="trace-1"
         )
 
@@ -330,7 +372,7 @@ class TestDatasetItems:
         """Test listing dataset items."""
         mock_requests.request.return_value.json.return_value = {"items": []}
 
-        result = mock_api_client.dataset_items_list(
+        mock_api_client.dataset_items_list(
             dataset_name="test-dataset", page=1, limit=10
         )
 
@@ -369,9 +411,7 @@ class TestDatasetRunItems:
         """Test listing dataset run items."""
         mock_requests.request.return_value.json.return_value = {"items": []}
 
-        result = mock_api_client.dataset_run_items_list(
-            "dataset-1", "run-1", page=1, limit=10
-        )
+        mock_api_client.dataset_run_items_list("dataset-1", "run-1", page=1, limit=10)
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["params"]["datasetId"] == "dataset-1"
@@ -442,78 +482,6 @@ class TestHealth:
         assert result == {"status": "healthy"}
 
 
-class TestIngestion:
-    """Tests for ingestion API methods."""
-
-    def test_ingestion_batch(self, mock_api_client, mock_requests):
-        """Test batch ingestion."""
-        mock_requests.request.return_value.json.return_value = {"success": True}
-
-        result = mock_api_client.ingestion_batch(
-            [{"event": "data"}], metadata={"key": "value"}
-        )
-
-        call_kwargs = mock_requests.request.call_args[1]
-        assert call_kwargs["json"]["batch"] == [{"event": "data"}]
-        assert call_kwargs["json"]["metadata"] == {"key": "value"}
-
-
-class TestLegacyMetrics:
-    """Tests for legacy metrics API methods."""
-
-    def test_legacy_metrics_v1_metrics(self, mock_api_client, mock_requests):
-        """Test legacy metrics endpoint."""
-        mock_requests.request.return_value.json.return_value = {"metrics": []}
-
-        result = mock_api_client.legacy_metrics_v1_metrics("test query")
-
-        call_kwargs = mock_requests.request.call_args[1]
-        assert call_kwargs["params"]["query"] == "test query"
-
-
-class TestLegacyObservations:
-    """Tests for legacy observations API methods."""
-
-    def test_legacy_observations_v1_get(self, mock_api_client, mock_requests):
-        """Test getting a single observation."""
-        mock_requests.request.return_value.json.return_value = {"id": "obs-1"}
-
-        result = mock_api_client.legacy_observations_v1_get("obs-1")
-
-        assert result == {"id": "obs-1"}
-
-    def test_legacy_observations_v1_get_many(self, mock_api_client, mock_requests):
-        """Test getting many observations."""
-        mock_requests.request.return_value.json.return_value = {"observations": []}
-
-        result = mock_api_client.legacy_observations_v1_get_many(
-            page=1, limit=10, type="GENERATION"
-        )
-
-        call_kwargs = mock_requests.request.call_args[1]
-        assert call_kwargs["params"]["type"] == "GENERATION"
-
-
-class TestLegacyScore:
-    """Tests for legacy score API methods."""
-
-    def test_legacy_score_v1_create(self, mock_api_client, mock_requests):
-        """Test creating a score."""
-        mock_requests.request.return_value.json.return_value = {"id": "score-1"}
-
-        result = mock_api_client.legacy_score_v1_create({"value": 0.9})
-
-        assert result == {"id": "score-1"}
-
-    def test_legacy_score_v1_delete(self, mock_api_client, mock_requests):
-        """Test deleting a score."""
-        mock_requests.request.return_value.text = ""
-
-        result = mock_api_client.legacy_score_v1_delete("score-1")
-
-        assert result == {"success": True}
-
-
 class TestLLMConnections:
     """Tests for LLM connections API methods."""
 
@@ -565,11 +533,11 @@ class TestMedia:
 class TestMetrics:
     """Tests for metrics API methods."""
 
-    def test_metrics_metrics(self, mock_api_client, mock_requests):
+    def test_metrics_get(self, mock_api_client, mock_requests):
         """Test metrics endpoint."""
         mock_requests.request.return_value.json.return_value = {"data": []}
 
-        result = mock_api_client.metrics_metrics("test query")
+        mock_api_client.metrics_get("test query")
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["params"]["query"] == "test query"
@@ -618,7 +586,7 @@ class TestObservations:
         """Test getting many observations."""
         mock_requests.request.return_value.json.return_value = {"observations": []}
 
-        result = mock_api_client.observations_get_many(
+        mock_api_client.observations_get_many(
             fields="core,basic", limit=10, type="GENERATION"
         )
 
@@ -634,7 +602,7 @@ class TestOpenTelemetry:
         """Test exporting OpenTelemetry traces."""
         mock_requests.request.return_value.json.return_value = {"success": True}
 
-        result = mock_api_client.opentelemetry_export_traces([{"span": "data"}])
+        mock_api_client.opentelemetry_export_traces([{"span": "data"}])
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["json"]["resourceSpans"] == [{"span": "data"}]
@@ -747,7 +715,7 @@ class TestProjects:
         """Test creating project."""
         mock_requests.request.return_value.json.return_value = {"id": "project-1"}
 
-        result = mock_api_client.projects_create("test-project", 30, {"key": "value"})
+        mock_api_client.projects_create("test-project", 30, {"key": "value"})
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["json"]["name"] == "test-project"
@@ -757,7 +725,7 @@ class TestProjects:
         """Test updating project."""
         mock_requests.request.return_value.json.return_value = {"id": "project-1"}
 
-        result = mock_api_client.projects_update(
+        mock_api_client.projects_update(
             "project-1", "updated-name", {"key": "value"}, 60
         )
 
@@ -804,7 +772,7 @@ class TestPrompts:
         """Test updating prompt version labels."""
         mock_requests.request.return_value.json.return_value = {"success": True}
 
-        result = mock_api_client.prompt_version_update("test-prompt", 1, ["prod"])
+        mock_api_client.prompt_version_update("test-prompt", 1, ["prod"])
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["json"]["newLabels"] == ["prod"]
@@ -873,7 +841,7 @@ class TestSCIM:
         """Test listing SCIM users."""
         mock_requests.request.return_value.json.return_value = {"users": []}
 
-        result = mock_api_client.scim_list_users(
+        mock_api_client.scim_list_users(
             filter="userName eq 'test'", start_index=1, count=10
         )
 
@@ -946,22 +914,29 @@ class TestScoreConfigs:
 class TestScores:
     """Tests for scores API methods."""
 
-    def test_scores_get_many(self, mock_api_client, mock_requests):
-        """Test getting many scores."""
-        mock_requests.request.return_value.json.return_value = {"scores": []}
-
-        result = mock_api_client.scores_get_many(page=1, limit=10, name="test-score")
-
-        call_kwargs = mock_requests.request.call_args[1]
-        assert call_kwargs["params"]["name"] == "test-score"
-
-    def test_scores_get_by_id(self, mock_api_client, mock_requests):
-        """Test getting score by ID."""
+    def test_scores_create(self, mock_api_client, mock_requests):
+        """Test creating a typed score."""
         mock_requests.request.return_value.json.return_value = {"id": "score-1"}
 
-        result = mock_api_client.scores_get_by_id("score-1")
+        result = mock_api_client.scores_create(
+            {"name": "quality", "value": 0.9, "traceId": "trace-1"}
+        )
 
         assert result == {"id": "score-1"}
+
+    def test_scores_get_many(self, mock_api_client, mock_requests):
+        """Test the cursor-based Scores API v3."""
+        mock_requests.request.return_value.json.return_value = {"scores": []}
+
+        mock_api_client.scores_get_many(
+            cursor="cursor-1", id="score-1", limit=10, name="test-score"
+        )
+
+        call_args, call_kwargs = mock_requests.request.call_args
+        assert call_args[1].endswith("/api/public/v3/scores")
+        assert call_kwargs["params"]["cursor"] == "cursor-1"
+        assert call_kwargs["params"]["id"] == "score-1"
+        assert call_kwargs["params"]["name"] == "test-score"
 
 
 class TestSessions:
@@ -1007,7 +982,7 @@ class TestTraces:
         """Test listing traces."""
         mock_requests.request.return_value.json.return_value = {"traces": []}
 
-        result = mock_api_client.trace_list(page=1, limit=10, user_id="user-1")
+        mock_api_client.trace_list(page=1, limit=10, user_id="user-1")
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["params"]["userId"] == "user-1"
@@ -1016,7 +991,7 @@ class TestTraces:
         """Test deleting multiple traces."""
         mock_requests.request.return_value.text = ""
 
-        result = mock_api_client.trace_delete_multiple(["trace-1", "trace-2"])
+        mock_api_client.trace_delete_multiple(["trace-1", "trace-2"])
 
         call_kwargs = mock_requests.request.call_args[1]
         assert call_kwargs["json"]["traceIds"] == ["trace-1", "trace-2"]

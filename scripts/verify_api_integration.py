@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import os
 import ast
 import glob
+import os
 import sys
 
 BASELINES = {
@@ -35,7 +35,7 @@ def parse_api_client(filepath):
     Parses api_client.py to find the main API/Client class and its public methods.
     Returns a set of method names.
     """
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         tree = ast.parse(f.read(), filename=filepath)
 
     methods = {}
@@ -82,7 +82,7 @@ class MethodCallVisitor(ast.NodeVisitor):
 
     def visit_Compare(self, node):
         # Capture action comparisons, e.g. action == "get"
-        for op, comparator in zip(node.ops, node.comparators):
+        for op, comparator in zip(node.ops, node.comparators, strict=False):
             if isinstance(op, (ast.Eq, ast.In)):
                 if isinstance(comparator, ast.Constant) and isinstance(
                     comparator.value, str
@@ -96,11 +96,32 @@ def parse_mcp_server(filepath, api_methods):
     Parses mcp_server.py to extract registered tools and identify which
     api_methods they leverage.
     """
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         tree = ast.parse(f.read(), filename=filepath)
 
     tool_mappings = {}
     all_mapped_methods = set()
+
+    # The current fleet surface is generated from the complete client class by
+    # Agent Utilities.  Treat that binding as authoritative only when the call
+    # explicitly supplies ``client_cls``; a bare helper import is insufficient.
+    introspected_surface = any(
+        isinstance(node, ast.Call)
+        and (
+            (isinstance(node.func, ast.Name) and node.func.id == "register_tool_surface")
+            or (
+                isinstance(node.func, ast.Attribute)
+                and node.func.attr == "register_tool_surface"
+            )
+        )
+        and any(
+            keyword.arg == "client_cls" and isinstance(keyword.value, ast.Name)
+            for keyword in node.keywords
+        )
+        for node in ast.walk(tree)
+    )
+    if introspected_surface:
+        all_mapped_methods.update(api_methods)
 
     for node in ast.walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -135,9 +156,11 @@ def parse_mcp_server(filepath, api_methods):
 
 
 def verify_agent(agent_dir):
-    # Find api_client.py and mcp_server.py
-    api_clients = glob.glob(
-        os.path.join(agent_dir, "**", "api_client.py"), recursive=True
+    # Generated clients are split across ``api_client_<domain>.py`` modules and
+    # composed by ``api_client.py``.  Scanning only the composition class yields
+    # zero methods and used to turn this required gate into a silent skip.
+    api_clients = sorted(
+        glob.glob(os.path.join(agent_dir, "**", "api_client*.py"), recursive=True)
     )
     mcp_servers = glob.glob(
         os.path.join(agent_dir, "**", "mcp_server.py"), recursive=True
@@ -146,10 +169,11 @@ def verify_agent(agent_dir):
     if not api_clients or not mcp_servers:
         return None
 
-    api_client_path = api_clients[0]
     mcp_server_path = mcp_servers[0]
 
-    api_methods = parse_api_client(api_client_path)
+    api_methods = {}
+    for api_client_path in api_clients:
+        api_methods.update(parse_api_client(api_client_path))
     if not api_methods:
         return None
 
@@ -163,7 +187,7 @@ def verify_agent(agent_dir):
 
     return {
         "agent_name": os.path.basename(agent_dir),
-        "api_client": api_client_path,
+        "api_client_count": len(api_clients),
         "mcp_server": mcp_server_path,
         "total_methods": total_methods,
         "covered_methods": covered_methods,
@@ -182,11 +206,8 @@ def main():
         cwd = os.getcwd()
         res = verify_agent(cwd)
         if not res:
-            # If no client or server found in this dir, pass silently (e.g. non-python files, doc edits)
-            print(
-                "Skipping integration parity verification: No mcp_server.py/api_client.py found in current directory."
-            )
-            sys.exit(0)
+            print("API-to-MCP integration parity failed: required surface unavailable.")
+            sys.exit(1)
 
         agent_name = res["agent_name"]
         coverage = res["coverage"]
@@ -218,7 +239,7 @@ def main():
             sys.exit(0)
 
     # --- Default Mode (Workspace-wide Scan) ---
-    agents_dir = "/home/apps/workspace/agent-packages/agents"
+    agents_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     agent_dirs = [
         d for d in glob.glob(os.path.join(agents_dir, "*")) if os.path.isdir(d)
     ]
@@ -243,11 +264,11 @@ def main():
             if res:
                 results.append(res)
         except Exception as e:
-            print(f"Error parsing {agent_dir}: {e}", file=sys.stderr)
+            print(f"Operation failed: {type(e).__name__}", file=sys.stderr)
 
     # Print a beautiful report
     print("# API to MCP Integration Parity Report")
-    print(f"Scan Directory: `{agents_dir}`\n")
+    print("Scan scope: provider fleet\n")
     print("| Agent Name | API Methods | Covered Methods | Coverage % | Status |")
     print("|---|---|---|---|---|")
 

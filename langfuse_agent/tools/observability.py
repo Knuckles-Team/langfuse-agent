@@ -9,6 +9,8 @@ from fastmcp import FastMCP
 from pydantic import Field
 
 from langfuse_agent.auth import get_client
+from langfuse_agent.kg_ingest import auto_ingest
+from langfuse_agent.runtime_posture import observability_runtime_posture
 
 
 def register_langfuse_observability_tools(mcp: FastMCP):
@@ -20,15 +22,15 @@ def register_langfuse_observability_tools(mcp: FastMCP):
     @mcp.tool(tags={"langfuse"})
     async def langfuse_observability(
         action: str = Field(
-            description="Action to perform. Must be one of: legacy_metrics_v1_metrics, legacy_observations_v1_get, legacy_observations_v1_get_many, legacy_score_v1_create, legacy_score_v1_delete, metrics_metrics, observations_get_many, opentelemetry_export_traces, score_configs_create, score_configs_get, score_configs_get_by_id, score_configs_update, scores_get_many, scores_get_by_id, sessions_list, sessions_get, trace_get, trace_delete, trace_list, trace_delete_multiple, ingestion_batch"
+            description="Action to perform. Must be one of: runtime_posture, metrics_get, observations_get_many, opentelemetry_export_traces, score_configs_create, score_configs_get, score_configs_get_by_id, score_configs_update, scores_create, scores_get_many, sessions_list, sessions_get, trace_get, trace_delete, trace_list, trace_delete_multiple"
         ),
-        batch: Any = Field(default=None, description="batch"),
+        author_user_id: Any = Field(default=None, description="author user id"),
         body: Any = Field(default=None, description="body"),
         config_id: Any = Field(default=None, description="config id"),
         cursor: Any = Field(default=None, description="cursor"),
         data_type: Any = Field(default=None, description="data type"),
-        dataset_run_id: Any = Field(default=None, description="dataset run id"),
         environment: Any = Field(default=None, description="environment"),
+        experiment_id: Any = Field(default=None, description="experiment id"),
         expand_metadata: Any = Field(default=None, description="expand metadata"),
         fields: Any = Field(default=None, description="fields"),
         filter: Any = Field(default=None, description="filter"),
@@ -36,10 +38,9 @@ def register_langfuse_observability_tools(mcp: FastMCP):
         from_timestamp: Any = Field(default=None, description="from timestamp"),
         level: Any = Field(default=None, description="level"),
         limit: Any = Field(default=None, description="limit"),
-        metadata: Any = Field(default=None, description="metadata"),
+        id: Any = Field(default=None, description="score id filter"),
         name: Any = Field(default=None, description="name"),
         observation_id: Any = Field(default=None, description="observation id"),
-        operator: Any = Field(default=None, description="operator"),
         order_by: Any = Field(default=None, description="order by"),
         page: Any = Field(default=None, description="page"),
         parent_observation_id: Any = Field(
@@ -50,8 +51,6 @@ def register_langfuse_observability_tools(mcp: FastMCP):
         queue_id: Any = Field(default=None, description="queue id"),
         release: Any = Field(default=None, description="release"),
         resource_spans: Any = Field(default=None, description="resource spans"),
-        score_id: Any = Field(default=None, description="score id"),
-        score_ids: Any = Field(default=None, description="score ids"),
         session_id: Any = Field(default=None, description="session id"),
         source: Any = Field(default=None, description="source"),
         tags: Any = Field(default=None, description="tags"),
@@ -59,17 +58,20 @@ def register_langfuse_observability_tools(mcp: FastMCP):
         to_timestamp: Any = Field(default=None, description="to timestamp"),
         trace_id: Any = Field(default=None, description="trace id"),
         trace_ids: Any = Field(default=None, description="trace ids"),
-        trace_tags: Any = Field(default=None, description="trace tags"),
         type: Any = Field(default=None, description="type"),
         user_id: Any = Field(default=None, description="user id"),
         value: Any = Field(default=None, description="value"),
+        value_max: Any = Field(default=None, description="maximum numeric score value"),
+        value_min: Any = Field(default=None, description="minimum numeric score value"),
         version: Any = Field(default=None, description="version"),
     ) -> Any:
         """Perform langfuse_observability operations."""
+        if action == "runtime_posture":
+            return observability_runtime_posture()
         client = get_client()
         kwargs = {}
-        if batch is not None:
-            kwargs["batch"] = batch
+        if author_user_id is not None:
+            kwargs["author_user_id"] = author_user_id
         if body is not None:
             kwargs["body"] = body
         if config_id is not None:
@@ -78,10 +80,10 @@ def register_langfuse_observability_tools(mcp: FastMCP):
             kwargs["cursor"] = cursor
         if data_type is not None:
             kwargs["data_type"] = data_type
-        if dataset_run_id is not None:
-            kwargs["dataset_run_id"] = dataset_run_id
         if environment is not None:
             kwargs["environment"] = environment
+        if experiment_id is not None:
+            kwargs["experiment_id"] = experiment_id
         if expand_metadata is not None:
             kwargs["expand_metadata"] = expand_metadata
         if fields is not None:
@@ -96,14 +98,12 @@ def register_langfuse_observability_tools(mcp: FastMCP):
             kwargs["level"] = level
         if limit is not None:
             kwargs["limit"] = limit
-        if metadata is not None:
-            kwargs["metadata"] = metadata
+        if id is not None:
+            kwargs["id"] = id
         if name is not None:
             kwargs["name"] = name
         if observation_id is not None:
             kwargs["observation_id"] = observation_id
-        if operator is not None:
-            kwargs["operator"] = operator
         if order_by is not None:
             kwargs["order_by"] = order_by
         if page is not None:
@@ -120,10 +120,6 @@ def register_langfuse_observability_tools(mcp: FastMCP):
             kwargs["release"] = release
         if resource_spans is not None:
             kwargs["resource_spans"] = resource_spans
-        if score_id is not None:
-            kwargs["score_id"] = score_id
-        if score_ids is not None:
-            kwargs["score_ids"] = score_ids
         if session_id is not None:
             kwargs["session_id"] = session_id
         if source is not None:
@@ -138,54 +134,22 @@ def register_langfuse_observability_tools(mcp: FastMCP):
             kwargs["trace_id"] = trace_id
         if trace_ids is not None:
             kwargs["trace_ids"] = trace_ids
-        if trace_tags is not None:
-            kwargs["trace_tags"] = trace_tags
         if type is not None:
             kwargs["type"] = type
         if user_id is not None:
             kwargs["user_id"] = user_id
         if value is not None:
             kwargs["value"] = value
+        if value_max is not None:
+            kwargs["value_max"] = value_max
+        if value_min is not None:
+            kwargs["value_min"] = value_min
         if version is not None:
             kwargs["version"] = version
 
-        if action == "legacy_metrics_v1_metrics":
+        if action == "metrics_get":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["query"]}
-            return client.legacy_metrics_v1_metrics(**method_kwargs)
-        elif action == "legacy_observations_v1_get":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["observation_id"]}
-            return client.legacy_observations_v1_get(**method_kwargs)
-        elif action == "legacy_observations_v1_get_many":
-            method_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k
-                in [
-                    "page",
-                    "limit",
-                    "name",
-                    "user_id",
-                    "type",
-                    "trace_id",
-                    "level",
-                    "parent_observation_id",
-                    "environment",
-                    "from_start_time",
-                    "to_start_time",
-                    "version",
-                    "filter",
-                ]
-            }
-            return client.legacy_observations_v1_get_many(**method_kwargs)
-        elif action == "legacy_score_v1_create":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["body"]}
-            return client.legacy_score_v1_create(**method_kwargs)
-        elif action == "legacy_score_v1_delete":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["score_id"]}
-            return client.legacy_score_v1_delete(**method_kwargs)
-        elif action == "metrics_metrics":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["query"]}
-            return client.metrics_metrics(**method_kwargs)
+            return client.metrics_get(**method_kwargs)
         elif action == "observations_get_many":
             method_kwargs = {
                 k: v
@@ -210,7 +174,9 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                     "filter",
                 ]
             }
-            return client.observations_get_many(**method_kwargs)
+            result = client.observations_get_many(**method_kwargs)
+            auto_ingest("observations_get_many", result)  # default-on KG ingestion
+            return result
         elif action == "opentelemetry_export_traces":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["resource_spans"]}
             return client.opentelemetry_export_traces(**method_kwargs)
@@ -228,39 +194,40 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                 k: v for k, v in kwargs.items() if k in ["config_id", "body"]
             }
             return client.score_configs_update(**method_kwargs)
+        elif action == "scores_create":
+            method_kwargs = {k: v for k, v in kwargs.items() if k in ["body"]}
+            return client.scores_create(**method_kwargs)
         elif action == "scores_get_many":
             method_kwargs = {
                 k: v
                 for k, v in kwargs.items()
                 if k
                 in [
-                    "page",
                     "limit",
-                    "user_id",
+                    "cursor",
+                    "id",
                     "name",
                     "from_timestamp",
                     "to_timestamp",
                     "environment",
                     "source",
-                    "operator",
                     "value",
-                    "score_ids",
+                    "value_min",
+                    "value_max",
                     "config_id",
                     "session_id",
-                    "dataset_run_id",
+                    "experiment_id",
                     "trace_id",
                     "observation_id",
                     "queue_id",
+                    "author_user_id",
                     "data_type",
-                    "trace_tags",
                     "fields",
-                    "filter",
                 ]
             }
-            return client.scores_get_many(**method_kwargs)
-        elif action == "scores_get_by_id":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["score_id"]}
-            return client.scores_get_by_id(**method_kwargs)
+            result = client.scores_get_many(**method_kwargs)
+            auto_ingest("scores_get_many", result)  # default-on KG ingestion
+            return result
         elif action == "sessions_list":
             method_kwargs = {
                 k: v
@@ -268,13 +235,17 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                 if k
                 in ["page", "limit", "from_timestamp", "to_timestamp", "environment"]
             }
-            return client.sessions_list(**method_kwargs)
+            result = client.sessions_list(**method_kwargs)
+            auto_ingest("sessions_list", result)  # default-on KG ingestion
+            return result
         elif action == "sessions_get":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["session_id"]}
             return client.sessions_get(**method_kwargs)
         elif action == "trace_get":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["trace_id"]}
-            return client.trace_get(**method_kwargs)
+            result = client.trace_get(**method_kwargs)
+            auto_ingest("trace_get", result)  # default-on KG ingestion
+            return result
         elif action == "trace_delete":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["trace_id"]}
             return client.trace_delete(**method_kwargs)
@@ -300,14 +271,11 @@ def register_langfuse_observability_tools(mcp: FastMCP):
                     "filter",
                 ]
             }
-            return client.trace_list(**method_kwargs)
+            result = client.trace_list(**method_kwargs)
+            auto_ingest("trace_list", result)  # default-on KG ingestion
+            return result
         elif action == "trace_delete_multiple":
             method_kwargs = {k: v for k, v in kwargs.items() if k in ["trace_ids"]}
             return client.trace_delete_multiple(**method_kwargs)
-        elif action == "ingestion_batch":
-            method_kwargs = {
-                k: v for k, v in kwargs.items() if k in ["batch", "metadata"]
-            }
-            return client.ingestion_batch(**method_kwargs)
         else:
             raise ValueError(f"Unknown action: {action}")

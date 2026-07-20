@@ -1,0 +1,8 @@
+{
+  "algorithm": "agent-utilities:mcp-tool-schema-compat:v1",
+  "connector": "langfuse-agent",
+  "schema_version": "1",
+  "tools": {
+    "langfuse_observability": "2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de"
+  }
+}

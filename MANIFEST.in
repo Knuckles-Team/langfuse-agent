@@ -1,4 +1,6 @@
 include LICENSE
 include README.md
 include requirements.txt
-recursive-include langfuse_agent *.md *.json *.yaml *.yml *.py
+include build_backend.py
+include langfuse_agent/dependency-license-catalog.json
+recursive-include langfuse_agent *.md *.json *.yaml *.py

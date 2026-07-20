@@ -103,11 +103,16 @@ def clean_env():
 
     # Clear relevant env vars
     env_vars_to_clear = [
-        "LANGFUSE_BASE_URL",
+        "LANGFUSE_HOST",
         "LANGFUSE_PUBLIC_KEY",
         "LANGFUSE_SECRET_KEY",
-        "LANGFUSE_URL",
         "LANGFUSE_TOKEN",
+        "LANGFUSE_CA_BUNDLE_REF",
+        "LANGFUSE_CA_BUNDLE",
+        "LANGFUSE_REQUEST_TIMEOUT_SECONDS",
+        "REQUESTS_CA_BUNDLE",
+        "SSL_CERT_FILE",
+        "UV_NATIVE_TLS",
     ]
 
     for var in env_vars_to_clear:
@@ -126,7 +131,7 @@ def mock_env_vars():
     """Set up mock environment variables."""
     original_env = os.environ.copy()
 
-    os.environ["LANGFUSE_BASE_URL"] = "https://test.langfuse.com"
+    os.environ["LANGFUSE_HOST"] = "https://test.langfuse.com"
     os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
     os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 

@@ -8,12 +8,8 @@ PKG_NAME = __name__.rsplit(".", 1)[0] if "." in __name__ else None
 
 
 def _get_pkg_name():
-    """Derive package name from test location."""
-    import pathlib
-
-    test_dir = pathlib.Path(__file__).resolve().parent
-    project_dir = test_dir.parent
-    return project_dir.name.replace("-", "_")
+    """Return the import package independently of checkout/worktree naming."""
+    return "langfuse_agent"
 
 
 @pytest.fixture

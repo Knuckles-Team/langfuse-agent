@@ -1,0 +1,33 @@
+{
+  "connector": "langfuse-agent",
+  "fixtures": [
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "langfuse-sessions",
+      "record": {
+        "acl_public": false,
+        "createdAt": "2000-01-01T00:00:00Z",
+        "id": "Synthetic content used only for contract validation."
+      }
+    },
+    {
+      "expected": {
+        "acl_state": "quarantine",
+        "id": "fixture-record",
+        "title": "Synthetic certification record"
+      },
+      "preset": "langfuse-traces",
+      "record": {
+        "acl_public": false,
+        "id": "fixture-record",
+        "name": "Synthetic content used only for contract validation.",
+        "timestamp": "2000-01-01T00:00:00Z"
+      }
+    }
+  ],
+  "schema_version": "1"
+}

@@ -4,8 +4,14 @@ CONCEPT:LA_1.0 — Langfuse MCP Integration
 """
 
 import logging
-import os
 import threading
+from typing import Any
+
+from agent_utilities.core.config import resolve_langfuse_host as _resolve_host
+from agent_utilities.core.config import setting
+from agent_utilities.observability.langfuse_trust import (
+    resolve_langfuse_requests_transport as _resolve_requests_transport,
+)
 
 from .api_client import LangfuseApi
 
@@ -14,36 +20,42 @@ logger = logging.getLogger(__name__)
 _client = None
 
 
+def resolve_langfuse_host() -> str:
+    """Resolve the sole current Agent Utilities Langfuse host contract."""
+    return str(_resolve_host())
+
+
+def resolve_langfuse_requests_transport() -> dict[str, Any]:
+    """Resolve the current fail-closed Requests transport contract."""
+    return _resolve_requests_transport()
+
+
 def get_client() -> LangfuseApi:
     """Get or create a singleton Langfuse client instance.
 
     CONCEPT:LA_1.0 — Langfuse MCP Integration
 
-    Logs user identity when OIDC delegation is active for audit trail.
+    OIDC delegation is recorded only as a boolean event; user identity is never
+    copied into logs, traces, or client configuration.
     """
     global _client
     if _client is None:
         from agent_utilities.mcp.delegated_auth import (
-            get_user_identity,
             is_delegation_enabled,
         )
 
-        host = os.getenv("LANGFUSE_BASE_URL", "https://cloud.langfuse.com")
-        public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "")
-        secret_key = os.getenv("LANGFUSE_SECRET_KEY", "")
+        transport_kwargs = resolve_langfuse_requests_transport()
+        host = resolve_langfuse_host()
+        public_key = setting("LANGFUSE_PUBLIC_KEY", "")
+        secret_key = setting("LANGFUSE_SECRET_KEY", "")
 
-        # Log OIDC user identity for audit (identity passthrough pattern)
         if is_delegation_enabled():
-            identity = get_user_identity()
-            logger.info(
-                "OIDC delegation active — Langfuse uses identity passthrough. "
-                "MCP server is SSO-protected; downstream uses API keys.",
-                extra={
-                    "sso_user_email": identity.get("email"),
-                    "sso_user_subject": identity.get("subject"),
-                    "langfuse_base_url": host,
-                },
-            )
+            logger.info("OIDC delegation active for Langfuse MCP.")
 
-        _client = LangfuseApi(public_key=public_key, secret_key=secret_key, host=host)
+        _client = LangfuseApi(
+            public_key=public_key,
+            secret_key=secret_key,
+            host=host,
+            transport_kwargs=transport_kwargs,
+        )
     return _client

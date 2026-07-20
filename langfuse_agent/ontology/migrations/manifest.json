@@ -1,0 +1,6 @@
+{
+  "connector": "langfuse-agent",
+  "current_ontology_source": "langfuse",
+  "migrations": [],
+  "schema_version": "1"
+}
