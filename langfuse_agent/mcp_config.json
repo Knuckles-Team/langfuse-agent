@@ -1,15 +1,16 @@
 {
   "mcpServers": {
     "langfuse": {
-      "command": "uv",
+      "command": "python",
       "args": [
-        "run",
-        "langfuse-mcp"
+        "-m",
+        "langfuse_agent.mcp_server"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed",
+        "MCP_TOOL_MODE": "intent",
         "LANGFUSE_BASE_URL": "http://localhost:8080",
         "LANGFUSE_DATASETSTOOL": "True",
+        "LANGFUSE_KGTOOL": "True",
         "LANGFUSE_MANAGEMENTTOOL": "True",
         "LANGFUSE_OBSERVABILITYTOOL": "True",
         "LANGFUSE_PROMPTS_MODELSTOOL": "True",

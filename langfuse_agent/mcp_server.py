@@ -24,11 +24,9 @@ warnings.filterwarnings("ignore", message=".*urllib3.*or charset_normalizer.*")
 import logging
 import sys
 
-from agent_utilities.mcp_utilities import (
-    create_mcp_server,
-    load_config,
-    register_tool_surface,
-)
+from agent_utilities.core.config import load_config
+from agent_utilities.mcp.server_factory import create_mcp_server
+from agent_utilities.mcp.verbose_tools import register_tool_surface
 
 from langfuse_agent.api_client import LangfuseApi
 from langfuse_agent.auth import get_client
@@ -38,7 +36,7 @@ from langfuse_agent.tools.management import register_langfuse_management_tools
 from langfuse_agent.tools.observability import register_langfuse_observability_tools
 from langfuse_agent.tools.prompts import register_langfuse_prompts_models_tools
 
-__version__ = "1.0.1"
+__version__ = "1.0.3"
 
 logger = get_logger(name="langfuse-agent")
 logger.setLevel(logging.INFO)

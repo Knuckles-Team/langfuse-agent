@@ -20,7 +20,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/langfuse-agent)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/langfuse-agent)
 
-*Version: 1.0.1*
+*Version: 1.0.3*
 
 > **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
 > interfaces, and guidance for provisioning the Langfuse platform are maintained in
@@ -39,7 +39,7 @@
 - **Consolidated Action-Routed MCP Tools:** Minimizes token overhead and eliminates tool bloat in LLM contexts by grouping 80+ methods into 4 optimized, togglable tool modules.
 - **Enterprise-Grade Security:** Comprehensive support for Eunomia policies, OIDC token delegation, and granular execution context tracking.
 - **Integrated Graph Agent:** Built-in Pydantic AI agent supporting the Agent Control Protocol (ACP) and standard Web interfaces (AG-UI).
-- **Native Telemetry & Tracing:** Out-of-the-box OpenTelemetry exports and native Langfuse tracing tracking every trace and span.
+- **Optional Telemetry & Tracing:** OTLP export and Langfuse instrumentation activate only when their runtime configuration is present.
 
 ---
 
@@ -59,11 +59,12 @@ This server utilizes dynamic Action-Routed tools to optimize token overhead and 
 Auto-generated — do not edit between the markers below.
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (default — `MCP_TOOL_MODE=condensed`)
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed` or `both`)
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `langfuse_datasets` | `LANGFUSE_DATASETSTOOL` | Perform langfuse_datasets operations. |
+| `langfuse_ingest` | `LANGFUSE_KGTOOL` | Perform langfuse_ingest operations. |
 | `langfuse_management` | `LANGFUSE_MANAGEMENTTOOL` | Perform langfuse_management operations. |
 | `langfuse_observability` | `LANGFUSE_OBSERVABILITYTOOL` | Perform langfuse_observability operations. |
 | `langfuse_prompts_models` | `LANGFUSE_PROMPTS_MODELSTOOL` | Perform langfuse_prompts_models operations. |
@@ -71,7 +72,7 @@ Auto-generated — do not edit between the markers below.
 #### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
 
 <details>
-<summary>87 per-operation tools — one per public API method (click to expand)</summary>
+<summary>81 per-operation tools — one per current public API method (click to expand)</summary>
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
@@ -105,24 +106,18 @@ Auto-generated — do not edit between the markers below.
 | `langfuse_datasets_get_runs` | `APITOOL` | Get dataset runs |
 | `langfuse_datasets_list` | `APITOOL` | Get all datasets |
 | `langfuse_health_health` | `APITOOL` | Check health of API and database |
-| `langfuse_ingestion_batch` | `APITOOL` | **Legacy endpoint for batch ingestion for Langfuse Observability.**  -> Please use the OpenTelemetry endpoint (`/api/public/otel/v1/traces`). Learn more: https://langfuse.com/integrations/native/opentelemetry  Within each batch, there can be multiple events. Each event has a type, an id, a timestamp, metadata and a body. Internally, we refer to this as the "event envelope" as it tells us something about the event but not the trace. We use the event id within this envelope to deduplicate messages to avoid processing the same event twice, i.e. the event id should be unique per request. The event.body.id is the ID of the actual trace and will be used for updates and will be visible within the Langfuse App. I.e. if you want to update a trace, you'd use the same body id, but separate event IDs.  Notes: - Introduction to data model: https://langfuse.com/docs/observability/data-model - Batch sizes are limited to 3.5 MB in total. You need to adjust the number of events per batch accordingly. - The API does not return a 4xx status code for input errors. Instead, it responds with a 207 status code, which includes a list of the encountered errors. |
-| `langfuse_legacy_metrics_v1_metrics` | `APITOOL` | Get metrics from the Langfuse project using a query object.  Consider using the [v2 metrics endpoint](/api-reference#tag/metricsv2/GET/api/public/v2/metrics) for better performance.  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api). |
-| `langfuse_legacy_observations_v1_get` | `APITOOL` | Get a observation |
-| `langfuse_legacy_observations_v1_get_many` | `APITOOL` | Get a list of observations.  Consider using the [v2 observations endpoint](/api-reference#tag/observationsv2/GET/api/public/v2/observations) for cursor-based pagination and field selection. |
-| `langfuse_legacy_score_v1_create` | `APITOOL` | Create a score (supports both trace and session scores) |
-| `langfuse_legacy_score_v1_delete` | `APITOOL` | Delete a score (supports both trace and session scores) |
 | `langfuse_llm_connections_list` | `APITOOL` | Get all LLM connections in a project |
 | `langfuse_llm_connections_upsert` | `APITOOL` | Create or update an LLM connection. The connection is upserted on provider. |
 | `langfuse_media_get` | `APITOOL` | Get a media record |
 | `langfuse_media_get_upload_url` | `APITOOL` | Get a presigned upload URL for a media record |
 | `langfuse_media_patch` | `APITOOL` | Patch a media record |
-| `langfuse_metrics_metrics` | `APITOOL` | Get metrics from the Langfuse project using a query object. V2 endpoint with optimized performance.  ## V2 Differences - Supports `observations`, `scores-numeric`, and `scores-categorical` views only (traces view not supported) - Direct access to tags and release fields on observations - Backwards-compatible: traceName, traceRelease, traceVersion dimensions are still available on observations view - High cardinality dimensions are not supported and will return a 400 error (see below)  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).  ## Available Views  ### observations Query observation-level data (spans, generations, events).  **Dimensions:** - `environment` - Deployment environment (e.g., production, staging) - `type` - Type of observation (SPAN, GENERATION, EVENT) - `name` - Name of the observation - `level` - Logging level of the observation - `version` - Version of the observation - `tags` - User-defined tags - `release` - Release version - `traceName` - Name of the parent trace (backwards-compatible) - `traceRelease` - Release version of the parent trace (backwards-compatible, maps to release) - `traceVersion` - Version of the parent trace (backwards-compatible, maps to version) - `providedModelName` - Name of the model used - `promptName` - Name of the prompt used - `promptVersion` - Version of the prompt used - `startTimeMonth` - Month of start_time in YYYY-MM format  **Measures:** - `count` - Total number of observations - `latency` - Observation latency (milliseconds) - `streamingLatency` - Generation latency from completion start to end (milliseconds) - `inputTokens` - Sum of input tokens consumed - `outputTokens` - Sum of output tokens produced - `totalTokens` - Sum of all tokens consumed - `outputTokensPerSecond` - Output tokens per second - `tokensPerSecond` - Total tokens per second - `inputCost` - Input cost (USD) - `outputCost` - Output cost (USD) - `totalCost` - Total cost (USD) - `timeToFirstToken` - Time to first token (milliseconds) - `countScores` - Number of scores attached to the observation  ### scores-numeric Query numeric and boolean score data.  **Dimensions:** - `environment` - Deployment environment - `name` - Name of the score (e.g., accuracy, toxicity) - `source` - Origin of the score (API, ANNOTATION, EVAL) - `dataType` - Data type (NUMERIC, BOOLEAN) - `configId` - Identifier of the score config - `timestampMonth` - Month in YYYY-MM format - `timestampDay` - Day in YYYY-MM-DD format - `value` - Numeric value of the score - `traceName` - Name of the parent trace - `tags` - Tags - `traceRelease` - Release version - `traceVersion` - Version - `observationName` - Name of the associated observation - `observationModelName` - Model name of the associated observation - `observationPromptName` - Prompt name of the associated observation - `observationPromptVersion` - Prompt version of the associated observation  **Measures:** - `count` - Total number of scores - `value` - Score value (for aggregations)  ### scores-categorical Query categorical score data. Same dimensions as scores-numeric except uses `stringValue` instead of `value`.  **Measures:** - `count` - Total number of scores  ## High Cardinality Dimensions The following dimensions cannot be used as grouping dimensions in v2 metrics API as they can cause performance issues. Use them in filters instead.  **observations view:** - `id` - Use traceId filter to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `parentObservationId` - Use parentObservationId filter instead  **scores-numeric / scores-categorical views:** - `id` - Use specific filters to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `observationId` - Use observationId filter instead  ## Aggregations Available aggregation functions: `sum`, `avg`, `count`, `max`, `min`, `p50`, `p75`, `p90`, `p95`, `p99`, `histogram`  ## Time Granularities Available granularities for timeDimension: `auto`, `minute`, `hour`, `day`, `week`, `month` - `auto` bins the data into approximately 50 buckets based on the time range |
+| `langfuse_metrics_get` | `APITOOL` | Query aggregate observation or score metrics through Metrics API v2. |
 | `langfuse_models_create` | `APITOOL` | Create a model |
 | `langfuse_models_delete` | `APITOOL` | Delete a model. Cannot delete models managed by Langfuse. You can create your own definition with the same modelName to override the definition though. |
 | `langfuse_models_get` | `APITOOL` | Get a model |
 | `langfuse_models_list` | `APITOOL` | Get all models |
-| `langfuse_observations_get_many` | `APITOOL` | Get a list of observations with cursor-based pagination and flexible field selection.  ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response metadata and should be passed in subsequent requests to retrieve the next page of results.  ## Field Selection Use the `fields` parameter to control which observation fields are returned: - `core` - Always included: id, traceId, startTime, endTime, projectId, parentObservationId, type - `basic` - name, level, statusMessage, version, environment, bookmarked, public, userId, sessionId - `time` - completionStartTime, createdAt, updatedAt - `io` - input, output - `metadata` - metadata (truncated to 200 chars by default, use `expandMetadata` to get full values) - `model` - providedModelName, internalModelId, modelParameters - `usage` - usageDetails, costDetails, totalCost - `prompt` - promptId, promptName, promptVersion - `metrics` - latency, timeToFirstToken  If not specified, `core` and `basic` field groups are returned.  ## Filters Multiple filtering options are available via query parameters or the structured `filter` parameter. When using the `filter` parameter, it takes precedence over individual query parameter filters. |
-| `langfuse_opentelemetry_export_traces` | `APITOOL` | **OpenTelemetry Traces Ingestion Endpoint**  This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability.  **Supported Formats:** - Binary Protobuf: `Content-Type: application/x-protobuf` - JSON Protobuf: `Content-Type: application/json` - Supports gzip compression via `Content-Encoding: gzip` header  **Specification Compliance:** - Conforms to [OTLP/HTTP Trace Export](https://opentelemetry.io/docs/specs/otlp/#otlphttp) - Implements `ExportTraceServiceRequest` message format  **Documentation:** - Integration guide: https://langfuse.com/integrations/native/opentelemetry - Data model: https://langfuse.com/docs/observability/data-model |
+| `langfuse_observations_get_many` | `APITOOL` | Get a list of observations with cursor-based pagination and flexible field selection. ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response… |
+| `langfuse_opentelemetry_export_traces` | `APITOOL` | **OpenTelemetry Traces Ingestion Endpoint** This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability. **Supported Formats:** - Binary Protobuf: `Conte… |
 | `langfuse_organizations_delete_organization_membership` | `APITOOL` | Delete a membership from the organization associated with the API key (requires organization-scoped API key) |
 | `langfuse_organizations_delete_project_membership` | `APITOOL` | Delete a membership from a specific project (requires organization-scoped API key). The user must be a member of the organization. |
 | `langfuse_organizations_get_organization_api_keys` | `APITOOL` | Get all API keys for the organization associated with the API key (requires organization-scoped API key) |
@@ -154,8 +149,8 @@ Auto-generated — do not edit between the markers below.
 | `langfuse_score_configs_get` | `APITOOL` | Get all score configs |
 | `langfuse_score_configs_get_by_id` | `APITOOL` | Get a score config |
 | `langfuse_score_configs_update` | `APITOOL` | Update a score config |
-| `langfuse_scores_get_by_id` | `APITOOL` | Get a score (supports both trace and session scores) |
-| `langfuse_scores_get_many` | `APITOOL` | Get a list of scores (supports both trace and session scores) |
+| `langfuse_scores_create` | `APITOOL` | Create a typed score through Langfuse's current score-write API. |
+| `langfuse_scores_get_many` | `APITOOL` | Query scores through the cursor-based Scores API v3. |
 | `langfuse_sessions_get` | `APITOOL` | Get a session. Please note that `traces` on this endpoint are not paginated, if you plan to fetch large sessions, consider `GET /api/public/traces?sessionId=<sessionId>` |
 | `langfuse_sessions_list` | `APITOOL` | Get sessions |
 | `langfuse_trace_delete` | `APITOOL` | Delete a specific trace |
@@ -165,10 +160,10 @@ Auto-generated — do not edit between the markers below.
 
 </details>
 
-_4 action-routed tool(s) (default) · 87 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (`condensed` default · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_5 action-routed tool(s) · 81 verbose 1:1 tool(s). `MCP_TOOL_MODE` selects the surface (`intent` default · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
-Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/mcp.md](docs/mcp.md).
+Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/usage.md](docs/usage.md).
 
 ### Dynamic Tool Selection & Visibility
 
@@ -195,11 +190,10 @@ When query strings or parameters are supplied, an LLM-free **Knowledge Graph res
 
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
-> **Install the slim `[mcp]` extra.** All examples install `langfuse-agent[mcp]` — the
-> MCP-server extra that pulls only the FastMCP / FastAPI tooling (`agent-utilities[mcp]`).
-> It deliberately **excludes** the heavy agent runtime (`pydantic-ai`, the epistemic-graph
-> engine, `dspy`, `llama-index`), so `uvx` / container installs are far smaller. Use the
-> full `[agent]` extra only when you need the integrated Pydantic AI agent.
+> **Install the connector-focused `[mcp]` extra.** Examples use `langfuse-agent[mcp]` to add
+> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> enables model orchestration.
 
 #### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
 
@@ -214,19 +208,21 @@ When query strings or parameters are supplied, an LLM-free **Knowledge Graph res
         "langfuse-mcp"
       ],
       "env": {
-        "MCP_TOOL_MODE": "condensed",
-        "LANGFUSE_BASE_URL": "http://localhost:8080",
+        "MCP_TOOL_MODE": "intent",
         "LANGFUSE_DATASETSTOOL": "True",
+        "LANGFUSE_KGTOOL": "True",
         "LANGFUSE_MANAGEMENTTOOL": "True",
         "LANGFUSE_OBSERVABILITYTOOL": "True",
-        "LANGFUSE_PROMPTS_MODELSTOOL": "True",
-        "LANGFUSE_PUBLIC_KEY": "your_public_key_here",
-        "LANGFUSE_SECRET_KEY": "your_secret_key_here"
+        "LANGFUSE_PROMPTS_MODELSTOOL": "True"
       }
     }
   }
 }
 ```
+
+Runtime references require an alias-aware launcher such as GraphOS. Other
+launchers must omit those entries and inject the resolved values through their
+own runtime secret boundary.
 
 #### Streamable-HTTP Transport (networked / production)
 
@@ -246,16 +242,14 @@ When query strings or parameters are supplied, an LLM-free **Knowledge Graph res
       ],
       "env": {
         "TRANSPORT": "streamable-http",
-        "HOST": "0.0.0.0",
+        "HOST": "127.0.0.1",
         "PORT": "8000",
-        "MCP_TOOL_MODE": "condensed",
-        "LANGFUSE_BASE_URL": "http://localhost:8080",
+        "MCP_TOOL_MODE": "intent",
         "LANGFUSE_DATASETSTOOL": "True",
+        "LANGFUSE_KGTOOL": "True",
         "LANGFUSE_MANAGEMENTTOOL": "True",
         "LANGFUSE_OBSERVABILITYTOOL": "True",
-        "LANGFUSE_PROMPTS_MODELSTOOL": "True",
-        "LANGFUSE_PUBLIC_KEY": "your_public_key_here",
-        "LANGFUSE_SECRET_KEY": "your_secret_key_here"
+        "LANGFUSE_PROMPTS_MODELSTOOL": "True"
       }
     }
   }
@@ -274,25 +268,30 @@ Alternatively, connect to a pre-deployed Streamable-HTTP instance by `url`:
 }
 ```
 
-Deploying the Streamable-HTTP server via Docker:
+Run a reviewed container image as a least-privilege stdio child (no
+listener or published port):
 
 ```bash
-docker run -d \
-  --name langfuse-mcp-mcp \
-  -p 8000:8000 \
-  -e TRANSPORT=streamable-http \
-  -e HOST=0.0.0.0 \
-  -e PORT=8000 \
-  -e MCP_TOOL_MODE=condensed \
-  -e LANGFUSE_BASE_URL=http://localhost:8080 \
+docker run -i --rm \
+  --read-only \
+  --cap-drop=ALL \
+  --security-opt=no-new-privileges \
+  --pids-limit=256 \
+  --tmpfs /tmp:rw,noexec,nosuid,nodev,size=64m \
+  -e TRANSPORT=stdio \
+  -e MCP_TOOL_MODE=intent \
   -e LANGFUSE_DATASETSTOOL=True \
+  -e LANGFUSE_KGTOOL=True \
   -e LANGFUSE_MANAGEMENTTOOL=True \
   -e LANGFUSE_OBSERVABILITYTOOL=True \
   -e LANGFUSE_PROMPTS_MODELSTOOL=True \
-  -e LANGFUSE_PUBLIC_KEY=your_public_key_here \
-  -e LANGFUSE_SECRET_KEY=your_secret_key_here \
-  knucklessg1/langfuse-agent:mcp
+  registry.example.invalid/langfuse-agent@sha256:<digest> langfuse-mcp
 ```
+
+For containerized network HTTP, supply an authenticated TLS ingress (or
+direct server TLS), exact `MCP_ALLOWED_HOSTS`, and an exact trusted-proxy
+CIDR policy through the operator-owned deployment profile. The generator
+does not emit an unauthenticated non-loopback listener.
 
 _Auto-generated from the code-read env surface (`MCP_TOOL_MODE` + package vars) — do not edit._
 <!-- MCP-CONFIG-EXAMPLES:END -->
@@ -300,16 +299,16 @@ _Auto-generated from the code-read env surface (`MCP_TOOL_MODE` + package vars) 
 <!-- BEGIN GENERATED: additional-deployment-options -->
 ### Additional Deployment Options
 
-`langfuse-agent` can also run as a **local container** (Docker / Podman / `uv`) or be
-consumed from a **remote deployment**. The
-[Deployment guide](https://knuckles-team.github.io/langfuse-agent/deployment/) has full, copy-paste
-`mcp_config.json` for all four transports — **stdio**, **streamable-http**,
-**local container / uv**, and **remote URL**:
+`langfuse-agent` can run as a local stdio process or container, or behind a remote
+network boundary. The
+[Deployment guide](https://knuckles-team.github.io/langfuse-agent/deployment/) carries
+the detailed transport contract.
 
-- **Local container / uv** — launch the server from `mcp_config.json` via `uvx`,
-  `docker run`, or `podman run`, or point at a local streamable-http container by `url`.
-- **Remote URL** — connect to a server deployed behind Caddy at
-  `http://langfuse-mcp.arpa/mcp` using the `"url"` key.
+- **Local container** — launch a reviewed immutable image as a least-privilege
+  stdio child with no listener or published port.
+- **Remote URL** — connect through an operator-supplied authenticated HTTPS
+  ingress. Keep its URL, outbound identity references, trust profile, and exact
+  `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
 ## Agent
@@ -317,76 +316,21 @@ consumed from a **remote deployment**. The
 This repository features a fully integrated Pydantic AI Graph Agent. It communicates over the **Agent Control Protocol (ACP)** and interacts seamlessly with the **Agent Web UI (AG-UI)** and Terminal interface.
 
 ### Running the Agent CLI
-To start the interactive command-line agent:
+To start the interactive command-line agent, first let the process supervisor
+inject the Langfuse credentials and any model-provider secret. Then run:
 
 ```bash
-# Set credentials
-export LANGFUSE_BASE_URL="http://localhost:8080"
-export LANGFUSE_PUBLIC_KEY="pk-lf-..."
-export LANGFUSE_SECRET_KEY="sk-lf-..."
-
-# Run the agent server
 langfuse-agent --provider openai --model-id gpt-4o
 ```
 
 ### Docker Compose Orchestration
-The following `docker/agent.compose.yml` configures the Agent, Web UI, and Terminal Interface together:
+The checked-in `docker/agent.compose.yml` runs the MCP and agent services with
+restricted containers and loopback-published ports. Supply pinned image digests
+and let the process supervisor inject materialized child credentials at runtime;
+never add them to the Compose file or a checked-in env file. GraphOS deployments
+keep only the corresponding `*_REF` settings in `AgentConfig`.
 
-```yaml
-version: '3.8'
-
-services:
-  langfuse-agent-mcp:
-    image: knucklessg1/langfuse-agent:mcp
-    container_name: langfuse-agent-mcp
-    hostname: langfuse-agent-mcp
-    restart: always
-    env_file:
-      - ../.env
-    environment:
-      - PYTHONUNBUFFERED=1
-      - HOST=0.0.0.0
-      - PORT=8004
-      - TRANSPORT=streamable-http
-    ports:
-      - "8004:8004"
-    healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/health')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-
-  langfuse-agent-agent:
-    image: knucklessg1/langfuse-agent:latest
-    container_name: langfuse-agent-agent
-    hostname: langfuse-agent-agent
-    restart: always
-    depends_on:
-      - langfuse-agent-mcp
-    env_file:
-      - ../.env
-    command: [ "langfuse-agent" ]
-    environment:
-      - PYTHONUNBUFFERED=1
-      - HOST=0.0.0.0
-      - PORT=9004
-      - MCP_URL=http://langfuse-agent-mcp:8004/mcp
-      - PROVIDER=${PROVIDER:-openai}
-      - MODEL_ID=${MODEL_ID:-gpt-4o}
-      - ENABLE_WEB_UI=True
-      - ENABLE_OTEL=True
-    ports:
-      - "9004:9004"
-    healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9004/health')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-```
-
-Detailed graph node architecture explanations, custom skill configurations, and agentic trace guides are available in [docs/agent.md](docs/agent.md).
+Detailed graph node architecture explanations, custom skill configurations, and agentic trace guides are available in [docs/deployment.md](docs/deployment.md).
 
 ---
 
@@ -410,19 +354,26 @@ Built directly upon the enterprise-ready [`agent-utilities`](https://github.com/
 
 ## Configuration & Environment Variables
 
-The agent can be fully configured using environment variables or a `.env` file. Below is the list of all supported variables:
+GraphOS configuration uses `AgentConfig` and secret references. Do not store
+credential values in `.env` files or MCP catalogs.
 
 ### Core API & Credentials
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `LANGFUSE_BASE_URL` | Langfuse instance base URL (legacy alias: `LANGFUSE_HOST`). | `https://cloud.langfuse.com` |
-| `LANGFUSE_PUBLIC_KEY` | Langfuse public API key. | `""` |
-| `LANGFUSE_SECRET_KEY` | Langfuse secret API key. | `""` |
+| `LANGFUSE_HOST` | Canonical Langfuse service URL. | `https://cloud.langfuse.com` |
+| `LANGFUSE_PUBLIC_KEY_REF` | Runtime reference to the project public key. | *(unset)* |
+| `LANGFUSE_SECRET_KEY_REF` | Runtime reference to the project secret key. | *(unset)* |
+| `LANGFUSE_TLS_PROFILE_REF` | Runtime reference to a reusable TLS profile. | *(unset)* |
+| `LANGFUSE_CA_BUNDLE_REF` | Runtime reference to a PEM trust store. | *(unset)* |
+| `LANGFUSE_CLIENT_CERT_REF` | Runtime reference to an mTLS client certificate. | *(unset)* |
+| `LANGFUSE_CLIENT_KEY_REF` | Runtime reference to the matching mTLS private key. | *(unset)* |
+| `LANGFUSE_CLIENT_KEY_PASSWORD_REF` | Optional runtime reference for an encrypted client key. | *(unset)* |
+| `LANGFUSE_PERSISTENCE_HMAC_KEY_REF` | Dedicated identity-HMAC key reference for graph persistence. | *(unset)* |
 
 ### Server Configuration
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `HOST` | The hostname/address the server binds to. | `0.0.0.0` |
+| `HOST` | The hostname/address the server binds to. | `127.0.0.1` |
 | `PORT` | The port the server listens on. | `8004` |
 | `TRANSPORT` | The communication protocol (`stdio`, `streamable-http`, `sse`). | `stdio` |
 | `AUTH_TYPE` | Server authentication strategy (`key`, `delegated`, `none`). | `key` |
@@ -451,44 +402,50 @@ Pick the extra that matches what you want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `langfuse-agent[mcp]` | Slim MCP server only (`agent-utilities[mcp]` — FastMCP/FastAPI) | You only run the **MCP server** (smallest install / image) |
-| `langfuse-agent[agent]` | Full agent runtime (`agent-utilities[agent,logfire]` — Pydantic AI + the epistemic-graph engine) | You run the **integrated agent** |
+| `langfuse-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
+| `langfuse-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated agent** |
 | `langfuse-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
-# MCP server only (recommended for tool hosting — slim deps)
+# Connector-focused MCP server (includes the shared graph engine)
 uv pip install "langfuse-agent[mcp]"
 
-# Full agent runtime (Pydantic AI + epistemic-graph engine)
+# Agent runtime (adds model orchestration to the shared graph engine)
 uv pip install "langfuse-agent[agent]"
 
 # Everything (development)
 uv pip install "langfuse-agent[all]"      # or: python -m pip install "langfuse-agent[all]"
 ```
 
-### Container images (`:mcp` vs `:agent`)
+### Container image targets
 
-One multi-stage `docker/Dockerfile` builds two right-sized images, selected by `--target`:
+One multi-stage `docker/Dockerfile` builds two published profiles and one exact,
+offline release profile selected by `--target`:
 
-| Image tag | Build target | Contents | Entrypoint |
-|-----------|--------------|----------|------------|
-| `knucklessg1/langfuse-agent:mcp` | `--target mcp` | `langfuse-agent[mcp]` — **slim**, no engine/`pydantic-ai`/`dspy`/`llama-index`/`tree-sitter` | `langfuse-mcp` |
-| `knucklessg1/langfuse-agent:latest` | `--target agent` (default) | `langfuse-agent[agent]` — **full** agent runtime + epistemic-graph engine | `langfuse-agent` |
+| Build target | Contents | Entrypoint |
+|--------------|----------|------------|
+| `mcp` | `langfuse-agent[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `langfuse-mcp` |
+| `mcp-local` | exact hash-locked wheelhouse for the same MCP profile; release assembly only | `langfuse-mcp` |
+| `agent` (default) | `langfuse-agent[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `langfuse-agent` |
 
 ```bash
-docker build --target mcp   -t knucklessg1/langfuse-agent:mcp    docker/   # slim MCP server
-docker build --target agent -t knucklessg1/langfuse-agent:latest docker/   # full agent
+docker build --target mcp   -t langfuse-agent:mcp docker/
+docker build --target agent -t langfuse-agent:agent docker/
 ```
+
+Promote and deploy only an operator-reviewed immutable image digest.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-The **full agent** (`[agent]` / `:latest`) embeds the **epistemic-graph** engine (pulled in
-transitively via `agent-utilities[agent]`). For production — or to share one knowledge graph
-across multiple agents — run **epistemic-graph as its own database container** and point the
-agent at it instead of embedding it. Deployment recipes (single-node + Raft HA), connection
-config, and the full database architecture (with diagrams) are documented in the
+Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
+Agent Utilities core dependency (`epistemic-graph[full]`, including its folded numeric
+kernel). The `[mcp]` extra keeps
+the server connector-focused; `[agent]` additionally enables model orchestration. Local
+deployments can use the bundled engine. For production or shared state, run
+**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+Deployment recipes (single-node + Raft HA), connection configuration, and architecture
+diagrams are documented in the
 [epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
-The slim `[mcp]` server does **not** require the database.
 
 ---
 
@@ -511,10 +468,10 @@ the recommended reference for installation, deployment, and day-to-day operation
 
 ## Repository Owners
 
-<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=Knucklessg1&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
+<img width="100%" height="180em" src="https://github-readme-stats.vercel.app/api?username=example&show_icons=true&hide_border=true&&count_private=true&include_all_commits=true" />
 
-![GitHub followers](https://img.shields.io/github/followers/Knucklessg1)
-![GitHub User's stars](https://img.shields.io/github/stars/Knucklessg1)
+![GitHub followers](https://img.shields.io/github/followers/example)
+![GitHub User's stars](https://img.shields.io/github/stars/example)
 
 ---
 
@@ -527,26 +484,27 @@ Contributions are welcome! Please ensure code quality by executing local checks 
 - Execute test suites using `pytest`
 
 
-<!-- BEGIN agent-os-genesis-deploy (generated; do not edit between markers) -->
+<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-os-genesis`
+## Deploy with `agent-utilities-deployment`
 
-This package can be provisioned for you — skill-guided — by the **`agent-os-genesis`**
-universal skill (its *single-package deploy mode*): it picks your install method, seeds
-secrets to OpenBao/Vault (or `.env`), trusts your enterprise CA, registers the MCP
-server, and verifies it — the same machinery that stands up the whole Agent OS, narrowed
-to just this package. Ask your agent to **"deploy `langfuse-agent` with agent-os-genesis"**.
+Provision this package with the consolidated **`agent-utilities-deployment`**
+workflow. It selects an installed-package, editable-source, or immutable-container
+path; records only runtime secret and TLS-profile references in `AgentConfig`; and
+runs doctor, registration, policy, observability, and rollback gates. Ask your agent
+to **"deploy `langfuse-agent` with agent-utilities-deployment"**.
 
 | Install mode | Command |
 |------|---------|
-| Bare-metal, prod (PyPI) | `uvx langfuse-mcp` · or `uv tool install langfuse-agent` |
-| Bare-metal, dev (editable) | `uv pip install -e ".[all]"` · or `pip install -e ".[all]"` |
-| Container, prod | deploy `knucklessg1/langfuse-agent:latest` via docker-compose / swarm / podman / podman-compose / kubernetes |
-| Container, dev (editable) | deploy `docker/compose.dev.yml` (source-mounted at `/src`; edits live on restart) |
+| Installed package | `uv tool install "langfuse-agent[mcp]"`, then run `langfuse-mcp` |
+| Editable source | `uv pip install -e ".[agent]"`, then run `langfuse-mcp` |
+| Immutable container | deploy `registry.example.invalid/langfuse-agent@sha256:<digest>` through the operator-selected orchestrator |
 
-Secrets are read-existing + seeded via `vault_sync` — you are only prompted for what's missing.
+The repository embeds no deployment profile, credential value, certificate path, or
+environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
+configured secret provider.
 
-<!-- END agent-os-genesis-deploy -->
+<!-- END agent-utilities-deployment -->
 
 ## Environment Variables
 
@@ -556,29 +514,39 @@ Secrets are read-existing + seeded via `vault_sync` — you are only prompted fo
 
 | Variable | Example | Description |
 |----------|---------|-------------|
-| `HOST` | `0.0.0.0` |  |
+| `HOST` | `127.0.0.1` |  |
 | `PORT` | `8004` |  |
 | `TRANSPORT` | `stdio` | options: stdio, streamable-http, sse |
-| `ENABLE_OTEL` | `True` |  |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:8080/api/public/otel` |  |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY` | `pk-...` |  |
-| `OTEL_EXPORTER_OTLP_SECRET_KEY` | `sk-...` |  |
+| `ENABLE_OTEL` | `False` |  |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `https://otel.example.invalid` |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY_REF` | — |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY_REF` | — |  |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
 | `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
 | `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
 | `EUNOMIA_REMOTE_URL` | `http://eunomia-server:8000` |  |
-| `LANGFUSE_BASE_URL` | `http://localhost:8080` |  |
-| `LANGFUSE_PUBLIC_KEY` | `your_public_key_here` |  |
-| `LANGFUSE_SECRET_KEY` | `your_secret_key_here` |  |
+| `LANGFUSE_BASE_URL` | `http://localhost:8080` | LANGFUSE_BASE_URL takes precedence when set; otherwise LANGFUSE_HOST is used. |
+| `LANGFUSE_HOST` | — |  |
+| `LANGFUSE_PUBLIC_KEY` | secret-injected |  |
+| `LANGFUSE_SECRET_KEY` | secret-injected |  |
+| `LANGFUSE_PUBLIC_KEY_REF` | — | Secret references (resolved at runtime) — alternatives to the plaintext keys above: |
+| `LANGFUSE_SECRET_KEY_REF` | — |  |
+| `LANGFUSE_TLS_PROFILE_REF` | — |  |
+| `LANGFUSE_CA_BUNDLE_REF` | — |  |
+| `LANGFUSE_CLIENT_CERT_REF` | — |  |
+| `LANGFUSE_CLIENT_KEY_REF` | — |  |
+| `LANGFUSE_CLIENT_KEY_PASSWORD_REF` | — |  |
+| `LANGFUSE_PERSISTENCE_HMAC_KEY_REF` | — | Required only when LANGFUSE_KG_AUTO_INGEST=True. |
 | `AUTH_TYPE` | `key` | options: key, delegated, none |
 | `DEFAULT_AGENT_NAME` | `"Langfuse Agent"` |  |
 | `AGENT_DESCRIPTION` | `"AI agent for Langfuse Agent operations."` |  |
 | `AGENT_SYSTEM_PROMPT` | `""` |  |
-| `MCP_TOOL_MODE` | `condensed` | action-routed tools) | verbose (1:1 per-operation tools) | both. |
-| `LANGFUSE_OBSERVABILITYTOOL` | `True` | MCP tools table (condensed action-routed surface). |
+| `MCP_TOOL_MODE` | `intent` | MCP_TOOL_MODE selects intent (default), condensed, verbose, or both surfaces. |
+| `LANGFUSE_OBSERVABILITYTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
 | `LANGFUSE_DATASETSTOOL` | `True` |  |
 | `LANGFUSE_PROMPTS_MODELSTOOL` | `True` |  |
 | `LANGFUSE_MANAGEMENTTOOL` | `True` |  |
+| `LANGFUSE_KGTOOL` | `True` |  |
 
 #### Inherited agent-utilities variables (apply to every connector)
 
@@ -588,9 +556,11 @@ Secrets are read-existing + seeded via `vault_sync` — you are only prompted fo
 | `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
 | `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
 | `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP auth (`oidc-client-credentials` for fleet calls) |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
 | `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET` | — | OIDC client secret (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
 | `DEBUG` | `False` | Verbose logging |
 | `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
 | `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
@@ -598,5 +568,21 @@ Secrets are read-existing + seeded via `vault_sync` — you are only prompted fo
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_23 package + 13 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_33 package + 15 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
+
+<!-- GOVERNED-CAPABILITY:START -->
+## Governed capability contract
+
+This package ships a compact canonical skill surface with specialist procedures
+kept as referenced workflows. The current MCP tools, skill metadata,
+`connector_manifest.yml`, ontology, mappings, shapes, fixtures, migrations,
+tool-schema fingerprints, and certification metadata form one versioned
+capability contract. Validate them together; do not rely on stale tool names or
+historical per-task skill wrappers.
+
+Runtime endpoints, credentials, certificate trust, tenant identity, retention,
+and observability policy are deployment inputs and are never packaged values.
+See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
+network transport, connector ingestion, GraphOS delegation, or trace export.
+<!-- GOVERNED-CAPABILITY:END -->

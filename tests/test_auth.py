@@ -3,6 +3,16 @@
 import os
 from unittest.mock import MagicMock, patch
 
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def valid_synthetic_trust(monkeypatch):
+    monkeypatch.setattr(
+        "langfuse_agent.auth.resolve_langfuse_requests_transport",
+        lambda: {},
+    )
+
 
 class TestGetClient:
     """Tests for the get_client function."""
@@ -10,7 +20,7 @@ class TestGetClient:
     def test_get_client_with_env_vars(self, clean_env):
         _ = clean_env
         """Test get_client with environment variables set."""
-        os.environ["LANGFUSE_BASE_URL"] = "https://test.langfuse.com"
+        os.environ["LANGFUSE_HOST"] = "https://test.langfuse.com"
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
@@ -31,6 +41,7 @@ class TestGetClient:
                 public_key="test_public_key",
                 secret_key="test_secret_key",
                 host="https://test.langfuse.com",
+                transport_kwargs={},
             )
             assert client == mock_client
 
@@ -51,7 +62,7 @@ class TestGetClient:
 
             langfuse_agent.auth._client = None
 
-            client = get_client()
+            get_client()
 
             mock_langfuse.assert_called_once()
             call_kwargs = mock_langfuse.call_args[1]
@@ -96,7 +107,7 @@ class TestGetClient:
 
             langfuse_agent.auth._client = None
 
-            client = get_client()
+            get_client()
 
             mock_langfuse.assert_called_once()
             call_kwargs = mock_langfuse.call_args[1]
@@ -106,7 +117,7 @@ class TestGetClient:
     def test_get_client_custom_host(self, clean_env):
         _ = clean_env
         """Test get_client with custom host."""
-        os.environ["LANGFUSE_BASE_URL"] = "https://custom.langfuse.com"
+        os.environ["LANGFUSE_HOST"] = "https://custom.langfuse.com"
         os.environ["LANGFUSE_PUBLIC_KEY"] = "test_public_key"
         os.environ["LANGFUSE_SECRET_KEY"] = "test_secret_key"
 
@@ -121,10 +132,28 @@ class TestGetClient:
 
             langfuse_agent.auth._client = None
 
-            client = get_client()
+            get_client()
 
             call_kwargs = mock_langfuse.call_args[1]
             assert call_kwargs["host"] == "https://custom.langfuse.com"
+
+    def test_get_client_uses_canonical_host(self, clean_env):
+        _ = clean_env
+        os.environ["LANGFUSE_HOST"] = "https://canonical.example.test"
+        os.environ["LANGFUSE_PUBLIC_KEY"] = "synthetic-public"
+        os.environ["LANGFUSE_SECRET_KEY"] = "synthetic-secret"
+
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
+            import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
+
+            langfuse_agent.auth._client = None
+            get_client()
+
+            assert (
+                mock_langfuse.call_args.kwargs["host"]
+                == "https://canonical.example.test"
+            )
 
     def test_get_client_oidc_delegation(self, clean_env):
         _ = clean_env
@@ -137,10 +166,6 @@ class TestGetClient:
             patch(
                 "agent_utilities.mcp.delegated_auth.is_delegation_enabled",
                 return_value=True,
-            ),
-            patch(
-                "agent_utilities.mcp.delegated_auth.get_user_identity",
-                return_value={"email": "test@example.com", "subject": "user-123"},
             ),
             patch("langfuse_agent.auth.logger") as mock_logger,
         ):
@@ -155,4 +180,44 @@ class TestGetClient:
             client = get_client()
 
             mock_logger.info.assert_called_once()
+            logged = repr(mock_logger.info.call_args)
+            assert "identity" not in logged
+            assert "subject" not in logged
+            assert "@" not in logged
+            assert "https://" not in logged
             assert client == mock_client
+
+    def test_get_client_fails_closed_for_invalid_transport(
+        self, clean_env, monkeypatch
+    ):
+        _ = clean_env
+        monkeypatch.setattr(
+            "langfuse_agent.auth.resolve_langfuse_requests_transport",
+            MagicMock(side_effect=RuntimeError("langfuse_requests_transport_invalid")),
+        )
+        import langfuse_agent.auth
+        from langfuse_agent.auth import get_client
+
+        langfuse_agent.auth._client = None
+
+        with pytest.raises(RuntimeError, match="langfuse_requests_transport_invalid"):
+            get_client()
+
+    def test_get_client_applies_resolved_mtls_transport(self, clean_env, monkeypatch):
+        _ = clean_env
+        os.environ["LANGFUSE_PUBLIC_KEY"] = "synthetic-public"
+        os.environ["LANGFUSE_SECRET_KEY"] = "synthetic-secret"
+        transport = {"verify": True, "cert": "synthetic-runtime-bundle.pem"}
+        monkeypatch.setattr(
+            "langfuse_agent.auth.resolve_langfuse_requests_transport",
+            lambda: transport,
+        )
+
+        with patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse:
+            import langfuse_agent.auth
+            from langfuse_agent.auth import get_client
+
+            langfuse_agent.auth._client = None
+            get_client()
+
+        assert mock_langfuse.call_args.kwargs["transport_kwargs"] == transport

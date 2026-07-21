@@ -5,11 +5,11 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "LM Studio (local)",
       "options": {
-        "baseURL": "http://vllm.arpa/v1"
+        "baseURL": "http://localhost:1234/v1"
       },
       "models": {
         "qwen/qwen3.6-27b": {
-          "name": "Qwen 3.6-35B-A3B"
+          "name": "Qwen 3.6-27B"
         }
       }
     }

@@ -1,9 +1,10 @@
 """Dynamic brute force test suite to achieve 100% test coverage for langfuse_agent/mcp_server.py."""
 
-import asyncio
 import inspect
 import os
 import sys
+import warnings
+from contextlib import ExitStack
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -35,27 +36,22 @@ async def test_mcp_tools_brute_force():
     # List of all expected actions for each tool to ensure every elif branch is executed
     actions_map = {
         "langfuse_observability": [
-            "legacy_metrics_v1_metrics",
-            "legacy_observations_v1_get",
-            "legacy_observations_v1_get_many",
-            "legacy_score_v1_create",
-            "legacy_score_v1_delete",
-            "metrics_metrics",
+            "runtime_posture",
+            "metrics_get",
             "observations_get_many",
             "opentelemetry_export_traces",
             "score_configs_create",
             "score_configs_get",
             "score_configs_get_by_id",
             "score_configs_update",
+            "scores_create",
             "scores_get_many",
-            "scores_get_by_id",
             "sessions_list",
             "sessions_get",
             "trace_get",
             "trace_delete",
             "trace_list",
             "trace_delete_multiple",
-            "ingestion_batch",
             "invalid_action_to_trigger_value_error",
         ],
         "langfuse_datasets": [
@@ -145,7 +141,21 @@ async def test_mcp_tools_brute_force():
 
     registered_tools = {tool.name: tool.fn for tool in tool_objs}
 
-    with patch("langfuse_agent.auth.get_client", return_value=mock_client):
+    client_bindings = (
+        "langfuse_agent.tools.datasets.get_client",
+        "langfuse_agent.tools.management.get_client",
+        "langfuse_agent.tools.observability.get_client",
+        "langfuse_agent.tools.prompts.get_client",
+    )
+    with ExitStack() as stack:
+        for binding in client_bindings:
+            stack.enter_context(patch(binding, return_value=mock_client))
+        network = stack.enter_context(
+            patch(
+                "requests.request",
+                side_effect=AssertionError("MCP unit tests must not reach the network"),
+            )
+        )
         for tool_name, tool_fn in registered_tools.items():
             if tool_name not in actions_map:
                 continue
@@ -161,9 +171,9 @@ async def test_mcp_tools_brute_force():
                         kwargs[param_name] = action
                     elif param.default is not inspect.Parameter.empty:
                         # Map expected type hints to non-None values
-                        if param.annotation == bool:
+                        if param.annotation is bool:
                             kwargs[param_name] = True
-                        elif param.annotation == int:
+                        elif param.annotation is int:
                             kwargs[param_name] = 1
                         else:
                             kwargs[param_name] = "dummy_val"
@@ -176,6 +186,18 @@ async def test_mcp_tools_brute_force():
                 except Exception:
                     # Catch ValueError on invalid actions or call errors and proceed to keep iterating
                     pass
+        network.assert_not_called()
+
+
+def test_observability_runtime_posture_is_metadata_only(monkeypatch):
+    from langfuse_agent.runtime_posture import observability_runtime_posture
+
+    monkeypatch.setenv("LANGFUSE_CAPTURE_CONTENT", "false")
+
+    assert observability_runtime_posture() == {
+        "content_capture_enabled": False,
+        "metadata_only": True,
+    }
 
 
 def test_get_mcp_instance_with_disabled_tools():
@@ -233,7 +255,12 @@ def test_mcp_server_transports():
 
 def test_mcp_server_main_execution():
     """Test __main__ execution block of mcp_server.py."""
-    with patch("fastmcp.FastMCP.run") as mock_run:
+    with (
+        patch.object(sys, "argv", ["langfuse-mcp"]),
+        patch("fastmcp.FastMCP.run") as mock_run,
+        warnings.catch_warnings(),
+    ):
+        warnings.simplefilter("ignore", RuntimeWarning)
         import runpy
 
         runpy.run_module("langfuse_agent.mcp_server", run_name="__main__")

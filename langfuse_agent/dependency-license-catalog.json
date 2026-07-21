@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "licenses": {
+    "agent-utilities": "MIT",
+    "langfuse": "MIT",
+    "langfuse-agent": "MIT",
+    "mkdocs": "BSD-2-Clause",
+    "mkdocs-material": "MIT",
+    "pytest": "MIT",
+    "pytest-asyncio": "Apache-2.0",
+    "pytest-cov": "MIT",
+    "pytest-timeout": "MIT",
+    "pytest-xdist": "MIT",
+    "requests": "Apache-2.0"
+  }
+}

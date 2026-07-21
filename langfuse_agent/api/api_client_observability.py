@@ -2,71 +2,19 @@
 from typing import Any
 
 from langfuse_agent.api.api_client_base import BaseApiClient
+from langfuse_agent.trace_projection import (
+    is_certification_trace_projection,
+    project_certification_trace_list,
+)
 
 
 class Api(BaseApiClient):
-    def legacy_metrics_v1_metrics(self, query: str) -> dict[str, Any]:
-        """Get metrics from the Langfuse project using a query object.  Consider using the [v2 metrics endpoint](/api-reference#tag/metricsv2/GET/api/public/v2/metrics) for better performance.  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api)."""
-        return self._request(
-            "GET", "/api/public/metrics", params={"query": query}, data=None
-        )
-
-    def legacy_observations_v1_get(self, observation_id: str) -> dict[str, Any]:
-        """Get a observation"""
-        return self._request(
-            "GET", f"/api/public/observations/{observation_id}", params=None, data=None
-        )
-
-    def legacy_observations_v1_get_many(
-        self,
-        page: int | None = None,
-        limit: int | None = None,
-        name: str | None = None,
-        user_id: str | None = None,
-        type: str | None = None,
-        trace_id: str | None = None,
-        level: Any | None = None,
-        parent_observation_id: str | None = None,
-        environment: list | None = None,
-        from_start_time: str | None = None,
-        to_start_time: str | None = None,
-        version: str | None = None,
-        filter: str | None = None,
-    ) -> dict[str, Any]:
-        """Get a list of observations.  Consider using the [v2 observations endpoint](/api-reference#tag/observationsv2/GET/api/public/v2/observations) for cursor-based pagination and field selection."""
-        return self._request(
-            "GET",
-            "/api/public/observations",
-            params={
-                "page": page,
-                "limit": limit,
-                "name": name,
-                "userId": user_id,
-                "type": type,
-                "traceId": trace_id,
-                "level": level,
-                "parentObservationId": parent_observation_id,
-                "environment": environment,
-                "fromStartTime": from_start_time,
-                "toStartTime": to_start_time,
-                "version": version,
-                "filter": filter,
-            },
-            data=None,
-        )
-
-    def legacy_score_v1_create(self, body: dict) -> dict[str, Any]:
-        """Create a score (supports both trace and session scores)"""
+    def scores_create(self, body: dict) -> dict[str, Any]:
+        """Create a typed score through Langfuse's current score-write API."""
         return self._request("POST", "/api/public/scores", params=None, data=body)
 
-    def legacy_score_v1_delete(self, score_id: str) -> dict[str, Any]:
-        """Delete a score (supports both trace and session scores)"""
-        return self._request(
-            "DELETE", f"/api/public/scores/{score_id}", params=None, data=None
-        )
-
-    def metrics_metrics(self, query: str) -> dict[str, Any]:
-        """Get metrics from the Langfuse project using a query object. V2 endpoint with optimized performance.  ## V2 Differences - Supports `observations`, `scores-numeric`, and `scores-categorical` views only (traces view not supported) - Direct access to tags and release fields on observations - Backwards-compatible: traceName, traceRelease, traceVersion dimensions are still available on observations view - High cardinality dimensions are not supported and will return a 400 error (see below)  For more details, see the [Metrics API documentation](https://langfuse.com/docs/metrics/features/metrics-api).  ## Available Views  ### observations Query observation-level data (spans, generations, events).  **Dimensions:** - `environment` - Deployment environment (e.g., production, staging) - `type` - Type of observation (SPAN, GENERATION, EVENT) - `name` - Name of the observation - `level` - Logging level of the observation - `version` - Version of the observation - `tags` - User-defined tags - `release` - Release version - `traceName` - Name of the parent trace (backwards-compatible) - `traceRelease` - Release version of the parent trace (backwards-compatible, maps to release) - `traceVersion` - Version of the parent trace (backwards-compatible, maps to version) - `providedModelName` - Name of the model used - `promptName` - Name of the prompt used - `promptVersion` - Version of the prompt used - `startTimeMonth` - Month of start_time in YYYY-MM format  **Measures:** - `count` - Total number of observations - `latency` - Observation latency (milliseconds) - `streamingLatency` - Generation latency from completion start to end (milliseconds) - `inputTokens` - Sum of input tokens consumed - `outputTokens` - Sum of output tokens produced - `totalTokens` - Sum of all tokens consumed - `outputTokensPerSecond` - Output tokens per second - `tokensPerSecond` - Total tokens per second - `inputCost` - Input cost (USD) - `outputCost` - Output cost (USD) - `totalCost` - Total cost (USD) - `timeToFirstToken` - Time to first token (milliseconds) - `countScores` - Number of scores attached to the observation  ### scores-numeric Query numeric and boolean score data.  **Dimensions:** - `environment` - Deployment environment - `name` - Name of the score (e.g., accuracy, toxicity) - `source` - Origin of the score (API, ANNOTATION, EVAL) - `dataType` - Data type (NUMERIC, BOOLEAN) - `configId` - Identifier of the score config - `timestampMonth` - Month in YYYY-MM format - `timestampDay` - Day in YYYY-MM-DD format - `value` - Numeric value of the score - `traceName` - Name of the parent trace - `tags` - Tags - `traceRelease` - Release version - `traceVersion` - Version - `observationName` - Name of the associated observation - `observationModelName` - Model name of the associated observation - `observationPromptName` - Prompt name of the associated observation - `observationPromptVersion` - Prompt version of the associated observation  **Measures:** - `count` - Total number of scores - `value` - Score value (for aggregations)  ### scores-categorical Query categorical score data. Same dimensions as scores-numeric except uses `stringValue` instead of `value`.  **Measures:** - `count` - Total number of scores  ## High Cardinality Dimensions The following dimensions cannot be used as grouping dimensions in v2 metrics API as they can cause performance issues. Use them in filters instead.  **observations view:** - `id` - Use traceId filter to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `parentObservationId` - Use parentObservationId filter instead  **scores-numeric / scores-categorical views:** - `id` - Use specific filters to narrow down results - `traceId` - Use traceId filter instead - `userId` - Use userId filter instead - `sessionId` - Use sessionId filter instead - `observationId` - Use observationId filter instead  ## Aggregations Available aggregation functions: `sum`, `avg`, `count`, `max`, `min`, `p50`, `p75`, `p90`, `p95`, `p99`, `histogram`  ## Time Granularities Available granularities for timeDimension: `auto`, `minute`, `hour`, `day`, `week`, `month` - `auto` bins the data into approximately 50 buckets based on the time range"""
+    def metrics_get(self, query: str) -> dict[str, Any]:
+        """Query aggregate observation or score metrics through Metrics API v2."""
         return self._request(
             "GET", "/api/public/v2/metrics", params={"query": query}, data=None
         )
@@ -155,62 +103,54 @@ class Api(BaseApiClient):
 
     def scores_get_many(
         self,
-        page: int | None = None,
         limit: int | None = None,
-        user_id: str | None = None,
+        cursor: str | None = None,
+        id: str | None = None,
         name: str | None = None,
         from_timestamp: str | None = None,
         to_timestamp: str | None = None,
-        environment: list | None = None,
-        source: Any | None = None,
-        operator: str | None = None,
-        value: int | None = None,
-        score_ids: str | None = None,
+        environment: str | None = None,
+        source: str | None = None,
+        value: str | None = None,
+        value_min: float | None = None,
+        value_max: float | None = None,
         config_id: str | None = None,
         session_id: str | None = None,
-        dataset_run_id: str | None = None,
+        experiment_id: str | None = None,
         trace_id: str | None = None,
         observation_id: str | None = None,
         queue_id: str | None = None,
-        data_type: Any | None = None,
-        trace_tags: list | None = None,
+        author_user_id: str | None = None,
+        data_type: str | None = None,
         fields: str | None = None,
-        filter: str | None = None,
     ) -> dict[str, Any]:
-        """Get a list of scores (supports both trace and session scores)"""
+        """Query scores through the cursor-based Scores API v3."""
         return self._request(
             "GET",
-            "/api/public/v2/scores",
+            "/api/public/v3/scores",
             params={
-                "page": page,
                 "limit": limit,
-                "userId": user_id,
+                "cursor": cursor,
+                "id": id,
                 "name": name,
                 "fromTimestamp": from_timestamp,
                 "toTimestamp": to_timestamp,
                 "environment": environment,
                 "source": source,
-                "operator": operator,
                 "value": value,
-                "scoreIds": score_ids,
+                "valueMin": value_min,
+                "valueMax": value_max,
                 "configId": config_id,
                 "sessionId": session_id,
-                "datasetRunId": dataset_run_id,
+                "experimentId": experiment_id,
                 "traceId": trace_id,
                 "observationId": observation_id,
                 "queueId": queue_id,
+                "authorUserId": author_user_id,
                 "dataType": data_type,
-                "traceTags": trace_tags,
                 "fields": fields,
-                "filter": filter,
             },
             data=None,
-        )
-
-    def scores_get_by_id(self, score_id: str) -> dict[str, Any]:
-        """Get a score (supports both trace and session scores)"""
-        return self._request(
-            "GET", f"/api/public/v2/scores/{score_id}", params=None, data=None
         )
 
     def sessions_list(
@@ -271,7 +211,8 @@ class Api(BaseApiClient):
         filter: str | None = None,
     ) -> dict[str, Any]:
         """Get list of traces"""
-        return self._request(
+        certification_projection = is_certification_trace_projection(fields)
+        result = self._request(
             "GET",
             "/api/public/traces",
             params={
@@ -287,25 +228,21 @@ class Api(BaseApiClient):
                 "version": version,
                 "release": release,
                 "environment": environment,
-                "fields": fields,
+                # Some self-hosted Langfuse versions omit metadata when this
+                # field set is sent. Fetch the default representation, then
+                # enforce the closed projection locally before any consumer
+                # can return or persist it.
+                "fields": None if certification_projection else fields,
                 "filter": filter,
             },
             data=None,
         )
+        if certification_projection:
+            return project_certification_trace_list(result)
+        return result
 
     def trace_delete_multiple(self, trace_ids: list) -> dict[str, Any]:
         """Delete multiple traces"""
         return self._request(
             "DELETE", "/api/public/traces", params=None, data={"traceIds": trace_ids}
-        )
-
-    def ingestion_batch(
-        self, batch: list, metadata: Any | None = None
-    ) -> dict[str, Any]:
-        """**Legacy endpoint for batch ingestion for Langfuse Observability.**  -> Please use the OpenTelemetry endpoint (`/api/public/otel/v1/traces`). Learn more: https://langfuse.com/integrations/native/opentelemetry  Within each batch, there can be multiple events. Each event has a type, an id, a timestamp, metadata and a body. Internally, we refer to this as the "event envelope" as it tells us something about the event but not the trace. We use the event id within this envelope to deduplicate messages to avoid processing the same event twice, i.e. the event id should be unique per request. The event.body.id is the ID of the actual trace and will be used for updates and will be visible within the Langfuse App. I.e. if you want to update a trace, you'd use the same body id, but separate event IDs.  Notes: - Introduction to data model: https://langfuse.com/docs/observability/data-model - Batch sizes are limited to 3.5 MB in total. You need to adjust the number of events per batch accordingly. - The API does not return a 4xx status code for input errors. Instead, it responds with a 207 status code, which includes a list of the encountered errors."""
-        return self._request(
-            "POST",
-            "/api/public/ingestion",
-            params=None,
-            data={"batch": batch, "metadata": metadata},
         )

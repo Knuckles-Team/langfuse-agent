@@ -1,7 +1,19 @@
 ---
 services:
   langfuse-agent:
-    # image: docker.io/knucklessg1/langfuse-agent:latest
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: ${AGENT_CONTAINER_MEMORY_LIMIT:-4g}
+    cpus: ${AGENT_CONTAINER_CPU_LIMIT:-2.0}
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+    # image: docker.io/${LANGFUSE_AGENT_AGENT_IMAGE:?set-LANGFUSE_AGENT_AGENT_IMAGE-to-image@sha256-digest}
     build:
       context: .. # Debug
       dockerfile: docker/debug.Dockerfile
@@ -16,24 +28,25 @@ services:
         max-size: "10m"
         max-file: "3"
     restart: always
-    env_file:
-      - ../.env
     environment:
       - "HOST=0.0.0.0"
       - "PORT=9001"
       - "TRANSPORT=stdio"
-      - "LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL}"
-      - "LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}"
-      - "LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}"
+      - "LANGFUSE_BASE_URL"
+      - "LANGFUSE_HOST"
+      - "LANGFUSE_PUBLIC_KEY"
+      - "LANGFUSE_SECRET_KEY"
+      - "REQUESTS_CA_BUNDLE"
+      - "SSL_CERT_FILE"
       - "PROVIDER=openai"
       - "LLM_BASE_URL=${LLM_BASE_URL:-http://host.docker.internal:1234/v1}"
-      - "LLM_API_KEY=${LLM_API_KEY:-llama}"
+      - "LLM_API_KEY"
       - "MODEL_ID=${MODEL_ID:-nvidia/nemotron-3-super}"
       - "DEBUG=False"
       - "ENABLE_WEB_UI=True"
       - "ENABLE_OTEL=True"
     ports:
-      - "9001:9001"
+      - "127.0.0.1:9001:9001"
     healthcheck:
       test: [ "CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9001/health')" ]
       interval: 30s

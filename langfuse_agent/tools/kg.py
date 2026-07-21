@@ -8,6 +8,7 @@ epistemic-graph knowledge graph as typed OWL nodes (:Trace / :Observation / :Gen
 
 from typing import Any
 
+from agent_utilities.mcp.action_dispatch import parse_json_object
 from fastmcp import FastMCP
 from pydantic import Field
 
@@ -53,12 +54,10 @@ def register_langfuse_kg_tools(mcp: FastMCP):
         engine client. Best-effort: ``{"ingested": None}`` when no engine is reachable.
         CONCEPT:AU-KG.ingest.enterprise-source-extractor.
         """
-        import json as _json
-
         if kind not in _INGESTERS:
-            raise ValueError(f"Unknown kind: {kind}. One of {list(_INGESTERS)}.")
+            raise ValueError(f"Unknown kind. Expected one of: {sorted(_INGESTERS)}.")
         ingest_fn, _ = _INGESTERS[kind]
-        kwargs = _json.loads(params_json) if params_json else {}
+        kwargs = parse_json_object(params_json)
         kwargs.setdefault("limit", limit)
         client = get_client()
 

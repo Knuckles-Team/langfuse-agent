@@ -88,7 +88,9 @@ nav:
   - Home: index.md
   - Overview: overview.md
   - Installation: installation.md
+  - Configuration, trust, and privacy: configuration.md
   - Deployment: deployment.md
+  - Trust and privacy: trust-and-privacy.md
   - Usage (API / CLI / MCP): usage.md
   - Backing Platform (Langfuse): platform.md
   - Concepts: concepts.md

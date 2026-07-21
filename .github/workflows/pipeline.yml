@@ -5,14 +5,81 @@ on:
     branches:
       - 'main'
 
+permissions:
+  contents: read
+
 jobs:
+  build-wheel:
+    name: Build immutable Langfuse Agent wheel
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_DATE_EPOCH: "0"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.11.7'
+      # Do not sync the project lock here: its editable sibling sources are a
+      # development workspace projection, never release inputs. Install only the
+      # exact hash-locked wheel-build/test tools and let PEP 517 read metadata.
+      - name: Prepare source-only wheel build environment
+        run: uv pip install --system --require-hashes -r release-build-requirements.txt
+      - name: Validate SBOM, privacy, version, image, and workflow contracts
+        run: >-
+          python -m pytest
+          tests/test_wheel_sbom.py
+          tests/test_wheel_privacy.py
+          tests/test_release_version.py
+          tests/test_release_image_contract.py
+          tests/test_release_workflow_contract.py
+          -q
+      - name: Build primary wheel
+        run: uv build --wheel --no-build-isolation --out-dir dist-primary
+      - name: Build reproduction wheel
+        run: uv build --wheel --no-build-isolation --out-dir dist-reproduction
+      - name: Audit both wheel candidates for retained identity
+        run: |
+          python scripts/check_wheel_privacy.py dist-primary/langfuse_agent-*.whl
+          python scripts/check_wheel_privacy.py dist-reproduction/langfuse_agent-*.whl
+      - name: Require byte-identical wheels and stage the sole candidate
+        run: |
+          python -c "from hashlib import sha256; from pathlib import Path; primary=sorted(Path('dist-primary').glob('langfuse_agent-*.whl')); reproduction=sorted(Path('dist-reproduction').glob('langfuse_agent-*.whl')); assert len(primary)==len(reproduction)==1, 'release wheel cardinality mismatch'; assert primary[0].name==reproduction[0].name, 'release wheel filename mismatch'; assert sha256(primary[0].read_bytes()).digest()==sha256(reproduction[0].read_bytes()).digest(), 'release wheel digest mismatch'; print('release_wheel_reproducibility=passed')"
+          mkdir dist
+          cp dist-primary/langfuse_agent-*.whl dist/
+      - name: Upload the sole wheel publish candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: langfuse-agent-wheel
+          path: dist/langfuse_agent-*.whl
+          if-no-files-found: error
+          retention-days: 7
+
   publish-pypi:
-    uses: Knuckles-Team/pipelines/.github/workflows/python_pipeline.yml@main
-    secrets:
-      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+    name: Publish validated wheel only
+    needs: build-wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: langfuse-agent-wheel
+          path: dist
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.11.7'
+      - name: Publish the exact validated wheel
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv publish --check-url https://pypi.org/simple dist/langfuse_agent-*.whl
   publish-docker:
     needs: publish-pypi
-    uses: Knuckles-Team/pipelines/.github/workflows/container_pipeline.yml@main
+    uses: Knuckles-Team/pipelines/.github/workflows/container_pipeline.yml@dc60f5ca0cfd00bf2e66f912a33d6d0f8ee62874 # v2.0.1
+    permissions:
+      contents: read
     secrets:
       DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
