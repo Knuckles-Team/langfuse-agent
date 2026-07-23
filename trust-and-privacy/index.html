@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://knuckles-team.github.io/langfuse-agent/platform/">
+        <link rel="canonical" href="https://knuckles-team.github.io/langfuse-agent/trust-and-privacy/">
       
       
-        <link rel="prev" href="../usage/">
+        <link rel="prev" href="../deployment/">
       
       
-        <link rel="next" href="../concepts/">
+        <link rel="next" href="../usage/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Backing Platform (Langfuse) - langfuse-agent</title>
+        <title>Trust and privacy - langfuse-agent</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#backing-platform-langfuse" class="md-skip">
+        <a href="#trust-and-privacy" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Backing Platform (Langfuse)
+              Trust and privacy
             
           </span>
         </div>
@@ -329,9 +329,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../trust-and-privacy/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -367,11 +369,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../platform/" class="md-tabs__link">
         
   
   
@@ -593,10 +593,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../trust-and-privacy/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trust and privacy
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -612,6 +639,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-graphos-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimal GraphOS configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#private-certificate-authorities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private certificate authorities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#safe-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Safe verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#knowledge-graph-persistence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Knowledge-graph persistence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure behavior
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -647,37 +749,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Backing Platform (Langfuse)
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../platform/" class="md-nav__link">
         
   
   
@@ -693,70 +768,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#self-hosted-components" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Self-hosted components
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#connect-graphos" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connect GraphOS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#shared-container-network" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared container network
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verify" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verify
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -815,10 +826,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#self-hosted-components" class="md-nav__link">
+  <a href="#minimal-graphos-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Self-hosted components
+        Minimal GraphOS configuration
       
     </span>
   </a>
@@ -826,10 +837,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connect-graphos" class="md-nav__link">
+  <a href="#private-certificate-authorities" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Connect GraphOS
+        Private certificate authorities
       
     </span>
   </a>
@@ -837,10 +848,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#shared-container-network" class="md-nav__link">
+  <a href="#safe-verification" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Shared container network
+        Safe verification
       
     </span>
   </a>
@@ -848,10 +859,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify" class="md-nav__link">
+  <a href="#knowledge-graph-persistence" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verify
+        Knowledge-graph persistence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure behavior
       
     </span>
   </a>
@@ -878,84 +900,138 @@
   
 
 
-<h1 id="backing-platform-langfuse">Backing platform — Langfuse<a class="headerlink" href="#backing-platform-langfuse" title="Permanent link">&para;</a></h1>
-<p><code>langfuse-agent</code> is a client of a Langfuse service selected by the canonical
-<code>LANGFUSE_HOST</code> setting. It does not provision or embed Langfuse.</p>
-<p>For production, follow the upstream
-<a href="https://langfuse.com/self-hosting">Langfuse self-hosting documentation</a> or use
-Langfuse Cloud. Pin reviewed image versions or digests, keep the service on a
-private network, and inject every platform credential through the deployment's
-secret manager.</p>
-<h2 id="self-hosted-components">Self-hosted components<a class="headerlink" href="#self-hosted-components" title="Permanent link">&para;</a></h2>
-<p>Current Langfuse self-hosting uses the web service plus PostgreSQL, ClickHouse,
-Redis, and S3-compatible object storage. The authoritative topology and required
-settings belong to the Langfuse release being deployed; do not copy static
-database passwords or encryption keys from this connector repository.</p>
-<p>At minimum, externalize:</p>
-<ul>
-<li>database, ClickHouse, Redis, and object-store credentials;</li>
-<li>application authentication, salt, and encryption keys;</li>
-<li>public service URL and ingress policy;</li>
-<li>image tags or digests, storage classes, backup policy, and retention; and</li>
-<li>the CA or TLS profile used by clients.</li>
-</ul>
-<p>The platform and connector use separate secret scopes. A Langfuse project API
-pair is issued after the platform is healthy; it is not a platform database
-credential.</p>
-<h2 id="connect-graphos">Connect GraphOS<a class="headerlink" href="#connect-graphos" title="Permanent link">&para;</a></h2>
-<p>Store the project API pair and optional TLS profile in the configured secret
-provider, then configure only references in <code>AgentConfig</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_HOST</span><span class="o">=</span>https://langfuse.example.invalid
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_PUBLIC_KEY_REF</span><span class="o">=</span>env://LANGFUSE_PROJECT_PUBLIC_KEY
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_SECRET_KEY_REF</span><span class="o">=</span>env://LANGFUSE_PROJECT_SECRET_KEY
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_TLS_PROFILE_REF</span><span class="o">=</span>env://LANGFUSE_RUNTIME_TLS_PROFILE
-</span></code></pre></div>
-<p>The <code>env://</code> references are neutral schema examples; a deployment may supply any
-supported reference through <code>AgentConfig</code>. The TLS-profile reference is optional
-when system trust is sufficient. GraphOS
-resolves the references in memory and starts the installed provider module; no
-Langfuse-specific MCP catalog entry is required.</p>
-<p>For loopback-only development, <code>LANGFUSE_HOST=http://localhost:3000</code> is allowed.
-Non-loopback deployments require HTTPS.</p>
-<h2 id="shared-container-network">Shared container network<a class="headerlink" href="#shared-container-network" title="Permanent link">&para;</a></h2>
-<p>When Langfuse and the provider share a container network, select the service URL
-at deployment time and keep credential material in the orchestrator's secret
-store. The provider container is a child runtime and therefore receives the
-materialized project keys only from that orchestrator:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">services</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">langfuse-agent-mcp</span><span class="p">:</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example/langfuse-agent:mcp</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">langfuse-web</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LANGFUSE_HOST</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LANGFUSE_PUBLIC_KEY</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LANGFUSE_SECRET_KEY</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQUESTS_CA_BUNDLE</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SSL_CERT_FILE</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TRANSPORT=streamable-http</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOST=0.0.0.0</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT=8004</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MCP_TLS_TERMINATED</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MCP_TRUSTED_PROXY_CIDRS</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MCP_ALLOWED_HOSTS</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;127.0.0.1:8004:8004&quot;</span>
-</span></code></pre></div>
-<p>The non-loopback listener is valid only behind the operator-supplied authenticated
-TLS ingress selected by those exact proxy and host policies. Do not put key values,
-platform passwords, deployment hostnames, or certificate paths in the Compose file.
-A production GraphOS parent uses the corresponding <code>*_REF</code> settings and performs
-this child materialization automatically.</p>
-<h2 id="verify">Verify<a class="headerlink" href="#verify" title="Permanent link">&para;</a></h2>
+<h1 id="trust-and-privacy">Trust and privacy<a class="headerlink" href="#trust-and-privacy" title="Permanent link">&para;</a></h1>
+<p><code>langfuse-agent</code> inherits its runtime configuration from the process that
+launches it. Keep service addresses, credentials, certificate locations, user
+identities, and trace payloads out of repository files and MCP catalogs.</p>
+<h2 id="minimal-graphos-configuration">Minimal GraphOS configuration<a class="headerlink" href="#minimal-graphos-configuration" title="Permanent link">&para;</a></h2>
+<p>With the current <code>agent-utilities</code> runtime, no handwritten Langfuse MCP entry is
+required. GraphOS registers the installed provider lazily when both credential
+references are available. The parent process supplies:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LANGFUSE_HOST</code></td>
+<td>Canonical service URL</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_PUBLIC_KEY_REF</code></td>
+<td><code>vault://</code>, <code>secret://</code>, or <code>env://</code> reference to the project public key</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_SECRET_KEY_REF</code></td>
+<td><code>vault://</code>, <code>secret://</code>, or <code>env://</code> reference to the project secret key</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_TLS_PROFILE_REF</code></td>
+<td>Optional reference to a reusable TLS profile</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_CA_BUNDLE_REF</code></td>
+<td>Preferred secret reference for a private CA bundle</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_CLIENT_CERT_REF</code></td>
+<td>Optional reference to an mTLS client certificate</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_CLIENT_KEY_REF</code></td>
+<td>Reference to the matching mTLS private key</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_CLIENT_KEY_PASSWORD_REF</code></td>
+<td>Optional reference for an encrypted client key</td>
+</tr>
+<tr>
+<td><code>LANGFUSE_PERSISTENCE_HMAC_KEY_REF</code></td>
+<td>Dedicated identity-HMAC key reference for optional graph persistence</td>
+</tr>
+</tbody>
+</table>
+<p>GraphOS resolves references in memory and starts
+<code>python -m langfuse_agent.mcp_server</code> with its own interpreter. It passes only
+the materialized runtime values required by that child. The launch performs no
+package download or package-index lookup.</p>
+<h2 id="private-certificate-authorities">Private certificate authorities<a class="headerlink" href="#private-certificate-authorities" title="Permanent link">&para;</a></h2>
+<p>Use system trust when it contains the issuing authority. Otherwise reference a
+PEM trust store containing the required root, roots, or chain certificates. Do
+not disable TLS verification and do not point Requests at a binary certificate.</p>
+<p>At startup, <code>agent-utilities</code>:</p>
 <ol>
-<li>Check the Langfuse platform's documented health endpoint.</li>
-<li>Run <code>agent-utilities doctor</code> without exposing secret values or service URLs.</li>
-<li>Call <code>langfuse_observability</code> with <code>action=trace_list</code> and a small limit.</li>
-<li>Treat an authenticated empty result as successful connectivity.</li>
+<li>resolves <code>LANGFUSE_CA_BUNDLE_REF</code> in memory;</li>
+<li>validates bounded, parseable CA certificates and current validity windows;</li>
+<li>materializes it with owner-only permissions in the runtime directory;</li>
+<li>projects the runtime-only location to both <code>REQUESTS_CA_BUNDLE</code> and
+   <code>SSL_CERT_FILE</code>; and</li>
+<li>leaves hostname and certificate-path verification enabled for the live
+   connection.</li>
 </ol>
-<p>See <a href="../deployment/">Deployment</a> for the provider runtime and
-<a href="../trust-and-privacy/">Trust and privacy</a> for private-CA handling.</p>
+<p>An operator-managed PEM may instead be supplied through
+<code>LANGFUSE_CA_BUNDLE</code>. Existing <code>REQUESTS_CA_BUNDLE</code> and <code>SSL_CERT_FILE</code>
+settings are accepted only after the same validation. Certificate paths and
+subjects are never returned by readiness checks or written to logs.</p>
+<p>The order and number of certificates are not used to claim a pre-verified
+server chain. OpenSSL and Requests construct and verify the target server's
+certificate path at connection time.</p>
+<p>The MCP configuration stores neither a certificate path nor project keys.
+GraphOS resolves the secret reference, creates the bounded runtime file, and
+supplies the two CA environment variables only to the child process.</p>
+<p>Mutual TLS uses the same boundary. Both client-certificate and private-key
+references are required; an encrypted key may use the password reference.
+GraphOS validates the pair and gives the provider only a private,
+process-lifetime combined client bundle. The Requests adapter applies that
+bundle to every Langfuse API request.</p>
+<p>When <code>uv</code> itself must install or update the package through platform trust, set
+<code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS launch uses the
+already-installed module and does not invoke <code>uv</code>.</p>
+<h2 id="safe-verification">Safe verification<a class="headerlink" href="#safe-verification" title="Permanent link">&para;</a></h2>
+<p>Use a synthetic trace and inspect only status, counts, and neutral identifiers:</p>
+<ol>
+<li>call <code>langfuse_observability</code> with <code>action=runtime_posture</code> and require
+   <code>content_capture_enabled=false</code> plus <code>metadata_only=true</code>;</li>
+<li>emit a synthetic local-LLM trace with no source documents or user fields;</li>
+<li>call <code>langfuse_observability</code> with <code>action=trace_list</code>, the exact opaque
+   tenant-qualified trace name, metadata-only fields, and a small limit;</li>
+<li>require exactly one matching trace whose controlled metadata binds the same
+   run, configured model, model class, skill, and skill-body digest; and</li>
+<li>discard the synthetic trace according to the project's retention policy.</li>
+</ol>
+<p>Do not use an unfiltered project-wide trace list as certification evidence; it
+can expose unrelated project metadata and cannot prove which runtime emitted a
+trace.</p>
+<p>Never print project keys, service URLs, certificate paths, raw trace inputs or
+outputs, user IDs, email addresses, or source-system content during this check.</p>
+<h2 id="knowledge-graph-persistence">Knowledge-graph persistence<a class="headerlink" href="#knowledge-graph-persistence" title="Permanent link">&para;</a></h2>
+<p>Reading a trace through MCP does not persist it. <code>LANGFUSE_KG_AUTO_INGEST</code> is
+off by default; enable it only after the governed graph destination and
+retention policy are approved. Explicit or automatic ingestion requires the
+shared persistence privacy guard and a dedicated key resolved only from
+<code>LANGFUSE_PERSISTENCE_HMAC_KEY_REF</code>. The Langfuse API secret is never reused for
+identity derivation.</p>
+<p>Before a node crosses the persistence boundary, the connector:</p>
+<ul>
+<li>drops person and user entities and their relationships;</li>
+<li>removes raw external, trace, session, observation, and user identifiers;</li>
+<li>replaces every node identity with a stable HMAC-derived identifier;</li>
+<li>persists only validated structural enums, timestamps, and numeric usage/cost
+  metadata for traces, sessions, observations, generations, models, and scores;</li>
+<li>drops free-form names, tags, URLs, host/path fields, environment/release
+  labels, model labels, and categorical score text; and</li>
+<li>emits only exception categories in logs.</li>
+</ul>
+<p>If the privacy guard or HMAC key is unavailable, ingestion fails closed while
+read-only MCP access remains available.</p>
+<h2 id="failure-behavior">Failure behavior<a class="headerlink" href="#failure-behavior" title="Permanent link">&para;</a></h2>
+<p>Custom trust fails closed. An incomplete, expired, malformed, or unrelated CA
+bundle prevents the Langfuse child from being registered. Network and
+authentication exceptions expose stable error categories only; response bodies,
+request URLs, and exception causes are not propagated.</p>
 
 
 
@@ -993,7 +1069,7 @@ this child materialization automatically.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../usage/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Usage (API / CLI / MCP)">
+          <a href="../deployment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Deployment">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1003,20 +1079,20 @@ this child materialization automatically.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Usage (API / CLI / MCP)
+                Deployment
               </div>
             </div>
           </a>
         
         
           
-          <a href="../concepts/" class="md-footer__link md-footer__link--next" aria-label="Next: Concepts">
+          <a href="../usage/" class="md-footer__link md-footer__link--next" aria-label="Next: Usage (API / CLI / MCP)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Concepts
+                Usage (API / CLI / MCP)
               </div>
             </div>
             <div class="md-footer__button md-icon">

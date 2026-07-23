@@ -16,14 +16,14 @@
         <link rel="prev" href="../overview/">
       
       
-        <link rel="next" href="../deployment/">
+        <link rel="next" href="../configuration/">
       
       
         
       
       
       <link rel="icon" href="https://raw.githubusercontent.com/squidfunk/mkdocs-material/master/material/templates/assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -295,6 +295,25 @@
   
   
     <li class="md-tabs__item">
+      <a href="../configuration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Configuration, trust, and privacy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../deployment/" class="md-tabs__link">
         
   
@@ -302,6 +321,25 @@
     
   
   Deployment
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../trust-and-privacy/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Trust and privacy
 
       </a>
     </li>
@@ -587,10 +625,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prebuilt-docker-image" class="md-nav__link">
+  <a href="#prebuilt-container-images" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prebuilt Docker image
+        Prebuilt container images
       
     </span>
   </a>
@@ -634,6 +672,33 @@
   
   
     <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration, trust, and privacy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../deployment/" class="md-nav__link">
         
   
@@ -642,6 +707,33 @@
     
   
     Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trust-and-privacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trust and privacy
   
 
     
@@ -812,10 +904,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prebuilt-docker-image" class="md-nav__link">
+  <a href="#prebuilt-container-images" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prebuilt Docker image
+        Prebuilt container images
       
     </span>
   </a>
@@ -867,11 +959,26 @@
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
 <p><code>langfuse-agent</code> is a standard Python package and a prebuilt container image. Pick the
 path that matches how you want to run it.</p>
+<p>Every built wheel contains a deterministic CycloneDX 1.6 SBOM at
+<code>.dist-info/sboms/package.cyclonedx.json</code>. The PEP 517 build backend derives it from the
+final wheel metadata and rebuilds <code>RECORD</code>; every direct-reference URL fails the build so
+package artifacts cannot retain workstation or network locations. A packaged,
+source-controlled catalog supplies canonical SPDX expressions for the root, runtime,
+optional, documentation, test, and development components. Missing or invalid entries
+fail closed, and every emitted SBOM component therefore has reviewed license metadata.</p>
+<p>The repository-owned release job is wheel-only. It deliberately does not synchronize the
+development lock's editable sibling checkouts; instead, it builds twice from the package
+metadata with the same bounded PEP 517 environment and fixed <code>SOURCE_DATE_EPOCH</code>. Both
+candidates must pass the SBOM, version, image, and privacy contracts and have identical
+filenames and SHA-256 digests. Only that byte-identical wheel is uploaded and published;
+no source archive or local-source provenance is admitted to the release.</p>
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Python 3.11 – 3.14</strong>.</li>
 <li>A reachable <strong>Langfuse</strong> instance (self-hosted or Langfuse Cloud) — see
   <a href="../platform/">Backing Platform</a> to deploy one locally.</li>
+<li>For a private CA, a referenced PEM trust store containing the required root,
+  roots, or chain certificates; see <a href="../trust-and-privacy/">Trust and privacy</a>.</li>
 </ul>
 <h2 id="from-pypi-recommended">From PyPI (recommended)<a class="headerlink" href="#from-pypi-recommended" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>langfuse-agent
@@ -921,16 +1028,27 @@ path that matches how you want to run it.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[all]&quot;</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>uv<span class="w"> </span>run<span class="w"> </span>langfuse-mcp
 </span></code></pre></div>
-<h2 id="prebuilt-docker-image">Prebuilt Docker image<a class="headerlink" href="#prebuilt-docker-image" title="Permanent link">&para;</a></h2>
-<p>A multi-stage, slim image is published on every release (entrypoint <code>langfuse-mcp</code>):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>knucklessg1/langfuse-agent:latest
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">LANGFUSE_BASE_URL</span><span class="o">=</span>http://your-langfuse:3000<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">LANGFUSE_PUBLIC_KEY</span><span class="o">=</span>pk-...<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">LANGFUSE_SECRET_KEY</span><span class="o">=</span>sk-...<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>knucklessg1/langfuse-agent:latest<span class="w">        </span><span class="c1"># stdio transport (default)</span>
+<p>If <code>uv</code> must use the platform trust store while provisioning, set
+<code>UV_NATIVE_TLS=true</code> in the installer environment. This is not a provider
+runtime setting.</p>
+<h2 id="prebuilt-container-images">Prebuilt container images<a class="headerlink" href="#prebuilt-container-images" title="Permanent link">&para;</a></h2>
+<p>The multi-stage build publishes separate MCP and full-agent targets. Deploy a
+reviewed immutable MCP-image digest supplied by the operator:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_MCP_IMAGE</span><span class="o">=</span><span class="s1">&#39;registry.example.invalid/langfuse-agent@sha256:&lt;digest&gt;&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-e<span class="w"> </span>LANGFUSE_HOST<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span>-e<span class="w"> </span>LANGFUSE_PUBLIC_KEY<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span>-e<span class="w"> </span>LANGFUSE_SECRET_KEY<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span>-e<span class="w"> </span>REQUESTS_CA_BUNDLE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span>-e<span class="w"> </span>SSL_CERT_FILE<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="s2">&quot;</span><span class="nv">$LANGFUSE_MCP_IMAGE</span><span class="s2">&quot;</span><span class="w"> </span>langfuse-mcp
 </span></code></pre></div>
+<p>This direct-container form expects the process supervisor to inject the
+materialized key variables and optional trust-store paths at container creation.
+Do not place their values in the command, a Compose file, or a checked-in env
+file. Production GraphOS deployments instead configure
+<code>LANGFUSE_PUBLIC_KEY_REF</code> and <code>LANGFUSE_SECRET_KEY_REF</code>; GraphOS performs the
+private child materialization.</p>
 <p>For an HTTP server with a published port and the agent server, see
 <a href="../deployment/">Deployment</a>.</p>
 <h2 id="verify-the-install">Verify the install<a class="headerlink" href="#verify-the-install" title="Permanent link">&para;</a></h2>
@@ -941,7 +1059,7 @@ path that matches how you want to run it.</p>
 <ul>
 <li><strong><a href="../deployment/">Deployment</a></strong> — run it as a long-lived MCP server and agent behind Caddy + DNS.</li>
 <li><strong><a href="../usage/">Usage</a></strong> — call the tools, the API, and the CLI.</li>
-<li><strong><a href="../deployment/#configuration-environment">Configuration</a></strong> — every environment variable.</li>
+<li><strong><a href="../deployment/#canonical-configuration">Configuration</a></strong> — canonical runtime settings.</li>
 </ul>
 
 
@@ -997,13 +1115,13 @@ path that matches how you want to run it.</p>
         
         
           
-          <a href="../deployment/" class="md-footer__link md-footer__link--next" aria-label="Next: Deployment">
+          <a href="../configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration, trust, and privacy">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Deployment
+                Configuration, trust, and privacy
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1076,7 +1194,7 @@ path that matches how you want to run it.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.tracking", "navigation.instant", "navigation.instant.progress", "navigation.footer", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link", "content.tooltips"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
