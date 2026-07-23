@@ -9,8 +9,8 @@ version = "1.0.3"
 description = "Agent for interacting with Langfuse Observability API"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
-requires-python = ">=3.11, <3.15"
-dependencies = [ "agent-utilities[mcp]>=1.27.1,<2.0.0", "langfuse>=4.14.1", "requests>=2.34.2",]
+requires-python = ">=3.12, <3.15"
+dependencies = [ "agent-utilities[mcp]>=1.27.1,<2.0.0", "langfuse>=4,<5", "requests>=2.34.2",]
 license = "MIT"
 [[project.authors]]
 name = "Project Contributors"
