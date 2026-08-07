@@ -3,7 +3,7 @@ connector: langfuse-agent
 ontology_source: langfuse
 sync:
 - preset: langfuse-sessions
-  server: langfuse-agent
+  server: langfuse-mcp
   tool: langfuse_observability
   action: sessions_list
   records_path: data
@@ -14,7 +14,7 @@ sync:
   doc_type: session
   tool_schema_sha256: 2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de
 - preset: langfuse-traces
-  server: langfuse-agent
+  server: langfuse-mcp
   tool: langfuse_observability
   action: trace_list
   records_path: data
