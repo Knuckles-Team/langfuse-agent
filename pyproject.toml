@@ -76,3 +76,11 @@ exclude = [ "docs*", "scripts*", "tests*",]
 
 [tool.vulture]
 ignore_names = ["request", "config"]
+
+[tool.uv]
+override-dependencies = [
+    "fastmcp-slim[client,server]>=4.0.0b1",
+]
+
+[tool.uv.sources]
+agent-utilities = { path = ".uv-workspace-siblings/agent-utilities", editable = true }
