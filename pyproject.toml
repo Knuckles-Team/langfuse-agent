@@ -42,6 +42,9 @@ langfuse-agent = "langfuse_agent.connectors"
 [project.entry-points."agent_utilities.prompt_providers"]
 langfuse-agent = "langfuse_agent.prompts"
 
+[tool.uv.workspace]
+members = ["."]
+
 [tool.setuptools]
 include-package-data = true
 
