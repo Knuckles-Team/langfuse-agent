@@ -96,7 +96,7 @@ no ports to manage). Swap `docker` for `podman` for a daemonless runtime:
         "-e", "LANGFUSE_BASE_URL=<your-langfuse_base_url>",
         "-e", "LANGFUSE_TOKEN=<your-langfuse_token>",
         "-e", "LANGFUSE_PUBLIC_KEY=<your-langfuse_public_key>",
-        "knucklessg1/langfuse-agent:latest"
+        "knucklessg1/langfuse-agent:2.1.0"
       ]
     }
   }
@@ -112,7 +112,7 @@ docker run -d --name langfuse-mcp -p 8000:8000 \
   -e LANGFUSE_BASE_URL="<your-langfuse_base_url>" \
   -e LANGFUSE_TOKEN="<your-langfuse_token>" \
   -e LANGFUSE_PUBLIC_KEY="<your-langfuse_public_key>" \
-  knucklessg1/langfuse-agent:latest
+  knucklessg1/langfuse-agent:2.1.0
 # or, from a clone of this repo:
 docker compose -f docker/mcp.compose.yml up -d
 ```
