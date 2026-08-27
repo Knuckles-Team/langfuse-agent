@@ -10,6 +10,34 @@ from pydantic import Field
 
 from langfuse_agent.auth import get_client
 
+# Every action name below is identical to the client method it dispatches to
+# (verified against the elif chain this table replaced); the tuple is the
+# exact, order-independent set of kwargs that branch used to forward.
+_ACTION_PARAMS: dict[str, tuple[str, ...]] = {
+    "llm_connections_list": ("page", "limit"),
+    "llm_connections_upsert": ("body",),
+    "media_get": ("media_id",),
+    "media_patch": ("media_id", "body"),
+    "media_get_upload_url": ("body",),
+    "models_create": ("body",),
+    "models_list": ("page", "limit"),
+    "models_get": ("id",),
+    "models_delete": ("id",),
+    "prompt_version_update": ("name", "version", "new_labels"),
+    "prompts_get": ("prompt_name", "version", "label", "resolve"),
+    "prompts_delete": ("prompt_name", "label", "version"),
+    "prompts_list": (
+        "name",
+        "label",
+        "tag",
+        "page",
+        "limit",
+        "from_updated_at",
+        "to_updated_at",
+    ),
+    "prompts_create": ("body",),
+}
+
 
 def register_langfuse_prompts_models_tools(mcp: FastMCP):
     """Register all prompt and model-related tools.
@@ -39,104 +67,29 @@ def register_langfuse_prompts_models_tools(mcp: FastMCP):
     ) -> Any:
         """Perform langfuse_prompts_models operations."""
         client = get_client()
-        kwargs = {}
-        if body is not None:
-            kwargs["body"] = body
-        if from_updated_at is not None:
-            kwargs["from_updated_at"] = from_updated_at
-        if id is not None:
-            kwargs["id"] = id
-        if label is not None:
-            kwargs["label"] = label
-        if limit is not None:
-            kwargs["limit"] = limit
-        if media_id is not None:
-            kwargs["media_id"] = media_id
-        if name is not None:
-            kwargs["name"] = name
-        if new_labels is not None:
-            kwargs["new_labels"] = new_labels
-        if page is not None:
-            kwargs["page"] = page
-        if prompt_name is not None:
-            kwargs["prompt_name"] = prompt_name
-        if resolve is not None:
-            kwargs["resolve"] = resolve
-        if tag is not None:
-            kwargs["tag"] = tag
-        if to_updated_at is not None:
-            kwargs["to_updated_at"] = to_updated_at
-        if version is not None:
-            kwargs["version"] = version
 
-        if action == "llm_connections_list":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["page", "limit"]}
-            return client.llm_connections_list(**method_kwargs)
-        elif action == "llm_connections_upsert":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["body"]}
-            return client.llm_connections_upsert(**method_kwargs)
-        elif action == "media_get":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["media_id"]}
-            return client.media_get(**method_kwargs)
-        elif action == "media_patch":
-            method_kwargs = {
-                k: v for k, v in kwargs.items() if k in ["media_id", "body"]
-            }
-            return client.media_patch(**method_kwargs)
-        elif action == "media_get_upload_url":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["body"]}
-            return client.media_get_upload_url(**method_kwargs)
-        elif action == "models_create":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["body"]}
-            return client.models_create(**method_kwargs)
-        elif action == "models_list":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["page", "limit"]}
-            return client.models_list(**method_kwargs)
-        elif action == "models_get":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["id"]}
-            return client.models_get(**method_kwargs)
-        elif action == "models_delete":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["id"]}
-            return client.models_delete(**method_kwargs)
-        elif action == "prompt_version_update":
-            method_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k in ["name", "version", "new_labels"]
-            }
-            return client.prompt_version_update(**method_kwargs)
-        elif action == "prompts_get":
-            method_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k in ["prompt_name", "version", "label", "resolve"]
-            }
-            return client.prompts_get(**method_kwargs)
-        elif action == "prompts_delete":
-            method_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k in ["prompt_name", "label", "version"]
-            }
-            return client.prompts_delete(**method_kwargs)
-        elif action == "prompts_list":
-            method_kwargs = {
-                k: v
-                for k, v in kwargs.items()
-                if k
-                in [
-                    "name",
-                    "label",
-                    "tag",
-                    "page",
-                    "limit",
-                    "from_updated_at",
-                    "to_updated_at",
-                ]
-            }
-            return client.prompts_list(**method_kwargs)
-        elif action == "prompts_create":
-            method_kwargs = {k: v for k, v in kwargs.items() if k in ["body"]}
-            return client.prompts_create(**method_kwargs)
-        else:
+        # Same insertion order as the original if-chain, so the assembled
+        # kwargs dict (and therefore any downstream filtered subset) is
+        # identical to before.
+        candidates = (
+            ("body", body),
+            ("from_updated_at", from_updated_at),
+            ("id", id),
+            ("label", label),
+            ("limit", limit),
+            ("media_id", media_id),
+            ("name", name),
+            ("new_labels", new_labels),
+            ("page", page),
+            ("prompt_name", prompt_name),
+            ("resolve", resolve),
+            ("tag", tag),
+            ("to_updated_at", to_updated_at),
+            ("version", version),
+        )
+        kwargs = {k: v for k, v in candidates if v is not None}
+
+        if action not in _ACTION_PARAMS:
             raise ValueError(f"Unknown action: {action}")
+        method_kwargs = {k: v for k, v in kwargs.items() if k in _ACTION_PARAMS[action]}
+        return getattr(client, action)(**method_kwargs)
