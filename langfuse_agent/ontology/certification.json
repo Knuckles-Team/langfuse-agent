@@ -1,7 +1,7 @@
 {
   "api_version": "graphos.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "292594666a3e969cbb461e90abb3b0b3c4dab29f1d60666cd7601619bed3c51c",
+    "connector_manifest.yml": "cd6feb89b9947a54d8d4ad788088a05414a5354c1282afd73a1e086eebd43b42",
     "langfuse_agent/connectors/mcp_source_presets.json": "52a9dcbc858c09c70f6deb9398ca5471e17e396ef44cce738675f9d26bf34435",
     "langfuse_agent/connectors/tool_schema_fingerprints.json": "c282471f16c93d8c0ef03139796b64a898a5792245d1a0fc90fb963c3b0f4a4d",
     "langfuse_agent/ontology/fixtures/records.json": "45426db59590ddb6e6f72b2296ceefd87236209488199ca4ab36f700f5e08df2",
@@ -18,9 +18,9 @@
     "synthetic_fixture_contract": "passed"
   },
   "compatibility": {
-    "agent_utilities": ">=2.4.0,<3",
+    "agent_utilities": ">=2.5.0,<3",
     "bundle_schema": "2",
-    "epistemic_graph": ">=2.26.0,<3"
+    "epistemic_graph": ">=2.27.0,<3"
   },
   "connector": "langfuse-agent",
   "kind": "ConnectorSourceAttestation",
@@ -32,5 +32,5 @@
   "signer": "UNSIGNED-PREVIEW",
   "signing_public_key": "",
   "status": "source-validated",
-  "validated_at": "2026-08-21T04:30:39Z"
+  "validated_at": "2026-08-26T13:42:55Z"
 }
