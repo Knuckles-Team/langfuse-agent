@@ -59,7 +59,7 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return value
 
 
-def _license_catalog(path: Path) -> dict[str, str]:
+def _load_license_catalog_document(path: Path) -> dict[str, Any]:
     if (
         path.is_symlink()
         or not path.is_file()
@@ -67,11 +67,14 @@ def _license_catalog(path: Path) -> dict[str, str]:
     ):
         raise WheelSbomError("license catalog is not a bounded regular file")
     try:
-        value = json.loads(path.read_bytes(), object_pairs_hook=_unique_object)
+        return json.loads(path.read_bytes(), object_pairs_hook=_unique_object)
     except WheelSbomError:
         raise
     except Exception as exc:
         raise WheelSbomError("license catalog is not valid JSON") from exc
+
+
+def _validated_licenses_section(value: Any) -> dict[str, str]:
     if (
         not isinstance(value, dict)
         or set(value) != {"version", "licenses"}
@@ -81,40 +84,44 @@ def _license_catalog(path: Path) -> dict[str, str]:
         or len(value["licenses"]) > 2_048
     ):
         raise WheelSbomError("license catalog schema is invalid")
-    catalog: dict[str, str] = {}
-    for name, expression in value["licenses"].items():
-        if (
-            not isinstance(name, str)
-            or _normalized_name(name) != name
-            or not isinstance(expression, str)
-            or not expression
-            or len(expression.encode("utf-8")) > _MAX_LICENSE_EXPRESSION_BYTES
-            or "\x00" in expression
-        ):
-            raise WheelSbomError("license catalog entry is invalid")
-        raw = (
-            "Metadata-Version: 2.4\n"
-            "Name: license-catalog-entry\n"
-            "Version: 1\n"
-            f"License-Expression: {expression}\n\n"
-        )
-        try:
-            normalized = Metadata.from_email(raw, validate=True).license_expression
-        except Exception as exc:
-            raise WheelSbomError("license catalog SPDX expression is invalid") from exc
-        if normalized != expression:
-            raise WheelSbomError("license catalog SPDX expression is not canonical")
-        catalog[name] = expression
-    return catalog
+    return value["licenses"]
 
 
-def _sbom(metadata: bytes, wheel_tag: str, license_catalog: Path) -> bytes:
-    message = BytesParser(policy=compat32).parsebytes(metadata)
-    name = str(message.get("Name") or "")
-    version = str(message.get("Version") or "")
-    normalized = _normalized_name(name)
-    if not _VERSION.fullmatch(version):
-        raise WheelSbomError("wheel metadata contains an invalid package version")
+def _canonical_license_expression(name: str, expression: str) -> str:
+    if (
+        not isinstance(name, str)
+        or _normalized_name(name) != name
+        or not isinstance(expression, str)
+        or not expression
+        or len(expression.encode("utf-8")) > _MAX_LICENSE_EXPRESSION_BYTES
+        or "\x00" in expression
+    ):
+        raise WheelSbomError("license catalog entry is invalid")
+    raw = (
+        "Metadata-Version: 2.4\n"
+        "Name: license-catalog-entry\n"
+        "Version: 1\n"
+        f"License-Expression: {expression}\n\n"
+    )
+    try:
+        normalized = Metadata.from_email(raw, validate=True).license_expression
+    except Exception as exc:
+        raise WheelSbomError("license catalog SPDX expression is invalid") from exc
+    if normalized != expression:
+        raise WheelSbomError("license catalog SPDX expression is not canonical")
+    return expression
+
+
+def _license_catalog(path: Path) -> dict[str, str]:
+    document = _load_license_catalog_document(path)
+    licenses = _validated_licenses_section(document)
+    return {
+        name: _canonical_license_expression(name, expression)
+        for name, expression in licenses.items()
+    }
+
+
+def _grouped_wheel_requirements(message: Any) -> dict[str, list[str]]:
     requirements = sorted(set(message.get_all("Requires-Dist") or ()))
     grouped: dict[str, list[str]] = {}
     for declaration in requirements:
@@ -127,11 +134,12 @@ def _sbom(metadata: bytes, wheel_tag: str, license_catalog: Path) -> bytes:
         if requirement.url is not None:
             raise WheelSbomError("wheel dependency contains a direct reference")
         grouped.setdefault(_normalized_name(requirement.name), []).append(declaration)
-    licenses = _license_catalog(license_catalog)
-    missing_licenses = {normalized, *grouped} - set(licenses)
-    if missing_licenses:
-        raise WheelSbomError("license catalog does not cover every wheel component")
-    root_ref = f"pkg:pypi/{normalized}@{version}"
+    return grouped
+
+
+def _dependency_components(
+    grouped: dict[str, list[str]], licenses: dict[str, str]
+) -> tuple[list[dict[str, Any]], list[str]]:
     components: list[dict[str, Any]] = []
     dependency_refs: list[str] = []
     for dependency, declarations in sorted(grouped.items()):
@@ -150,6 +158,23 @@ def _sbom(metadata: bytes, wheel_tag: str, license_catalog: Path) -> bytes:
                 ],
             }
         )
+    return components, dependency_refs
+
+
+def _sbom(metadata: bytes, wheel_tag: str, license_catalog: Path) -> bytes:
+    message = BytesParser(policy=compat32).parsebytes(metadata)
+    name = str(message.get("Name") or "")
+    version = str(message.get("Version") or "")
+    normalized = _normalized_name(name)
+    if not _VERSION.fullmatch(version):
+        raise WheelSbomError("wheel metadata contains an invalid package version")
+    grouped = _grouped_wheel_requirements(message)
+    licenses = _license_catalog(license_catalog)
+    missing_licenses = {normalized, *grouped} - set(licenses)
+    if missing_licenses:
+        raise WheelSbomError("license catalog does not cover every wheel component")
+    root_ref = f"pkg:pypi/{normalized}@{version}"
+    components, dependency_refs = _dependency_components(grouped, licenses)
     document = {
         "bomFormat": "CycloneDX",
         "specVersion": "1.6",
@@ -206,19 +231,37 @@ def _normalized_info(
     return info
 
 
-def embed_wheel_sbom(
-    wheel: Path,
-    *,
-    license_catalog: Path | None = None,
-) -> None:
-    """Embed a deterministic PEP 770 CycloneDX SBOM and rebuild ``RECORD``."""
-
+def _validated_wheel_path(wheel: Path) -> Path:
     if (
         wheel.is_symlink()
         or not wheel.is_file()
         or wheel.stat().st_size > _MAX_WHEEL_BYTES
     ):
         raise WheelSbomError("wheel input is not a bounded regular file")
+    return wheel
+
+
+def _wheel_dist_info_layout(names: list[str]) -> tuple[str, str, str, str, str]:
+    """Return ``(dist_info, metadata_name, wheel_name, record_name, scripts_prefix)``."""
+
+    metadata_names = [name for name in names if name.endswith(".dist-info/METADATA")]
+    wheel_names = [name for name in names if name.endswith(".dist-info/WHEEL")]
+    record_names = [name for name in names if name.endswith(".dist-info/RECORD")]
+    if not (len(metadata_names) == len(wheel_names) == len(record_names) == 1):
+        raise WheelSbomError("wheel metadata layout is not exact")
+    dist_info = metadata_names[0].removesuffix("METADATA")
+    if (
+        wheel_names[0] != dist_info + "WHEEL"
+        or record_names[0] != dist_info + "RECORD"
+    ):
+        raise WheelSbomError("wheel metadata directories differ")
+    scripts_prefix = dist_info.removesuffix(".dist-info/") + ".data/scripts/"
+    return dist_info, metadata_names[0], wheel_names[0], record_names[0], scripts_prefix
+
+
+def _read_wheel_payloads(
+    wheel: Path,
+) -> tuple[dict[str, bytes], dict[str, zipfile.ZipInfo], list[str]]:
     with zipfile.ZipFile(wheel, "r") as archive:
         infos = archive.infolist()
         names = [info.filename for info in infos]
@@ -226,41 +269,36 @@ def embed_wheel_sbom(
             raise WheelSbomError("wheel contains duplicate members")
         for name in names:
             _safe_member(name)
-        metadata_names = [
-            name for name in names if name.endswith(".dist-info/METADATA")
-        ]
-        wheel_names = [name for name in names if name.endswith(".dist-info/WHEEL")]
-        record_names = [name for name in names if name.endswith(".dist-info/RECORD")]
-        if not (len(metadata_names) == len(wheel_names) == len(record_names) == 1):
-            raise WheelSbomError("wheel metadata layout is not exact")
-        dist_info = metadata_names[0].removesuffix("METADATA")
-        if (
-            wheel_names[0] != dist_info + "WHEEL"
-            or record_names[0] != dist_info + "RECORD"
-        ):
-            raise WheelSbomError("wheel metadata directories differ")
-        scripts_prefix = dist_info.removesuffix(".dist-info/") + ".data/scripts/"
         payloads = {info.filename: archive.read(info) for info in infos}
         info_by_name = {info.filename: info for info in infos}
+    return payloads, info_by_name, names
 
-    wheel_message = BytesParser(policy=compat32).parsebytes(payloads[wheel_names[0]])
+
+def _wheel_compatibility_tag(payloads: dict[str, bytes], wheel_name: str) -> str:
+    wheel_message = BytesParser(policy=compat32).parsebytes(payloads[wheel_name])
     tags = sorted(set(wheel_message.get_all("Tag") or ()))
     if not tags:
         raise WheelSbomError("wheel has no compatibility tag")
-    sbom_name = dist_info + "sboms/package.cyclonedx.json"
-    payloads[sbom_name] = _sbom(
-        payloads[metadata_names[0]],
-        ",".join(tags),
-        license_catalog or _LICENSE_CATALOG,
-    )
-    record_name = record_names[0]
-    payloads.pop(record_name, None)
+    return ",".join(tags)
+
+
+def _rebuilt_record(payloads: dict[str, bytes], record_name: str) -> bytes:
     record = io.StringIO(newline="")
     writer = csv.writer(record, lineterminator="\n")
     writer.writerows(_record_row(name, payloads[name]) for name in sorted(payloads))
     writer.writerow((record_name, "", ""))
-    payloads[record_name] = record.getvalue().encode("utf-8")
+    return record.getvalue().encode("utf-8")
 
+
+def _write_sbom_wheel(
+    wheel: Path,
+    payloads: dict[str, bytes],
+    info_by_name: dict[str, zipfile.ZipInfo],
+    *,
+    scripts_prefix: str,
+    sbom_name: str,
+    record_name: str,
+) -> None:
     descriptor, temporary_name = tempfile.mkstemp(
         prefix=".wheel-sbom-", dir=wheel.parent
     )
@@ -283,6 +321,37 @@ def embed_wheel_sbom(
         os.replace(temporary, wheel)
     finally:
         temporary.unlink(missing_ok=True)
+
+
+def embed_wheel_sbom(
+    wheel: Path,
+    *,
+    license_catalog: Path | None = None,
+) -> None:
+    """Embed a deterministic PEP 770 CycloneDX SBOM and rebuild ``RECORD``."""
+
+    wheel = _validated_wheel_path(wheel)
+    payloads, info_by_name, names = _read_wheel_payloads(wheel)
+    dist_info, metadata_name, wheel_name, record_name, scripts_prefix = (
+        _wheel_dist_info_layout(names)
+    )
+    wheel_tag = _wheel_compatibility_tag(payloads, wheel_name)
+    sbom_name = dist_info + "sboms/package.cyclonedx.json"
+    payloads[sbom_name] = _sbom(
+        payloads[metadata_name],
+        wheel_tag,
+        license_catalog or _LICENSE_CATALOG,
+    )
+    payloads.pop(record_name, None)
+    payloads[record_name] = _rebuilt_record(payloads, record_name)
+    _write_sbom_wheel(
+        wheel,
+        payloads,
+        info_by_name,
+        scripts_prefix=scripts_prefix,
+        sbom_name=sbom_name,
+        record_name=record_name,
+    )
 
 
 def build_wheel(
