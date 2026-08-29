@@ -21,6 +21,52 @@ from langfuse_agent.mcp_server import (
 )
 
 
+async def _registered_tool_functions(mcp: FastMCP) -> dict[str, Any]:
+    """Find the tool functions registered on a FastMCP instance."""
+    if inspect.iscoroutinefunction(mcp.list_tools):
+        tool_objs = await mcp.list_tools()
+    else:
+        tool_objs = mcp.list_tools()
+        if inspect.iscoroutine(tool_objs):
+            tool_objs = await tool_objs
+    return {tool.name: tool.fn for tool in tool_objs}
+
+
+def _tool_call_kwargs(sig: inspect.Signature, action: str) -> dict[str, Any]:
+    """Build a kwargs dict with non-None dummy values covering every default param."""
+    kwargs: dict[str, Any] = {}
+    for param_name, param in sig.parameters.items():
+        if param_name == "action":
+            kwargs[param_name] = action
+        elif param.default is not inspect.Parameter.empty:
+            # Map expected type hints to non-None values
+            if param.annotation is bool:
+                kwargs[param_name] = True
+            elif param.annotation is int:
+                kwargs[param_name] = 1
+            else:
+                kwargs[param_name] = "dummy_val"
+    return kwargs
+
+
+async def _exercise_tool_action(tool_fn, kwargs: dict[str, Any]) -> None:
+    try:
+        if inspect.iscoroutinefunction(tool_fn):
+            await tool_fn(**kwargs)
+        else:
+            tool_fn(**kwargs)
+    except Exception:
+        # Catch ValueError on invalid actions or call errors and proceed to keep iterating
+        pass
+
+
+async def _exercise_tool_actions(tool_fn, actions: list[str]) -> None:
+    sig = inspect.signature(tool_fn)
+    for action in actions:
+        kwargs = _tool_call_kwargs(sig, action)
+        await _exercise_tool_action(tool_fn, kwargs)
+
+
 @pytest.mark.asyncio
 async def test_mcp_tools_brute_force():
     """Brute force test all tool actions with non-None parameter values to achieve 100% branch/line coverage."""
@@ -131,15 +177,7 @@ async def test_mcp_tools_brute_force():
         ],
     }
 
-    # Find the tool functions registered on the FastMCP instance
-    if inspect.iscoroutinefunction(mcp.list_tools):
-        tool_objs = await mcp.list_tools()
-    else:
-        tool_objs = mcp.list_tools()
-        if inspect.iscoroutine(tool_objs):
-            tool_objs = await tool_objs
-
-    registered_tools = {tool.name: tool.fn for tool in tool_objs}
+    registered_tools = await _registered_tool_functions(mcp)
 
     client_bindings = (
         "langfuse_agent.tools.datasets.get_client",
@@ -159,33 +197,7 @@ async def test_mcp_tools_brute_force():
         for tool_name, tool_fn in registered_tools.items():
             if tool_name not in actions_map:
                 continue
-
-            actions = actions_map[tool_name]
-            sig = inspect.signature(tool_fn)
-
-            for action in actions:
-                # Build arguments dictionary with non-None dummy values to cover all parameter initialization checks
-                kwargs: dict[str, Any] = {}
-                for param_name, param in sig.parameters.items():
-                    if param_name == "action":
-                        kwargs[param_name] = action
-                    elif param.default is not inspect.Parameter.empty:
-                        # Map expected type hints to non-None values
-                        if param.annotation is bool:
-                            kwargs[param_name] = True
-                        elif param.annotation is int:
-                            kwargs[param_name] = 1
-                        else:
-                            kwargs[param_name] = "dummy_val"
-
-                try:
-                    if inspect.iscoroutinefunction(tool_fn):
-                        await tool_fn(**kwargs)
-                    else:
-                        tool_fn(**kwargs)
-                except Exception:
-                    # Catch ValueError on invalid actions or call errors and proceed to keep iterating
-                    pass
+            await _exercise_tool_actions(tool_fn, actions_map[tool_name])
         network.assert_not_called()
 
 
