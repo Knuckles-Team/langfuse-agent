@@ -89,34 +89,50 @@ def _field_name(value: Any) -> str:
     return re.sub(r"[^a-z0-9]+", "", str(value or "").casefold())
 
 
+def _safe_name_value(value: Any) -> str | None:
+    rendered = str(value or "")
+    return rendered if _GOVERNED_TRACE_NAME_RE.fullmatch(rendered) else None
+
+
+def _safe_numeric_value(field: str, value: Any) -> Any | None:
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return None
+    try:
+        finite = math.isfinite(float(value))
+    except (OverflowError, ValueError):
+        return None
+    if not finite:
+        return None
+    return str(value) if field == "scorevalue" else value
+
+
+def _safe_timestamp_value(value: Any) -> str | None:
+    if isinstance(value, datetime):
+        value = value.isoformat()
+    elif isinstance(value, date):
+        return None
+    rendered = str(value or "")
+    return rendered if _ISO_TIMESTAMP_RE.fullmatch(rendered) else None
+
+
+def _safe_enum_value(field: str, value: Any) -> str | None:
+    allowed = _ENUM_FIELDS.get(field)
+    if allowed is None:
+        return None
+    rendered = str(value or "").upper()
+    return rendered if rendered in allowed else None
+
+
 def _safe_observability_value(field: str, value: Any) -> Any | None:
     """Validate one metadata-only value before durable graph persistence."""
 
     if field == "name":
-        rendered = str(value or "")
-        return rendered if _GOVERNED_TRACE_NAME_RE.fullmatch(rendered) else None
+        return _safe_name_value(value)
     if field in _NUMERIC_FIELDS:
-        if isinstance(value, bool) or not isinstance(value, int | float):
-            return None
-        try:
-            finite = math.isfinite(float(value))
-        except (OverflowError, ValueError):
-            return None
-        if not finite:
-            return None
-        return str(value) if field == "scorevalue" else value
+        return _safe_numeric_value(field, value)
     if field in _TIMESTAMP_FIELDS:
-        if isinstance(value, datetime):
-            value = value.isoformat()
-        elif isinstance(value, date):
-            return None
-        rendered = str(value or "")
-        return rendered if _ISO_TIMESTAMP_RE.fullmatch(rendered) else None
-    allowed = _ENUM_FIELDS.get(field)
-    if allowed is not None:
-        rendered = str(value or "").upper()
-        return rendered if rendered in allowed else None
-    return None
+        return _safe_timestamp_value(value)
+    return _safe_enum_value(field, value)
 
 
 def _persistence_key() -> bytes:
@@ -159,6 +175,122 @@ def _opaque_id(kind: str, raw_id: str, key: bytes) -> str:
     return f"langfuse:{normalized}:{digest[:32]}"
 
 
+def _entity_payload_fields(
+    entity: dict[str, Any], allowed_fields: frozenset[str]
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {}
+    for key_name, value in entity.items():
+        field = _field_name(key_name)
+        if field not in allowed_fields:
+            continue
+        safe_value = _safe_observability_value(field, value)
+        if safe_value is not None:
+            payload[key_name] = safe_value
+    return payload
+
+
+def _entity_payload_passthrough(entity: dict[str, Any], raw_id: str) -> dict[str, Any]:
+    payload = {
+        key_name: value
+        for key_name, value in entity.items()
+        if key_name != "id" and _field_name(key_name) not in _UNSAFE_ID_FIELDS
+    }
+    raw_suffix = raw_id.rsplit(":", 1)[-1]
+    if str(payload.get("name") or "") == raw_suffix:
+        payload.pop("name", None)
+    return payload
+
+
+def _prepared_entity(
+    entity: dict[str, Any], key: bytes, guard: PersistencePrivacyGuard
+) -> tuple[str, dict[str, Any]] | None:
+    """Return ``(raw_id, sanitized clean entity)``, or ``None`` to skip this entity."""
+
+    raw_id = str(entity.get("id") or "")
+    entity_type = str(entity.get("node_type") or "Entity")
+    if not raw_id or entity_type.casefold() in {"person", "user"}:
+        return None
+    policy = _OBSERVABILITY_PERSISTENCE_POLICY.get(entity_type.casefold())
+    if policy is not None:
+        entity_type, allowed_fields = policy
+        payload = _entity_payload_fields(entity, allowed_fields)
+    else:
+        payload = _entity_payload_passthrough(entity, raw_id)
+    safe_id = _opaque_id(entity_type, raw_id, key)
+    clean, _ = guard.sanitize(payload)
+    if not isinstance(clean, dict):
+        return None
+    clean["id"] = safe_id
+    clean["node_type"] = entity_type
+    # The projection contains only the bounded metadata allowlist above.
+    # Give authenticated graph readers an explicit, tenant-scoped ACL;
+    # absence would quarantine the row and make the safe projection
+    # unreadable even to the GraphOS parent that governed the write.
+    clean["external_access"] = _METADATA_ACCESS.model_dump()
+    return raw_id, clean
+
+
+def _prepared_entities(
+    entities: list[dict[str, Any]], key: bytes, guard: PersistencePrivacyGuard
+) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    prepared: list[dict[str, Any]] = []
+    id_map: dict[str, str] = {}
+    for entity in entities:
+        result = _prepared_entity(entity, key, guard)
+        if result is None:
+            continue
+        raw_id, clean = result
+        prepared.append(clean)
+        id_map[raw_id] = clean["id"]
+    return prepared, id_map
+
+
+def _relationship_touches_person(raw_source: str, raw_target: str) -> bool:
+    return any(
+        marker in value.casefold()
+        for value in (raw_source, raw_target)
+        for marker in (":person:", ":user:")
+    )
+
+
+def _resolved_relationship_endpoint(
+    raw_id: str, id_map: dict[str, str], key: bytes
+) -> str | None:
+    return id_map.get(raw_id) or (_opaque_id("Entity", raw_id, key) if raw_id else None)
+
+
+def _prepared_relationship(
+    relationship: dict[str, Any],
+    id_map: dict[str, str],
+    key: bytes,
+    guard: PersistencePrivacyGuard,
+) -> dict[str, Any] | None:
+    raw_source = str(relationship.get("source") or "")
+    raw_target = str(relationship.get("target") or "")
+    if _relationship_touches_person(raw_source, raw_target):
+        return None
+    source = _resolved_relationship_endpoint(raw_source, id_map, key)
+    target = _resolved_relationship_endpoint(raw_target, id_map, key)
+    if not source or not target:
+        return None
+    relation_type, _ = guard.sanitize_text(str(relationship.get("relationship")))
+    return {"source": source, "target": target, "relationship": relation_type}
+
+
+def _prepared_relationships(
+    relationships: list[dict[str, Any]] | None,
+    id_map: dict[str, str],
+    key: bytes,
+    guard: PersistencePrivacyGuard,
+) -> list[dict[str, Any]]:
+    safe_relationships: list[dict[str, Any]] = []
+    for relationship in relationships or []:
+        prepared = _prepared_relationship(relationship, id_map, key, guard)
+        if prepared is not None:
+            safe_relationships.append(prepared)
+    return safe_relationships
+
+
 def _prepare_for_persistence(
     entities: list[dict[str, Any]],
     relationships: list[dict[str, Any]] | None,
@@ -170,72 +302,9 @@ def _prepare_for_persistence(
     environments, and categorical score text are not persisted.
     """
     key = _persistence_key()
-
     guard = PersistencePrivacyGuard()
-    id_map: dict[str, str] = {}
-    prepared: list[dict[str, Any]] = []
-    for entity in entities:
-        raw_id = str(entity.get("id") or "")
-        entity_type = str(entity.get("node_type") or "Entity")
-        if not raw_id or entity_type.casefold() in {"person", "user"}:
-            continue
-        policy = _OBSERVABILITY_PERSISTENCE_POLICY.get(entity_type.casefold())
-        if policy is not None:
-            entity_type, allowed_fields = policy
-        safe_id = _opaque_id(entity_type, raw_id, key)
-        if policy is not None:
-            payload = {}
-            for key_name, value in entity.items():
-                field = _field_name(key_name)
-                if field not in allowed_fields:
-                    continue
-                safe_value = _safe_observability_value(field, value)
-                if safe_value is not None:
-                    payload[key_name] = safe_value
-        else:
-            payload = {
-                key_name: value
-                for key_name, value in entity.items()
-                if key_name != "id" and _field_name(key_name) not in _UNSAFE_ID_FIELDS
-            }
-            raw_suffix = raw_id.rsplit(":", 1)[-1]
-            if str(payload.get("name") or "") == raw_suffix:
-                payload.pop("name", None)
-        clean, _ = guard.sanitize(payload)
-        if not isinstance(clean, dict):
-            continue
-        clean["id"] = safe_id
-        clean["node_type"] = entity_type
-        # The projection contains only the bounded metadata allowlist above.
-        # Give authenticated graph readers an explicit, tenant-scoped ACL;
-        # absence would quarantine the row and make the safe projection
-        # unreadable even to the GraphOS parent that governed the write.
-        clean["external_access"] = _METADATA_ACCESS.model_dump()
-        prepared.append(clean)
-        id_map[raw_id] = safe_id
-
-    safe_relationships: list[dict[str, Any]] = []
-    for relationship in relationships or []:
-        raw_source = str(relationship.get("source") or "")
-        raw_target = str(relationship.get("target") or "")
-        if any(
-            marker in value.casefold()
-            for value in (raw_source, raw_target)
-            for marker in (":person:", ":user:")
-        ):
-            continue
-        source = id_map.get(raw_source) or (
-            _opaque_id("Entity", raw_source, key) if raw_source else None
-        )
-        target = id_map.get(raw_target) or (
-            _opaque_id("Entity", raw_target, key) if raw_target else None
-        )
-        if not source or not target:
-            continue
-        relation_type, _ = guard.sanitize_text(str(relationship.get("relationship")))
-        safe_relationships.append(
-            {"source": source, "target": target, "relationship": relation_type}
-        )
+    prepared, id_map = _prepared_entities(entities, key, guard)
+    safe_relationships = _prepared_relationships(relationships, id_map, key, guard)
     return prepared, safe_relationships
 
 
@@ -366,6 +435,65 @@ def _usage_total(obs: dict[str, Any]) -> Any:
     return None
 
 
+def _observation_node(obs: dict[str, Any], node_id: str, is_generation: bool) -> dict[str, Any]:
+    node = {
+        "id": node_id,
+        "node_type": "Generation" if is_generation else "Observation",
+        "observationType": obs.get("type"),
+        "startTime": obs.get("startTime"),
+        "endTime": obs.get("endTime"),
+        "level": obs.get("level"),
+        "externalToolId": str(obs.get("id")),
+    }
+    if is_generation:
+        node["totalTokens"] = _usage_total(obs)
+        node["totalCost"] = obs.get("calculatedTotalCost") or obs.get("totalCost")
+    return node
+
+
+def _observation_relationships(
+    obs: dict[str, Any], node_id: str, is_generation: bool
+) -> list[dict[str, Any]]:
+    relationships: list[dict[str, Any]] = []
+    trace_id = obs.get("traceId")
+    if trace_id:
+        relationships.append(
+            {
+                "source": node_id,
+                "target": f"langfuse:trace:{trace_id}",
+                "relationship": "belongsToTrace",
+            }
+        )
+    parent = obs.get("parentObservationId")
+    if parent:
+        relationships.append(
+            {
+                "source": node_id,
+                "target": f"langfuse:observation:{parent}",
+                "relationship": "parentObservation",
+            }
+        )
+    model = obs.get("model")
+    if is_generation and model:
+        relationships.append(
+            {
+                "source": node_id,
+                "target": f"langfuse:model:{model}",
+                "relationship": "usedModel",
+            }
+        )
+    return relationships
+
+
+def _observation_model_entity(
+    obs: dict[str, Any], is_generation: bool
+) -> dict[str, Any] | None:
+    model = obs.get("model")
+    if is_generation and model:
+        return {"id": f"langfuse:model:{model}", "node_type": "Model"}
+    return None
+
+
 def ingest_observations(
     observations: list[dict[str, Any]],
     *,
@@ -385,55 +513,12 @@ def ingest_observations(
         if not oid:
             continue
         node_id = f"langfuse:observation:{oid}"
-        otype = (obs.get("type") or "").upper()
-        is_gen = otype == "GENERATION"
-        node = {
-            "id": node_id,
-            "node_type": "Generation" if is_gen else "Observation",
-            "observationType": obs.get("type"),
-            "startTime": obs.get("startTime"),
-            "endTime": obs.get("endTime"),
-            "level": obs.get("level"),
-            "externalToolId": str(oid),
-        }
-        if is_gen:
-            node["totalTokens"] = _usage_total(obs)
-            node["totalCost"] = obs.get("calculatedTotalCost") or obs.get("totalCost")
-        entities.append(node)
-
-        tid = obs.get("traceId")
-        if tid:
-            relationships.append(
-                {
-                    "source": node_id,
-                    "target": f"langfuse:trace:{tid}",
-                    "relationship": "belongsToTrace",
-                }
-            )
-        parent = obs.get("parentObservationId")
-        if parent:
-            relationships.append(
-                {
-                    "source": node_id,
-                    "target": f"langfuse:observation:{parent}",
-                    "relationship": "parentObservation",
-                }
-            )
-        model = obs.get("model")
-        if is_gen and model:
-            entities.append(
-                {
-                    "id": f"langfuse:model:{model}",
-                    "node_type": "Model",
-                }
-            )
-            relationships.append(
-                {
-                    "source": node_id,
-                    "target": f"langfuse:model:{model}",
-                    "relationship": "usedModel",
-                }
-            )
+        is_generation = (obs.get("type") or "").upper() == "GENERATION"
+        entities.append(_observation_node(obs, node_id, is_generation))
+        relationships.extend(_observation_relationships(obs, node_id, is_generation))
+        model_entity = _observation_model_entity(obs, is_generation)
+        if model_entity is not None:
+            entities.append(model_entity)
     return ingest_entities(entities, relationships, client=client, graph=graph)
 
 
