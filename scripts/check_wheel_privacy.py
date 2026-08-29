@@ -19,26 +19,37 @@ _NON_RUNTIME_PARTS = {"__pycache__", "docs", "scripts", "tests"}
 _BYTECODE_SUFFIXES = {".pyc", ".pyo"}
 
 
+def _member_path_findings(path: PurePosixPath) -> set[str]:
+    findings: set[str] = set()
+    parts = path.parts
+    if path.is_absolute() or ".." in parts:
+        findings.add("unsafe-member-path")
+    if any(part in _NON_RUNTIME_PARTS for part in parts):
+        findings.add("non-runtime-content")
+    if path.suffix.lower() in _BYTECODE_SUFFIXES:
+        findings.add("bytecode-content")
+    return findings
+
+
+def _member_payload_findings(payload: bytes) -> set[str]:
+    findings: set[str] = set()
+    if _EMAIL.search(payload):
+        findings.add("email-like-content")
+    if any(pattern.search(payload) for pattern in _MACHINE_PATHS):
+        findings.add("machine-path-content")
+    return findings
+
+
 def wheel_privacy_findings(wheel: Path) -> tuple[str, ...]:
     """Return stable finding categories without exposing matched content."""
     findings: set[str] = set()
     with zipfile.ZipFile(wheel) as archive:
         for member in archive.infolist():
             path = PurePosixPath(member.filename)
-            parts = path.parts
-            if path.is_absolute() or ".." in parts:
-                findings.add("unsafe-member-path")
-            if any(part in _NON_RUNTIME_PARTS for part in parts):
-                findings.add("non-runtime-content")
-            if path.suffix.lower() in _BYTECODE_SUFFIXES:
-                findings.add("bytecode-content")
+            findings |= _member_path_findings(path)
             if member.is_dir():
                 continue
-            payload = archive.read(member)
-            if _EMAIL.search(payload):
-                findings.add("email-like-content")
-            if any(pattern.search(payload) for pattern in _MACHINE_PATHS):
-                findings.add("machine-path-content")
+            findings |= _member_payload_findings(archive.read(member))
     return tuple(sorted(findings))
 
 
