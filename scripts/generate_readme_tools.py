@@ -29,20 +29,26 @@ def _description(node: ast.FunctionDef) -> str:
     return text if len(text) <= 240 else f"{text[:237].rstrip()}…"
 
 
+def _api_class_methods(tree: ast.Module) -> dict[str, str]:
+    methods: dict[str, str] = {}
+    for item in tree.body:
+        if not isinstance(item, ast.ClassDef) or item.name != "Api":
+            continue
+        for node in item.body:
+            if isinstance(
+                node, (ast.FunctionDef, ast.AsyncFunctionDef)
+            ) and not node.name.startswith("_"):
+                methods[node.name] = _description(node)
+    return methods
+
+
 def _api_methods() -> list[tuple[str, str]]:
     methods: dict[str, str] = {}
     for path in sorted((ROOT / "langfuse_agent" / "api").glob("api_client_*.py")):
         if path.name == "api_client_base.py":
             continue
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for item in tree.body:
-            if not isinstance(item, ast.ClassDef) or item.name != "Api":
-                continue
-            for node in item.body:
-                if isinstance(
-                    node, (ast.FunctionDef, ast.AsyncFunctionDef)
-                ) and not node.name.startswith("_"):
-                    methods[node.name] = _description(node)
+        methods.update(_api_class_methods(tree))
     return sorted(methods.items())
 
 
