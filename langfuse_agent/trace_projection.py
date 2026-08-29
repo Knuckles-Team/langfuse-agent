@@ -71,31 +71,37 @@ def _project_row(value: Any) -> dict[str, Any] | None:
     }
 
 
+def _projected_rows(result: Mapping[str, Any]) -> list[dict[str, Any]]:
+    rows = result.get("data")
+    if not isinstance(rows, list):
+        return []
+    return [
+        projected_row
+        for row in rows
+        if (projected_row := _project_row(row)) is not None
+    ]
+
+
+def _safe_pagination_meta(meta: Any) -> dict[str, int]:
+    if not isinstance(meta, Mapping):
+        return {}
+    return {
+        key: value
+        for key, value in meta.items()
+        if key in _PAGINATION_FIELDS
+        and isinstance(value, int)
+        and not isinstance(value, bool)
+        and value >= 0
+    }
+
+
 def project_certification_trace_list(result: Any) -> dict[str, Any]:
     """Drop every field outside the governed trace certification contract."""
 
     if not isinstance(result, Mapping):
         return {"data": []}
-    rows = result.get("data")
-    projected_rows = []
-    if isinstance(rows, list):
-        projected_rows = [
-            projected_row
-            for row in rows
-            if (projected_row := _project_row(row)) is not None
-        ]
-
-    response: dict[str, Any] = {"data": projected_rows}
-    meta = result.get("meta")
-    if isinstance(meta, Mapping):
-        safe_meta = {
-            key: value
-            for key, value in meta.items()
-            if key in _PAGINATION_FIELDS
-            and isinstance(value, int)
-            and not isinstance(value, bool)
-            and value >= 0
-        }
-        if safe_meta:
-            response["meta"] = safe_meta
+    response: dict[str, Any] = {"data": _projected_rows(result)}
+    safe_meta = _safe_pagination_meta(result.get("meta"))
+    if safe_meta:
+        response["meta"] = safe_meta
     return response
