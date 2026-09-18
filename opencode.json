@@ -8,11 +8,11 @@
         "baseURL": "http://localhost:1234/v1"
       },
       "models": {
-        "qwen/qwen3.6-27b": {
+        "qwen/qwen3.8-27b": {
           "name": "Qwen 3.6-27B"
         }
       }
     }
   },
-  "model": "lmstudio/qwen/qwen3.6-27b"
+  "model": "lmstudio/qwen/qwen3.8-27b"
 }
