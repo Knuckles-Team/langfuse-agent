@@ -21,7 +21,7 @@ CONDENSED = (
 )
 
 
-def _description(node: ast.FunctionDef) -> str:
+def _description(node: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
     text = " ".join(
         (ast.get_docstring(node) or "Current Langfuse API operation.").split()
     )

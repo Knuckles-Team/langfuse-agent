@@ -1,3 +1,5 @@
+# mypy: disable-error-code=method-assign
+
 """Privacy contract tests for governed trace certification reads."""
 
 from __future__ import annotations
@@ -29,7 +31,7 @@ def _client(response: dict) -> tuple[LangfuseApi, MagicMock]:
 
 
 def _governed_row(**overrides: object) -> dict:
-    row = {
+    row: dict[str, object] = {
         "id": _TRACE_ID,
         "name": _TRACE_NAME,
         "timestamp": _TIMESTAMP,
@@ -174,7 +176,7 @@ async def test_auto_ingest_receives_only_the_projected_result(monkeypatch) -> No
     mcp = ToolCapture()
     observability.register_langfuse_observability_tools(mcp)
     assert mcp.function is not None
-    arguments = {
+    arguments: dict[str, object] = {
         name: None
         for name in inspect.signature(mcp.function).parameters
         if name != "action"
