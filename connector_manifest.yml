@@ -286,7 +286,7 @@ sync:
   updated_field: createdAt
   pagination: page
   doc_type: session
-  tool_schema_sha256: 2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de
+  tool_schema_sha256: bc6f87ede618b432cc830c74c86c951c0de6f3760b7f36137a4523d0e44d63e6
   raw:
     server: langfuse-mcp
     tool: langfuse_observability
@@ -316,7 +316,7 @@ sync:
   updated_field: timestamp
   pagination: page
   doc_type: trace
-  tool_schema_sha256: 2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de
+  tool_schema_sha256: bc6f87ede618b432cc830c74c86c951c0de6f3760b7f36137a4523d0e44d63e6
   raw:
     server: langfuse-mcp
     tool: langfuse_observability
