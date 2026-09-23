@@ -106,7 +106,18 @@ def register_langfuse_observability_tools(mcp: FastMCP):
     CONCEPT:LA_1.0 — Langfuse MCP Integration
     """
 
-    @mcp.tool(tags={"langfuse"})
+    @mcp.tool(
+        tags={"langfuse"},
+        annotations={
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": False,
+            "openWorldHint": True,
+        },
+        meta={
+            "eg.annotations": {"modalities_in": ["text"], "modalities_out": ["text"]}
+        },
+    )
     async def langfuse_observability(
         action: Literal[
             "metrics_get",
