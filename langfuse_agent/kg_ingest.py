@@ -18,17 +18,6 @@ import re
 from datetime import date, datetime
 from typing import Any
 
-from agent_utilities.core.config import config, setting
-from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    ingest_entities as _native_ingest_entities,
-)
-from agent_utilities.protocols.source_connectors.base import ExternalAccess
-from agent_utilities.security.cli_secrets import (
-    RuntimeSecretReferenceError,
-    resolve_runtime_secret_reference,
-)
-from agent_utilities.security.persistence_privacy import PersistencePrivacyGuard
 
 _SOURCE = "langfuse-agent"
 _DOMAIN = "langfuse"
@@ -79,10 +68,6 @@ _ISO_TIMESTAMP_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$"
 )
 _GOVERNED_TRACE_NAME_RE = re.compile(r"^graph_run:pref_run_[a-f0-9]{64}$")
-_METADATA_ACCESS = ExternalAccess(
-    is_public=False,
-    read_roles=["kg:read", "kg:write", "kg:admin"],
-)
 
 
 def _field_name(value: Any) -> str:
@@ -135,31 +120,12 @@ def _safe_observability_value(field: str, value: Any) -> Any | None:
     return _safe_enum_value(field, value)
 
 
-def _persistence_key() -> bytes:
-    """Resolve the dedicated identity-HMAC key without credential fallback."""
-    materialized = str(
-        setting("LANGFUSE_PERSISTENCE_HMAC_MATERIALIZED", "") or ""
-    ).strip().casefold() in {"1", "true", "yes", "on"}
-    try:
-        value = (
-            str(setting("LANGFUSE_PERSISTENCE_HMAC_KEY", "") or "")
-            if materialized
-            else resolve_runtime_secret_reference(
-                config.langfuse_persistence_hmac_key_ref
-            )
-        )
-    except RuntimeSecretReferenceError:
-        value = ""
-    encoded = value.encode("utf-8")
-    if (
-        len(encoded) < 32
-        or len(encoded) > 16_384
-        or any(ord(character) < 32 for character in value)
-    ):
-        raise NativeIngestError(
-            "Langfuse persistence identity key is required"
-        ) from None
-    return encoded
+def _persistence_key(*args: object, **kwargs: object) -> object:
+    """Resolve the dedicated identity-HMAC key without credential fallback.
+
+    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
+    """
+    _kg_unavailable("_persistence_key")
 
 
 def _opaque_id(kind: str, raw_id: str, key: bytes) -> str:
@@ -201,48 +167,20 @@ def _entity_payload_passthrough(entity: dict[str, Any], raw_id: str) -> dict[str
     return payload
 
 
-def _prepared_entity(
-    entity: dict[str, Any], key: bytes, guard: PersistencePrivacyGuard
-) -> tuple[str, dict[str, Any]] | None:
-    """Return ``(raw_id, sanitized clean entity)``, or ``None`` to skip this entity."""
+def _prepared_entity(*args: object, **kwargs: object) -> object:
+    """Return ``(raw_id, sanitized clean entity)``, or ``None`` to skip this entity.
 
-    raw_id = str(entity.get("id") or "")
-    entity_type = str(entity.get("node_type") or "Entity")
-    if not raw_id or entity_type.casefold() in {"person", "user"}:
-        return None
-    policy = _OBSERVABILITY_PERSISTENCE_POLICY.get(entity_type.casefold())
-    if policy is not None:
-        entity_type, allowed_fields = policy
-        payload = _entity_payload_fields(entity, allowed_fields)
-    else:
-        payload = _entity_payload_passthrough(entity, raw_id)
-    safe_id = _opaque_id(entity_type, raw_id, key)
-    clean, _ = guard.sanitize(payload)
-    if not isinstance(clean, dict):
-        return None
-    clean["id"] = safe_id
-    clean["node_type"] = entity_type
-    # The projection contains only the bounded metadata allowlist above.
-    # Give authenticated graph readers an explicit, tenant-scoped ACL;
-    # absence would quarantine the row and make the safe projection
-    # unreadable even to the GraphOS parent that governed the write.
-    clean["external_access"] = _METADATA_ACCESS.model_dump()
-    return raw_id, clean
+    SDK-GAP: No-op: nothing left to register/write; preserves the graceful-degradation contract.
+    """
+    return None
 
 
-def _prepared_entities(
-    entities: list[dict[str, Any]], key: bytes, guard: PersistencePrivacyGuard
-) -> tuple[list[dict[str, Any]], dict[str, str]]:
-    prepared: list[dict[str, Any]] = []
-    id_map: dict[str, str] = {}
-    for entity in entities:
-        result = _prepared_entity(entity, key, guard)
-        if result is None:
-            continue
-        raw_id, clean = result
-        prepared.append(clean)
-        id_map[raw_id] = clean["id"]
-    return prepared, id_map
+def _prepared_entities(*args: object, **kwargs: object) -> object:
+    """Was: _prepared_entities.
+
+    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
+    """
+    _kg_unavailable("_prepared_entities")
 
 
 def _relationship_touches_person(raw_source: str, raw_target: str) -> bool:
@@ -259,74 +197,36 @@ def _resolved_relationship_endpoint(
     return id_map.get(raw_id) or (_opaque_id("Entity", raw_id, key) if raw_id else None)
 
 
-def _prepared_relationship(
-    relationship: dict[str, Any],
-    id_map: dict[str, str],
-    key: bytes,
-    guard: PersistencePrivacyGuard,
-) -> dict[str, Any] | None:
-    raw_source = str(relationship.get("source") or "")
-    raw_target = str(relationship.get("target") or "")
-    if _relationship_touches_person(raw_source, raw_target):
-        return None
-    source = _resolved_relationship_endpoint(raw_source, id_map, key)
-    target = _resolved_relationship_endpoint(raw_target, id_map, key)
-    if not source or not target:
-        return None
-    relation_type, _ = guard.sanitize_text(str(relationship.get("relationship")))
-    return {"source": source, "target": target, "relationship": relation_type}
+def _prepared_relationship(*args: object, **kwargs: object) -> object:
+    """Was: _prepared_relationship.
+
+    SDK-GAP: No-op: nothing left to register/write; preserves the graceful-degradation contract.
+    """
+    return None
 
 
-def _prepared_relationships(
-    relationships: list[dict[str, Any]] | None,
-    id_map: dict[str, str],
-    key: bytes,
-    guard: PersistencePrivacyGuard,
-) -> list[dict[str, Any]]:
-    safe_relationships: list[dict[str, Any]] = []
-    for relationship in relationships or []:
-        prepared = _prepared_relationship(relationship, id_map, key, guard)
-        if prepared is not None:
-            safe_relationships.append(prepared)
-    return safe_relationships
+def _prepared_relationships(*args: object, **kwargs: object) -> object:
+    """Was: _prepared_relationships.
+
+    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
+    """
+    _kg_unavailable("_prepared_relationships")
 
 
-def _prepare_for_persistence(
-    entities: list[dict[str, Any]],
-    relationships: list[dict[str, Any]] | None,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+def _prepare_for_persistence(*args: object, **kwargs: object) -> object:
     """Minimize metadata and replace every external identity with an HMAC.
 
-    Automatic observability nodes use a strict structural/time/numeric
-    allowlist. Free-form labels, tags, locations, model names, release fields,
-    environments, and categorical score text are not persisted.
+    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
     """
-    key = _persistence_key()
-    guard = PersistencePrivacyGuard()
-    prepared, id_map = _prepared_entities(entities, key, guard)
-    safe_relationships = _prepared_relationships(relationships, id_map, key, guard)
-    return prepared, safe_relationships
+    _kg_unavailable("_prepare_for_persistence")
 
 
-def ingest_entities(
-    entities: list[dict[str, Any]],
-    relationships: list[dict[str, Any]] | None = None,
-    *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
-) -> dict[str, int]:
-    """Sanitize and write canonical nodes and relationships through native ingestion."""
-    prepared, safe_relationships = _prepare_for_persistence(entities, relationships)
-    return _native_ingest_entities(
-        prepared,
-        safe_relationships,
-        source=source,
-        domain=domain,
-        client=client,
-        graph=graph,
-    )
+def ingest_entities(*args: object, **kwargs: object) -> object:
+    """Sanitize and write canonical nodes and relationships through native ingestion.
+
+    SDK-GAP: Always raises now; see KnowledgeGraphIngestUnavailable.
+    """
+    _kg_unavailable("ingest_entities")
 
 
 def ingest_documents(
@@ -435,7 +335,9 @@ def _usage_total(obs: dict[str, Any]) -> Any:
     return None
 
 
-def _observation_node(obs: dict[str, Any], node_id: str, is_generation: bool) -> dict[str, Any]:
+def _observation_node(
+    obs: dict[str, Any], node_id: str, is_generation: bool
+) -> dict[str, Any]:
     node = {
         "id": node_id,
         "node_type": "Generation" if is_generation else "Observation",
@@ -600,17 +502,12 @@ _INGEST_BY_ACTION = {
 }
 
 
-def auto_ingest(action: str, result: Any) -> None:
+def auto_ingest(*args: object, **kwargs: object) -> object:
     """Opt-in standalone ingestion of a read result.
 
-    When this provider is mounted by GraphOS, the child flag is forced off and
-    GraphOS calls :func:`ingest_read_result` under the authenticated parent
-    ``GraphSession``. This standalone gate remains useful for a directly served
-    network provider whose request middleware has already minted graph authority.
+    SDK-GAP: No-op: nothing left to register/write; preserves the graceful-degradation contract.
     """
-    if not config.langfuse_kg_auto_ingest:
-        return
-    ingest_read_result(action, result)
+    return None
 
 
 def ingest_read_result(action: str, result: Any) -> None:
@@ -628,3 +525,23 @@ def ingest_read_result(action: str, result: Any) -> None:
     if not records:
         return
     fn(records)
+
+
+class KnowledgeGraphIngestUnavailable(RuntimeError):
+    """Direct-to-graph ingestion is unavailable from this connector.
+
+    SDK-GAP (EH-48x, /var/tmp/l9/finish/au-decon-G4c/SDK-GAPS.md): raised in
+    place of the old ``agent_utilities.knowledge_graph`` native-ingest call --
+    agent-connector-sdk has no facade over EG's typed ingestion protocol yet,
+    and the fleet precedent (agents/world-reference-mcp) moves direct-to-graph
+    delivery to agent_connector_sdk.runner/sinks at the deployment layer, out
+    of connector scope.
+    """
+
+
+def _kg_unavailable(name: str) -> None:
+    raise KnowledgeGraphIngestUnavailable(
+        f"{name}: direct-to-graph ingestion moved out of connector code "
+        "(agent-utilities removed); no agent-connector-sdk facade exists yet "
+        "-- see SDK-GAPS.md"
+    )

@@ -8,7 +8,7 @@ epistemic-graph knowledge graph as typed OWL nodes (:Trace / :Observation / :Gen
 
 from typing import Any
 
-from agent_utilities.mcp.action_dispatch import parse_json_object
+from agent_connector_sdk.mcp.action_dispatch import parse_json_object
 from fastmcp import FastMCP
 from pydantic import Field
 
