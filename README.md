@@ -192,8 +192,6 @@ When query strings or parameters are supplied, an LLM-free **Knowledge Graph res
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `langfuse-agent[mcp]` to add
 > FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
-> enables model orchestration.
 
 #### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
 
@@ -316,12 +314,6 @@ the detailed transport contract.
 This repository features a fully integrated Pydantic AI Graph Agent. It communicates over the **Agent Control Protocol (ACP)** and interacts seamlessly with the **Agent Web UI (AG-UI)** and Terminal interface.
 
 ### Running the Agent CLI
-To start the interactive command-line agent, first let the process supervisor
-inject the Langfuse credentials and any model-provider secret. Then run:
-
-```bash
-langfuse-agent --provider openai --model-id gpt-4o
-```
 
 ### Docker Compose Orchestration
 The checked-in `docker/agent.compose.yml` runs the MCP and agent services with
@@ -403,7 +395,6 @@ Pick the extra that matches what you want to run:
 | Extra | Installs | Use when |
 |-------|----------|----------|
 | `langfuse-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | You only run the **MCP server** (smallest install / image) |
-| `langfuse-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | You run the **integrated agent** |
 | `langfuse-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -411,7 +402,6 @@ Pick the extra that matches what you want to run:
 uv pip install "langfuse-agent[mcp]"
 
 # Agent runtime (adds model orchestration to the shared graph engine)
-uv pip install "langfuse-agent[agent]"
 
 # Everything (development)
 uv pip install "langfuse-agent[all]"      # or: python -m pip install "langfuse-agent[all]"
@@ -426,21 +416,17 @@ offline release profile selected by `--target`:
 |--------------|----------|------------|
 | `mcp` | `langfuse-agent[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `langfuse-mcp` |
 | `mcp-local` | exact hash-locked wheelhouse for the same MCP profile; release assembly only | `langfuse-mcp` |
-| `agent` (default) | `langfuse-agent[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `langfuse-agent` |
 
 ```bash
 docker build --target mcp   -t langfuse-agent:mcp docker/
-docker build --target agent -t langfuse-agent:agent docker/
 ```
 
 Promote and deploy only an operator-reviewed immutable image digest.
 
 ### Knowledge-graph database (`epistemic-graph`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`, including its folded numeric
-kernel). The `[mcp]` extra keeps
-the server connector-focused; `[agent]` additionally enables model orchestration. Local
+`[mcp]` carries the **epistemic-graph** engine through the required Agent Utilities
+core dependency (`epistemic-graph[full]`, including its folded numeric kernel). Local
 deployments can use the bundled engine. For production or shared state, run
 **epistemic-graph as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
@@ -483,7 +469,6 @@ Contributions are welcome! Please ensure code quality by executing local checks 
 - Validate type-safety with `mypy .`
 - Execute test suites using `pytest`
 
-
 <!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
 
 ## Deploy with `agent-utilities-deployment`
@@ -497,7 +482,7 @@ to **"deploy `langfuse-agent` with agent-utilities-deployment"**.
 | Install mode | Command |
 |------|---------|
 | Installed package | `uv tool install "langfuse-agent[mcp]"`, then run `langfuse-mcp` |
-| Editable source | `uv pip install -e ".[agent]"`, then run `langfuse-mcp` |
+| Editable source | `uv pip install -e ".[mcp]"`, then run `langfuse-mcp` |
 | Immutable container | deploy `registry.example.invalid/langfuse-agent@sha256:<digest>` through the operator-selected orchestrator |
 
 The repository embeds no deployment profile, credential value, certificate path, or

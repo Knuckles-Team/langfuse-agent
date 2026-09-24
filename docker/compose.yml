@@ -1,6 +1,6 @@
 ---
 services:
-  langfuse-agent:
+  langfuse-mcp:
     init: true
     user: "10001:10001"
     read_only: true
@@ -13,13 +13,13 @@ services:
     cpus: ${AGENT_CONTAINER_CPU_LIMIT:-2.0}
     tmpfs:
       - /tmp:rw,noexec,nosuid,nodev,size=64m
-    # image: docker.io/${LANGFUSE_AGENT_AGENT_IMAGE:?set-LANGFUSE_AGENT_AGENT_IMAGE-to-image@sha256-digest}
+    # image: docker.io/${LANGFUSE_AGENT_MCP_IMAGE:?set-LANGFUSE_AGENT_MCP_IMAGE-to-image@sha256-digest}
     build:
       context: .. # Debug
       dockerfile: docker/debug.Dockerfile
-    container_name: langfuse-agent
-    hostname: langfuse-agent
-    command: [ "langfuse-agent" ]
+    container_name: langfuse-mcp
+    hostname: langfuse-mcp
+    command: [ "langfuse-mcp" ]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     logging:

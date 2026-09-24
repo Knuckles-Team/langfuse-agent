@@ -1,22 +1,18 @@
 # syntax=docker/dockerfile:1
-# Two right-sized published images plus one exact offline release image come from
-# ONE Dockerfile, selected by build --target. Each is slim multi-stage (build in a
-# builder, ship only /usr/local — no dev-tools/source):
+# Two images come from ONE Dockerfile, selected by build --target. Each is slim
+# multi-stage (build in a builder, ship only /usr/local — no dev-tools/source):
 #
-#   --target agent  (DEFAULT)  installs langfuse-agent[agent] = the FULL runtime
-#                              (agent-utilities[agent-runtime]: pydantic-ai + skills;
-#                              the full epistemic-graph engine is a base dependency).
-#                              The provider's [agent] also includes [mcp], so this image
-#                              can run EITHER the agent OR the mcp server. Push as the
-#                              default tags: latest / main / <version>.
+#   --target mcp        (DEFAULT)  installs langfuse-agent[mcp] = the MCP-server
+#                                  tooling closure (FastMCP/FastAPI plus the
+#                                  mandatory full epistemic-graph base runtime).
+#                                  The retired standalone agent runtime
+#                                  (agent_server.py) has no agent-connector-sdk
+#                                  equivalent and was removed.
 #
-#   --target mcp               installs langfuse-agent[mcp]   = MCP-server tooling ONLY
-#                              (agent-utilities[mcp]: FastMCP/FastAPI plus the mandatory
-#                              full epistemic-graph base runtime). It omits the optional
-#                              provider agent/frontends. Push as the :mcp / :mcp-<version> tag.
+#   --target mcp-local             exact offline release image from a
+#                                  hash-locked wheelhouse; see below.
 #
-#   docker build --target agent -t langfuse-agent:local .
-#   docker build --target mcp   -t langfuse-agent:mcp    .
+#   docker build -t langfuse-agent:local .
 #   docker build --target mcp-local \
 #     --build-arg RELEASE_REQUIREMENTS=langfuse-agent-requirements.txt \
 #     --build-arg RELEASE_REQUIREMENTS_SHA256=<requirements-sha256> \
@@ -39,11 +35,6 @@ RUN apt-get update \
 FROM builder-published AS builder-mcp
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system --break-system-packages langfuse-agent[mcp]==2.1.0
-
-# Full agent runtime dependency closure.
-FROM builder-published AS builder-agent
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install --system --break-system-packages langfuse-agent[agent]==2.1.0
 
 # Exact offline release input for the MCP provider runtime. The caller supplies one
 # complete, hash-locked wheel closure for Langfuse Agent MCP, Agent Utilities MCP, and
@@ -105,8 +96,3 @@ USER 10001:10001
 COPY --from=builder-mcp-local /usr/local /usr/local
 CMD ["langfuse-mcp"]
 
-# Full image (DEFAULT target): agent runtime; can also run the mcp server.
-FROM runtime-base AS agent
-USER 10001:10001
-COPY --from=builder-agent /usr/local /usr/local
-CMD ["langfuse-agent"]
