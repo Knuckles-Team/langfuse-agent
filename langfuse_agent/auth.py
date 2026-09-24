@@ -7,7 +7,11 @@ import logging
 import threading
 from typing import Any
 
-from agent_connector_sdk.config import setting
+from agent_utilities.core.config import resolve_langfuse_host as _resolve_host
+from agent_utilities.core.config import setting
+from agent_utilities.observability.langfuse_trust import (
+    resolve_langfuse_requests_transport as _resolve_requests_transport,
+)
 
 from .api_client import LangfuseApi
 
@@ -15,44 +19,15 @@ local = threading.local()
 logger = logging.getLogger(__name__)
 _client = None
 
-_LANGFUSE_DEFAULT_HOST = "https://cloud.langfuse.com"
-_LANGFUSE_HOST_RE = __import__("re").compile(
-    r"^https://[A-Za-z0-9.-]+(?::[0-9]{1,5})?/?$"
-)
-
 
 def resolve_langfuse_host() -> str:
-    """Resolve ``LANGFUSE_HOST`` without exposing it in logs.
-
-    SDK-GAP (EH-48x, SDK-GAPS.md #4): inlined port of
-    agent_utilities.core.config.resolve_langfuse_host -- trivial (no
-    agent_utilities dependency beyond `setting`, which is already SDK-native).
-    """
-    host = str(setting("LANGFUSE_HOST", "") or "") or _LANGFUSE_DEFAULT_HOST
-    if not host:
-        return ""
-    if not _LANGFUSE_HOST_RE.match(host):
-        raise ValueError("LANGFUSE_HOST must be an https:// origin")
-    return host.rstrip("/")
+    """Resolve the sole current Agent Utilities Langfuse host contract."""
+    return str(_resolve_host())
 
 
 def resolve_langfuse_requests_transport() -> dict[str, Any]:
-    """Resolve TLS transport kwargs for the ``requests``-based Langfuse client.
-
-    SDK-GAP (EH-48x, SDK-GAPS.md #4): agent_utilities.observability.langfuse_trust
-    is a substantial (400+ line) fail-closed custom-CA-bundle/x509 validation
-    module with no agent-connector-sdk equivalent -- porting it is out of
-    scope for this migration. Falls back to the standard platform trust store
-    (still secure TLS verification) instead of the operator's custom CA
-    bundle; a deployment relying on ``LANGFUSE_TRUST_BUNDLE`` custom-CA
-    material needs that gap closed first (see SDK-GAPS.md #4).
-    """
-    logger.warning(
-        "resolve_langfuse_requests_transport: agent_utilities.observability."
-        "langfuse_trust was not ported (SDK-GAPS.md #4); using the platform "
-        "trust store instead of any operator-configured custom CA bundle."
-    )
-    return {}
+    """Resolve the current fail-closed Requests transport contract."""
+    return _resolve_requests_transport()
 
 
 def get_client() -> LangfuseApi:
@@ -65,7 +40,7 @@ def get_client() -> LangfuseApi:
     """
     global _client
     if _client is None:
-        from langfuse_agent._delegated_auth_compat import (
+        from agent_utilities.mcp.delegated_auth import (
             is_delegation_enabled,
         )
 
