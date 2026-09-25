@@ -250,10 +250,7 @@ def _wheel_dist_info_layout(names: list[str]) -> tuple[str, str, str, str, str]:
     if not (len(metadata_names) == len(wheel_names) == len(record_names) == 1):
         raise WheelSbomError("wheel metadata layout is not exact")
     dist_info = metadata_names[0].removesuffix("METADATA")
-    if (
-        wheel_names[0] != dist_info + "WHEEL"
-        or record_names[0] != dist_info + "RECORD"
-    ):
+    if wheel_names[0] != dist_info + "WHEEL" or record_names[0] != dist_info + "RECORD":
         raise WheelSbomError("wheel metadata directories differ")
     scripts_prefix = dist_info.removesuffix(".dist-info/") + ".data/scripts/"
     return dist_info, metadata_names[0], wheel_names[0], record_names[0], scripts_prefix

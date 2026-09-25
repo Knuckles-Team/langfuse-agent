@@ -13,7 +13,7 @@ from packaging.requirements import Requirement
 from packaging.version import Version
 
 import build_backend
-from scripts import security_contract
+from scripts import security_contract  # type: ignore[attr-defined]
 
 ROOT = Path(__file__).resolve().parents[1]
 
