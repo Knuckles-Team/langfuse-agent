@@ -636,10 +636,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-install" class="md-nav__link">
+  <a href="#check-the-install" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verify the install
+        Check the install
       
     </span>
   </a>
@@ -915,10 +915,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-install" class="md-nav__link">
+  <a href="#check-the-install" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verify the install
+        Check the install
       
     </span>
   </a>
@@ -958,7 +958,7 @@
 
 <h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h1>
 <p><code>langfuse-agent</code> is a standard Python package and a prebuilt container image. Pick the
-path that matches how you want to run it.</p>
+path that matches how the operator want to run it.</p>
 <p>Every built wheel contains a deterministic CycloneDX 1.6 SBOM at
 <code>.dist-info/sboms/package.cyclonedx.json</code>. The PEP 517 build backend derives it from the
 final wheel metadata and rebuilds <code>RECORD</code>; every direct-reference URL fails the build so
@@ -984,7 +984,7 @@ no source archive or local-source provenance is admitted to the release.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>langfuse-agent
 </span></code></pre></div>
 <h3 id="optional-extras">Optional extras<a class="headerlink" href="#optional-extras" title="Permanent link">&para;</a></h3>
-<p>The base install ships the MCP server runtime. Install the extra for what you need:</p>
+<p>The base install ships the MCP server runtime. Install the extra for what the operator need:</p>
 <table>
 <thead>
 <tr>
@@ -1051,7 +1051,7 @@ file. Production GraphOS deployments instead configure
 private child materialization.</p>
 <p>For an HTTP server with a published port and the agent server, see
 <a href="../deployment/">Deployment</a>.</p>
-<h2 id="verify-the-install">Verify the install<a class="headerlink" href="#verify-the-install" title="Permanent link">&para;</a></h2>
+<h2 id="check-the-install">Check the install<a class="headerlink" href="#check-the-install" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>langfuse-mcp<span class="w"> </span>--help
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import langfuse_agent; print(langfuse_agent.__version__)"</span>
 </span></code></pre></div>

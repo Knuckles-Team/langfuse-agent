@@ -902,7 +902,7 @@
 
 <h1 id="trust-and-privacy">Trust and privacy<a class="headerlink" href="#trust-and-privacy" title="Permanent link">&para;</a></h1>
 <p><code>langfuse-agent</code> inherits its runtime configuration from the process that
-launches it. Keep service addresses, credentials, certificate locations, user
+starts it. Keep service addresses, credentials, certificate locations, user
 identities, and trace payloads out of repository files and MCP catalogs.</p>
 <h2 id="minimal-graphos-configuration">Minimal GraphOS configuration<a class="headerlink" href="#minimal-graphos-configuration" title="Permanent link">&para;</a></h2>
 <p>With the current <code>agent-utilities</code> runtime, no handwritten Langfuse MCP entry is
@@ -956,7 +956,7 @@ references are available. The parent process supplies:</p>
 </table>
 <p>GraphOS resolves references in memory and starts
 <code>python -m langfuse_agent.mcp_server</code> with its own interpreter. It passes only
-the materialized runtime values required by that child. The launch performs no
+the materialized runtime values required by that child. The start performs no
 package download or package-index lookup.</p>
 <h2 id="private-certificate-authorities">Private certificate authorities<a class="headerlink" href="#private-certificate-authorities" title="Permanent link">&para;</a></h2>
 <p>Use system trust when it contains the issuing authority. Otherwise reference a
@@ -976,8 +976,8 @@ not disable TLS verification and do not point Requests at a binary certificate.<
 <code>LANGFUSE_CA_BUNDLE</code>. Existing <code>REQUESTS_CA_BUNDLE</code> and <code>SSL_CERT_FILE</code>
 settings are accepted only after the same validation. Certificate paths and
 subjects are never returned by readiness checks or written to logs.</p>
-<p>The order and number of certificates are not used to claim a pre-verified
-server chain. OpenSSL and Requests construct and verify the target server's
+<p>The order and number of certificates are not used to claim a pre-checked
+server chain. OpenSSL and Requests construct and check the target server's
 certificate path at connection time.</p>
 <p>The MCP configuration stores neither a certificate path nor project keys.
 GraphOS resolves the secret reference, creates the bounded runtime file, and
@@ -988,7 +988,7 @@ GraphOS validates the pair and gives the provider only a private,
 process-lifetime combined client bundle. The Requests adapter applies that
 bundle to every Langfuse API request.</p>
 <p>When <code>uv</code> itself must install or update the package through platform trust, set
-<code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS launch uses the
+<code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS start uses the
 already-installed module and does not invoke <code>uv</code>.</p>
 <h2 id="safe-verification">Safe verification<a class="headerlink" href="#safe-verification" title="Permanent link">&para;</a></h2>
 <p>Use a synthetic trace and inspect only status, counts, and neutral identifiers:</p>

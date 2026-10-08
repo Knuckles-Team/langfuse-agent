@@ -743,10 +743,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify" class="md-nav__link">
+  <a href="#check" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verify
+        Check
       
     </span>
   </a>
@@ -848,10 +848,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify" class="md-nav__link">
+  <a href="#check" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verify
+        Check
       
     </span>
   </a>
@@ -912,7 +912,7 @@ provider, then configure only references in <code>AgentConfig</code>:</p>
 </span></code></pre></div>
 <p>The <code>env://</code> references are neutral schema examples; a deployment may supply any
 supported reference through <code>AgentConfig</code>. The TLS-profile reference is optional
-when system trust is sufficient. GraphOS
+when system trust is enough. GraphOS
 resolves the references in memory and starts the installed provider module; no
 Langfuse-specific MCP catalog entry is required.</p>
 <p>For loopback-only development, <code>LANGFUSE_HOST=http://localhost:3000</code> is allowed.
@@ -947,7 +947,7 @@ TLS ingress selected by those exact proxy and host policies. Do not put key valu
 platform passwords, deployment hostnames, or certificate paths in the Compose file.
 A production GraphOS parent uses the corresponding <code>*_REF</code> settings and performs
 this child materialization automatically.</p>
-<h2 id="verify">Verify<a class="headerlink" href="#verify" title="Permanent link">&para;</a></h2>
+<h2 id="check">Check<a class="headerlink" href="#check" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Check the Langfuse platform's documented health endpoint.</li>
 <li>Run <code>agent-utilities doctor</code> without exposing secret values or service URLs.</li>

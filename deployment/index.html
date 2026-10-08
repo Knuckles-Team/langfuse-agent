@@ -723,15 +723,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#direct-installed-provider-launch" class="md-nav__link">
+  <a href="#direct-installed-provider-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Direct installed-provider launch
+        Direct installed-provider start
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Direct installed-provider launch">
+    <nav class="md-nav" aria-label="Direct installed-provider start">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1042,15 +1042,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#direct-installed-provider-launch" class="md-nav__link">
+  <a href="#direct-installed-provider-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Direct installed-provider launch
+        Direct installed-provider start
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Direct installed-provider launch">
+    <nav class="md-nav" aria-label="Direct installed-provider start">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1320,12 +1320,12 @@ parent with references rather than credential values:</p>
 <p>These <code>env://</code> values are neutral schema examples, not a required namespace;
 runtime configuration may instead supply any supported <code>vault://</code> or
 <code>secret://</code> reference. <code>LANGFUSE_TLS_PROFILE_REF</code> is optional when system trust
-is sufficient. Do not
+is enough. Do not
 add a separate Langfuse entry to the MCP catalog. When both credential
 references are configured, GraphOS registers the provider lazily and starts:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>&lt;current-python-interpreter&gt; -m langfuse_agent.mcp_server
 </span></code></pre></div>
-<p>The interpreter and module are already installed. This launch path performs no
+<p>The interpreter and module are already installed. This start path performs no
 package download, package-index lookup, or PATH-based provider selection.</p>
 <h2 id="canonical-configuration">Canonical configuration<a class="headerlink" href="#canonical-configuration" title="Permanent link">&para;</a></h2>
 <p>The GraphOS parent accepts the following Langfuse settings through
@@ -1419,7 +1419,7 @@ Agent Utilities:</p>
    connection.</li>
 </ol>
 <p>Static bundle validation does not claim that a specific server leaf is already
-chained. OpenSSL and Requests construct and verify the target server's path at
+chained. OpenSSL and Requests construct and check the target server's path at
 connection time.</p>
 <p>For mutual TLS, configure both <code>LANGFUSE_CLIENT_CERT_REF</code> and
 <code>LANGFUSE_CLIENT_KEY_REF</code>; optionally configure
@@ -1428,11 +1428,11 @@ validates the pair, creates a private process-lifetime client bundle, and passes
 that bundle to the provider's Requests transport. The references, password, and
 machine-specific paths are not persisted or logged.</p>
 <p>If <code>uv</code> itself must use platform trust while installing or updating the package,
-set <code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS launch does
+set <code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS start does
 not invoke <code>uv</code>, so this setting does not belong in provider or MCP
 configuration.</p>
-<h2 id="direct-installed-provider-launch">Direct installed-provider launch<a class="headerlink" href="#direct-installed-provider-launch" title="Permanent link">&para;</a></h2>
-<p>Direct launch is useful for isolated development and for supervisors that
+<h2 id="direct-installed-provider-start">Direct installed-provider start<a class="headerlink" href="#direct-installed-provider-start" title="Permanent link">&para;</a></h2>
+<p>Direct start is useful for isolated development and for supervisors that
 already implement secret injection. The supervisor must materialize the project
 keys only in the child process; never place their values in an MCP file,
 Compose file, shell profile, or command line.</p>
