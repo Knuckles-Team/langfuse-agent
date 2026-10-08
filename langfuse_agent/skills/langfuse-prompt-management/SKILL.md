@@ -8,7 +8,7 @@ description: >-
   must publish a new prompt version, resolve the production prompt for an app,
   promote a label, or register a model match-pattern with a unit price. Do NOT
   use for reading traces/generations (use langfuse-trace-analytics) or building
-  eval datasets & scores (use langfuse-eval-datasets).
+  eval datasets and scores (use langfuse-eval-datasets).
 license: MIT
 tags: [langfuse, prompts, models, registry, llm, mcp]
 metadata:
