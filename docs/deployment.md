@@ -179,7 +179,7 @@ parent with references rather than credential values:
 These `env://` values are neutral schema examples, not a required namespace;
 runtime configuration may instead supply any supported `vault://` or
 `secret://` reference. `LANGFUSE_TLS_PROFILE_REF` is optional when system trust
-is sufficient. Do not
+is enough. Do not
 add a separate Langfuse entry to the MCP catalog. When both credential
 references are configured, GraphOS registers the provider lazily and starts:
 
@@ -187,7 +187,7 @@ references are configured, GraphOS registers the provider lazily and starts:
 <current-python-interpreter> -m langfuse_agent.mcp_server
 ```
 
-The interpreter and module are already installed. This launch path performs no
+The interpreter and module are already installed. This start path performs no
 package download, package-index lookup, or PATH-based provider selection.
 
 ## Canonical configuration
@@ -235,7 +235,7 @@ Agent Utilities:
    connection.
 
 Static bundle validation does not claim that a specific server leaf is already
-chained. OpenSSL and Requests construct and verify the target server's path at
+chained. OpenSSL and Requests construct and check the target server's path at
 connection time.
 
 For mutual TLS, configure both `LANGFUSE_CLIENT_CERT_REF` and
@@ -246,13 +246,13 @@ that bundle to the provider's Requests transport. The references, password, and
 machine-specific paths are not persisted or logged.
 
 If `uv` itself must use platform trust while installing or updating the package,
-set `UV_NATIVE_TLS=true` in that installer process. Native GraphOS launch does
+set `UV_NATIVE_TLS=true` in that installer process. Native GraphOS start does
 not invoke `uv`, so this setting does not belong in provider or MCP
 configuration.
 
-## Direct installed-provider launch
+## Direct installed-provider start
 
-Direct launch is useful for isolated development and for supervisors that
+Direct start is useful for isolated development and for supervisors that
 already implement secret injection. The supervisor must materialize the project
 keys only in the child process; never place their values in an MCP file,
 Compose file, shell profile, or command line.

@@ -1,7 +1,7 @@
 # Usage — API / CLI / MCP
 
 `langfuse-agent` exposes the same capability three ways: as **MCP tools** an agent
-calls, as a **Python API** (`LangfuseApi`) you import, and as a **CLI**. The complete
+calls, as a **Python API** (`LangfuseApi`) the operator import, and as a **CLI**. The complete
 tool surface and ecosystem role are in [Overview](overview.md).
 
 ## As an MCP server

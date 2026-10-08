@@ -45,7 +45,7 @@ the provider is installed, GraphOS registers it lazily when both credential
 references are configured. This path performs no package-index lookup at
 startup.
 
-For a direct provider launch outside GraphOS, the process supervisor must inject
+For a direct provider start outside GraphOS, the process supervisor must inject
 the materialized project keys at process creation. Do not persist those values
 in a shell profile, `.env` file, Compose file, MCP catalog, or command line.
 
@@ -74,12 +74,12 @@ Utilities validates that the input is bounded, parseable CA material, then
 materializes it with owner-only permissions and projects its runtime path to
 both `SSL_CERT_FILE` and `REQUESTS_CA_BUNDLE` for the child.
 
-The TLS client constructs and verifies the server's certificate path at
+The TLS client constructs and checks the server's certificate path at
 connection time. Static validation does not prove that a particular server
 leaf chains to every certificate in the supplied trust store.
 
 `UV_NATIVE_TLS=true` is an installer setting only when an administrator uses
-`uv` to install or update packages through platform trust. Native GraphOS launch
+`uv` to install or update packages through platform trust. Native GraphOS start
 does not invoke `uv`, so this setting does not belong in the Langfuse child
 configuration.
 
@@ -106,7 +106,7 @@ references only.
 1. Validate the capability bundle and skill metadata against the installed tool
    schemas.
 2. Confirm required secrets are present without printing their values.
-3. Make a verified TLS connection to the configured host.
+3. Make a checked TLS connection to the configured host.
 4. Exercise health/readiness and one least-privilege read operation.
 5. Confirm traces arrive under the expected opaque tenant/run identifiers and
    contain no captured content.

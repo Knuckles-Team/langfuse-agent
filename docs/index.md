@@ -29,13 +29,13 @@ deterministic MCP tools and a Pydantic-AI agent server. It provides:
   MCP tools and routes requests through the agent-utilities graph engine.
 
 The connector remains inactive when credential references are absent. GraphOS
-resolves the references only when it launches the provider.
+resolves the references only when it starts the provider.
 
 ## Explore the documentation
 
 <div class="grid cards" markdown>
 
-- :material-rocket-launch: **[Installation](installation.md)** — pip, source, extras, and the prebuilt Docker image.
+- :material-rocket-start: **[Installation](installation.md)** — pip, source, extras, and the prebuilt Docker image.
 - :material-server-network: **[Deployment](deployment.md)** — run the MCP and agent servers, Docker Compose, Caddy + Technitium.
 - :material-console: **[Usage](usage.md)** — the MCP tools, the `LangfuseApi` client, and the CLI.
 - :material-database-cog: **[Backing Platform](platform.md)** — deploy Langfuse with Docker.
@@ -61,7 +61,7 @@ graph-os
 GraphOS registers the provider lazily and starts the installed
 `langfuse_agent.mcp_server` module with its own interpreter. No package download
 occurs at runtime. The TLS-profile reference is optional when system trust is
-sufficient.
+enough.
 
 See **[Installation](installation.md)** and **[Deployment](deployment.md)** for the
 full matrix (PyPI extras, Docker image, all transports, the agent server, reverse

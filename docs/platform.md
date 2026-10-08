@@ -42,7 +42,7 @@ export LANGFUSE_TLS_PROFILE_REF=env://LANGFUSE_RUNTIME_TLS_PROFILE
 
 The `env://` references are neutral schema examples; a deployment may supply any
 supported reference through `AgentConfig`. The TLS-profile reference is optional
-when system trust is sufficient. GraphOS
+when system trust is enough. GraphOS
 resolves the references in memory and starts the installed provider module; no
 Langfuse-specific MCP catalog entry is required.
 
@@ -84,7 +84,7 @@ platform passwords, deployment hostnames, or certificate paths in the Compose fi
 A production GraphOS parent uses the corresponding `*_REF` settings and performs
 this child materialization automatically.
 
-## Verify
+## Check
 
 1. Check the Langfuse platform's documented health endpoint.
 2. Run `agent-utilities doctor` without exposing secret values or service URLs.
