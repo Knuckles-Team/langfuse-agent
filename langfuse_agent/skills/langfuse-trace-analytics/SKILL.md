@@ -8,7 +8,7 @@ description: >-
   inspect what an LLM app did: find recent/slow/expensive traces, follow a
   trace's generation tree, attribute activity to a user or session, or ingest
   that activity into the knowledge graph as typed :Trace/:Observation/:Generation
-  nodes. Do NOT use for creating/managing datasets & scores as an eval set (use
+  nodes. Do NOT use for creating/managing datasets and scores as an eval set (use
   langfuse-eval-datasets) or the prompt/model registry (use
   langfuse-prompt-management).
 license: MIT
