@@ -1,7 +1,7 @@
 # Trust and privacy
 
 `langfuse-agent` inherits its runtime configuration from the process that
-launches it. Keep service addresses, credentials, certificate locations, user
+starts it. Keep service addresses, credentials, certificate locations, user
 identities, and trace payloads out of repository files and MCP catalogs.
 
 ## Minimal GraphOS configuration
@@ -24,7 +24,7 @@ references are available. The parent process supplies:
 
 GraphOS resolves references in memory and starts
 `python -m langfuse_agent.mcp_server` with its own interpreter. It passes only
-the materialized runtime values required by that child. The launch performs no
+the materialized runtime values required by that child. The start performs no
 package download or package-index lookup.
 
 ## Private certificate authorities
@@ -48,8 +48,8 @@ An operator-managed PEM may instead be supplied through
 settings are accepted only after the same validation. Certificate paths and
 subjects are never returned by readiness checks or written to logs.
 
-The order and number of certificates are not used to claim a pre-verified
-server chain. OpenSSL and Requests construct and verify the target server's
+The order and number of certificates are not used to claim a pre-checked
+server chain. OpenSSL and Requests construct and check the target server's
 certificate path at connection time.
 
 The MCP configuration stores neither a certificate path nor project keys.
@@ -63,7 +63,7 @@ process-lifetime combined client bundle. The Requests adapter applies that
 bundle to every Langfuse API request.
 
 When `uv` itself must install or update the package through platform trust, set
-`UV_NATIVE_TLS=true` in that installer process. Native GraphOS launch uses the
+`UV_NATIVE_TLS=true` in that installer process. Native GraphOS start uses the
 already-installed module and does not invoke `uv`.
 
 ## Safe verification

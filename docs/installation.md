@@ -1,7 +1,7 @@
 # Installation
 
 `langfuse-agent` is a standard Python package and a prebuilt container image. Pick the
-path that matches how you want to run it.
+path that matches how the operator want to run it.
 
 Every built wheel contains a deterministic CycloneDX 1.6 SBOM at
 `.dist-info/sboms/package.cyclonedx.json`. The PEP 517 build backend derives it from the
@@ -34,7 +34,7 @@ pip install langfuse-agent
 
 ### Optional extras
 
-The base install ships the MCP server runtime. Install the extra for what you need:
+The base install ships the MCP server runtime. Install the extra for what the operator need:
 
 | Extra | Install | Pulls in |
 |---|---|---|
@@ -93,7 +93,7 @@ private child materialization.
 For an HTTP server with a published port and the agent server, see
 [Deployment](deployment.md).
 
-## Verify the install
+## Check the install
 
 ```bash
 langfuse-mcp --help

@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Governed connector metadata, ontology/SHACL assets, mappings, migrations,
   schema fingerprints, and privacy-safe certification fixtures.
-- One comprehensive `langfuse-agent-operations` skill; specialized prompt,
+- One complete `langfuse-agent-operations` skill; specialized prompt,
   dataset, and trace procedures remain explicit workflows without duplicating
   activation guidance.
 
