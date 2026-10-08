@@ -435,7 +435,9 @@ def _usage_total(obs: dict[str, Any]) -> Any:
     return None
 
 
-def _observation_node(obs: dict[str, Any], node_id: str, is_generation: bool) -> dict[str, Any]:
+def _observation_node(
+    obs: dict[str, Any], node_id: str, is_generation: bool
+) -> dict[str, Any]:
     node = {
         "id": node_id,
         "node_type": "Generation" if is_generation else "Observation",
