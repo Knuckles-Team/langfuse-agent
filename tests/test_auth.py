@@ -164,7 +164,7 @@ class TestGetClient:
         with (
             patch("langfuse_agent.auth.LangfuseApi") as mock_langfuse,
             patch(
-                "agent_utilities.mcp.delegated_auth.is_delegation_enabled",
+                "langfuse_agent.auth.is_delegation_enabled",
                 return_value=True,
             ),
             patch("langfuse_agent.auth.logger") as mock_logger,
