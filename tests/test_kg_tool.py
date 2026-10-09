@@ -1,6 +1,6 @@
 """Validation contracts for the explicit Langfuse KG ingestion tool."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastmcp import FastMCP
@@ -56,7 +56,7 @@ async def test_langfuse_ingest_uses_v2_observations_method_after_validation():
     tool = await _ingest_tool()
     client = MagicMock()
     client.observations_get_many.return_value = {"data": []}
-    ingest = MagicMock(return_value={"nodes": 0, "edges": 0})
+    ingest = AsyncMock(return_value={"nodes": 0, "edges": 0})
 
     with (
         patch("langfuse_agent.tools.kg.get_client", return_value=client),

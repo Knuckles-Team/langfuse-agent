@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import inspect
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -157,7 +157,7 @@ async def test_auto_ingest_receives_only_the_projected_result(monkeypatch) -> No
         ]
     }
     client, _ = _client(raw)
-    ingest = MagicMock()
+    ingest = AsyncMock()
     monkeypatch.setattr(observability, "get_client", lambda: client)
     monkeypatch.setattr(observability, "auto_ingest", ingest)
 

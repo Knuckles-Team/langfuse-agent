@@ -1,7 +1,7 @@
 """Tests for langfuse_api.py - Langfuse API client."""
 
 import pytest
-from agent_utilities.core.exceptions import ApiError, AuthError
+from agent_connector_sdk.exceptions import ApiError, AuthError
 
 from langfuse_agent.api_client import LangfuseApi
 

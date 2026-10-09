@@ -7,8 +7,15 @@ import logging
 import threading
 from typing import Any
 
+from agent_connector_sdk.config import setting
+
+# SDK gap: agent_connector_sdk has no equivalent of these two Langfuse-specific
+# helpers yet (grep over agent_connector_sdk/ turns up nothing for either name).
+# resolve_langfuse_host centralizes the validated LANGFUSE_HOST contract and
+# resolve_langfuse_requests_transport is the fail-closed Requests transport
+# contract for Langfuse's observability trust boundary -- neither is a generic
+# connector concern the SDK owns today, so both stay on agent_utilities.
 from agent_utilities.core.config import resolve_langfuse_host as _resolve_host
-from agent_utilities.core.config import setting
 from agent_utilities.observability.langfuse_trust import (
     resolve_langfuse_requests_transport as _resolve_requests_transport,
 )
@@ -40,6 +47,10 @@ def get_client() -> LangfuseApi:
     """
     global _client
     if _client is None:
+        # NOTE: intentionally still agent_utilities, like agent_server.py (see
+        # recipe Pitfall #1 and the RFC 8693 delegated-auth pitfall found by
+        # opensearch-mcp). agent_connector_sdk.auth.delegation exists, but no
+        # fleet connector has yet proven that wiring end-to-end.
         from agent_utilities.mcp.delegated_auth import (
             is_delegation_enabled,
         )
