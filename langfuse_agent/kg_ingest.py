@@ -3,8 +3,8 @@
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. The langfuse-agent connector natively
 pushes its observability data into the ONE epistemic-graph knowledge graph as **typed OWL
 nodes** (``:Trace``, ``:Observation``, ``:Generation``, ``:Session``, ``:Score``,
-``:Dataset``, ``:Prompt``, ``:Model``) plus links through the required
-``agent_utilities.knowledge_graph.memory.native_ingest`` authority. Node ids follow
+``:Dataset``, ``:Prompt``, ``:Model``) plus links through ``agent_connector_sdk.ingest`` --
+the generated ``SourceIngest`` client, not a local ingestion helper. Node ids follow
 ``langfuse:<class>:<externalId>``; ``node_type`` on each entity
 matches a class federated by ``langfuse_agent.ontology``.
 """
@@ -18,20 +18,30 @@ import re
 from datetime import date, datetime
 from typing import Any
 
-from agent_utilities.core.config import config, setting
-from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
-from agent_utilities.knowledge_graph.memory.native_ingest import (
-    ingest_entities as _native_ingest_entities,
+from agent_connector_sdk.config import setting
+from agent_connector_sdk.credentials.references import SecretReferenceError
+from agent_connector_sdk.credentials.resolution import resolve_secret_reference
+from agent_connector_sdk.credentials.resolver import CredentialUnavailableError
+from agent_connector_sdk.ingest import (
+    ChangeSet,
+    Entity,
+    IngestBinding,
+    IngestError,
+    KnowledgeIngest,
+    Relationship,
+    current_ingest,
 )
-from agent_utilities.protocols.source_connectors.base import ExternalAccess
-from agent_utilities.security.cli_secrets import (
-    RuntimeSecretReferenceError,
-    resolve_runtime_secret_reference,
-)
-from agent_utilities.security.persistence_privacy import PersistencePrivacyGuard
+from agent_connector_sdk.privacy import PersistencePrivacyGuard
 
-_SOURCE = "langfuse-agent"
-_DOMAIN = "langfuse"
+# SDK gap: agent_connector_sdk has no equivalent of agent_utilities.protocols
+# .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
+# ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
+# (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
+# declaration, not a *per-record* runtime ACL the write path can stamp -- a
+# materially different mechanism, not a drop-in replacement. Kept on
+# agent_utilities pending an SDK-side per-record ACL primitive.
+from agent_utilities.protocols.source_connectors.base import ExternalAccess
+
 _UNSAFE_ID_FIELDS = frozenset(
     {
         "externaltoolid",
@@ -144,11 +154,11 @@ def _persistence_key() -> bytes:
         value = (
             str(setting("LANGFUSE_PERSISTENCE_HMAC_KEY", "") or "")
             if materialized
-            else resolve_runtime_secret_reference(
-                config.langfuse_persistence_hmac_key_ref
+            else resolve_secret_reference(
+                setting("LANGFUSE_PERSISTENCE_HMAC_KEY_REF", None)
             )
         )
-    except RuntimeSecretReferenceError:
+    except (SecretReferenceError, CredentialUnavailableError, TypeError):
         value = ""
     encoded = value.encode("utf-8")
     if (
@@ -156,9 +166,7 @@ def _persistence_key() -> bytes:
         or len(encoded) > 16_384
         or any(ord(character) < 32 for character in value)
     ):
-        raise NativeIngestError(
-            "Langfuse persistence identity key is required"
-        ) from None
+        raise IngestError("Langfuse persistence identity key is required") from None
     return encoded
 
 
@@ -308,39 +316,71 @@ def _prepare_for_persistence(
     return prepared, safe_relationships
 
 
-def ingest_entities(
-    entities: list[dict[str, Any]],
-    relationships: list[dict[str, Any]] | None = None,
-    *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
-) -> dict[str, int]:
-    """Sanitize and write canonical nodes and relationships through native ingestion."""
-    prepared, safe_relationships = _prepare_for_persistence(entities, relationships)
-    return _native_ingest_entities(
-        prepared,
-        safe_relationships,
-        source=source,
-        domain=domain,
-        client=client,
-        graph=graph,
+_BINDING = IngestBinding(connector="langfuse-agent", stream="langfuse")
+
+_RESERVED_ENTITY_KEYS = frozenset({"id", "node_type"})
+_RESERVED_RELATIONSHIP_KEYS = frozenset({"source", "target", "relationship"})
+
+
+def _to_entity(record: dict[str, Any]) -> Entity:
+    properties = {
+        key: value for key, value in record.items() if key not in _RESERVED_ENTITY_KEYS
+    }
+    return Entity(
+        id=record.get("id"), node_type=record.get("node_type"), properties=properties
     )
 
 
-def ingest_documents(
+def _to_relationship(record: dict[str, Any]) -> Relationship:
+    properties = {
+        key: value
+        for key, value in record.items()
+        if key not in _RESERVED_RELATIONSHIP_KEYS
+    }
+    return Relationship(
+        source=record["source"],
+        target=record["target"],
+        relationship=record["relationship"],
+        properties=properties or None,
+    )
+
+
+async def ingest_entities(
+    entities: list[dict[str, Any]],
+    relationships: list[dict[str, Any]] | None = None,
+    *,
+    ingest: KnowledgeIngest | None = None,
+) -> dict[str, int]:
+    """Sanitize and write canonical nodes and relationships via the SDK ingest facade."""
+    prepared, safe_relationships = _prepare_for_persistence(entities, relationships)
+    if not prepared:
+        raise IngestError("ingest_entities needs at least one entity")
+    # The SDK's own request builder only requires a node_type be present -- it does
+    # not reject a lingering retired "type" alias the way agent_utilities' native
+    # ingest did. Keep that fail-closed canonical-key contract here explicitly.
+    for entity in prepared:
+        if "type" in entity or not entity.get("node_type"):
+            raise IngestError("ingest_entities nodes require canonical node_type")
+    change_set = ChangeSet(
+        entities=tuple(_to_entity(entity) for entity in prepared),
+        relationships=tuple(
+            _to_relationship(relationship) for relationship in safe_relationships
+        ),
+    )
+    service = ingest or current_ingest()
+    receipt = await service.submit(_BINDING, change_set)
+    return {"nodes": receipt.affected_count, "edges": receipt.relationship_count}
+
+
+async def ingest_documents(
     docs: list[dict[str, Any]],
     *,
-    source: str = _SOURCE,
-    domain: str = _DOMAIN,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Write text records as ``:Document`` nodes (semantic-search fodder).
 
     Each doc: ``{"id":..., "text":..., "title"?:..., "source_uri"?:..., ...props}``.
-    Documents pass through the same privacy guard before native ingestion.
+    Documents pass through the same privacy guard before ingestion.
     """
     prepared: list[dict[str, Any]] = []
     for doc in docs or []:
@@ -353,13 +393,7 @@ def ingest_documents(
         node["node_type"] = "Document"
         node["text"] = text
         prepared.append(node)
-    return ingest_entities(
-        prepared,
-        source=source,
-        domain=domain,
-        client=client,
-        graph=graph,
-    )
+    return await ingest_entities(prepared, ingest=ingest)
 
 
 # --------------------------------------------------------------------------- #
@@ -385,11 +419,10 @@ def _records(resp: Any) -> list[dict[str, Any]]:
     return out
 
 
-def ingest_traces(
+async def ingest_traces(
     traces: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map traces to opaque, metadata-minimized ``:Trace``/``:Session`` nodes."""
     entities: list[dict[str, Any]] = []
@@ -425,7 +458,7 @@ def ingest_traces(
                     "relationship": "inSession",
                 }
             )
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)
 
 
 def _usage_total(obs: dict[str, Any]) -> Any:
@@ -496,11 +529,10 @@ def _observation_model_entity(
     return None
 
 
-def ingest_observations(
+async def ingest_observations(
     observations: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map observation records → ``:Observation`` / ``:Generation`` nodes (+ links).
 
@@ -521,14 +553,13 @@ def ingest_observations(
         model_entity = _observation_model_entity(obs, is_generation)
         if model_entity is not None:
             entities.append(model_entity)
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)
 
 
-def ingest_sessions(
+async def ingest_sessions(
     sessions: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map session records → ``:Session`` nodes."""
     entities: list[dict[str, Any]] = []
@@ -544,14 +575,13 @@ def ingest_sessions(
                 "externalToolId": str(sid),
             }
         )
-    return ingest_entities(entities, client=client, graph=graph)
+    return await ingest_entities(entities, ingest=ingest)
 
 
-def ingest_scores(
+async def ingest_scores(
     scores: list[dict[str, Any]],
     *,
-    client: Any | None = None,
-    graph: str | None = None,
+    ingest: KnowledgeIngest | None = None,
 ) -> dict[str, int]:
     """Map score records → ``:Score`` nodes (+ ``scores`` / ``belongsToTrace`` links)."""
     entities: list[dict[str, Any]] = []
@@ -589,7 +619,7 @@ def ingest_scores(
                     "relationship": "scores",
                 }
             )
-    return ingest_entities(entities, relationships, client=client, graph=graph)
+    return await ingest_entities(entities, relationships, ingest=ingest)
 
 
 # Dispatch used by the observability tool to auto-ingest read results.
@@ -602,7 +632,7 @@ _INGEST_BY_ACTION = {
 }
 
 
-def auto_ingest(action: str, result: Any) -> None:
+async def auto_ingest(action: str, result: Any) -> None:
     """Opt-in standalone ingestion of a read result.
 
     When this provider is mounted by GraphOS, the child flag is forced off and
@@ -610,17 +640,17 @@ def auto_ingest(action: str, result: Any) -> None:
     ``GraphSession``. This standalone gate remains useful for a directly served
     network provider whose request middleware has already minted graph authority.
     """
-    if not config.langfuse_kg_auto_ingest:
+    if not setting("LANGFUSE_KG_AUTO_INGEST", False):
         return
-    ingest_read_result(action, result)
+    await ingest_read_result(action, result)
 
 
-def ingest_read_result(action: str, result: Any) -> None:
+async def ingest_read_result(action: str, result: Any) -> None:
     """Ingest one supported API read under the caller's existing authority.
 
     This function never synthesizes identity and has no configuration bypass.
-    The native ingestion boundary still requires a verified ambient
-    ``GraphSession`` and surfaces every write failure to its caller.
+    The ingest boundary still requires a verified ambient ``GraphSession`` and
+    surfaces every write failure to its caller.
     """
 
     fn = _INGEST_BY_ACTION.get(action)
@@ -629,4 +659,4 @@ def ingest_read_result(action: str, result: Any) -> None:
     records = _records(result)
     if not records:
         return
-    fn(records)
+    await fn(records)

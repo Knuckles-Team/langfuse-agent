@@ -207,5 +207,5 @@ def register_langfuse_observability_tools(mcp: FastMCP):
         method_kwargs = {k: v for k, v in kwargs.items() if k in _ACTION_PARAMS[action]}
         result = getattr(client, action)(**method_kwargs)
         if action in _AUTO_INGEST_ACTIONS:
-            auto_ingest(action, result)  # default-on KG ingestion
+            await auto_ingest(action, result)  # default-on KG ingestion
         return result

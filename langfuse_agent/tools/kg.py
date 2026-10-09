@@ -6,9 +6,10 @@ epistemic-graph knowledge graph as typed OWL nodes (:Trace / :Observation / :Gen
 :Session / :Score). Best-effort: returns ``{"ingested": None}`` when no engine is reachable.
 """
 
+from collections.abc import Awaitable, Callable
 from typing import Any
 
-from agent_utilities.mcp.action_dispatch import parse_json_object
+from agent_connector_sdk.mcp.action_dispatch import parse_json_object
 from fastmcp import FastMCP
 from pydantic import Field
 
@@ -21,7 +22,8 @@ from langfuse_agent.kg_ingest import (
     ingest_traces,
 )
 
-_INGESTERS = {
+_IngestFn = Callable[..., Awaitable[dict[str, int]]]
+_INGESTERS: dict[str, tuple[_IngestFn, str]] = {
     "traces": (ingest_traces, "trace_list"),
     "observations": (ingest_observations, "observations_get_many"),
     "sessions": (ingest_sessions, "sessions_list"),
@@ -69,7 +71,7 @@ def register_langfuse_kg_tools(mcp: FastMCP):
         }[kind]
         resp = method(**kwargs)
         records = _records(resp)
-        result = ingest_fn(records)
+        result = await ingest_fn(records)
         return {"kind": kind, "listed": len(records), "ingested": result}
 
     return None

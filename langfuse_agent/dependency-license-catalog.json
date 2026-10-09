@@ -1,6 +1,7 @@
 {
   "version": 1,
   "licenses": {
+    "agent-connector-sdk": "MIT",
     "agent-utilities": "MIT",
     "langfuse": "MIT",
     "langfuse-agent": "MIT",

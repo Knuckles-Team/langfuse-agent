@@ -1,21 +1,24 @@
-"""Native epistemic-graph typed-node ingestion — Wire-First coverage.
+"""Native epistemic-graph typed-node ingestion -- Wire-First coverage.
 
 Exercises the real ``ingest_entities`` + record mappers (``ingest_traces`` /
-``ingest_observations`` / ``ingest_sessions`` / ``ingest_scores``) with a
-ChangeEnvelope-capable fake client (no engine required), asserting the governed commit
-and Langfuse record → typed-node mapping. CONCEPT:AU-KG.ingest.enterprise-source-extractor.
+``ingest_observations`` / ``ingest_sessions`` / ``ingest_scores``) against a fake
+``agent_connector_sdk.ingest`` transport (no engine required). The real SDK request
+builder (``agent_connector_sdk.ingest.request.build_request``) still runs, so a
+malformed change set is still caught by the SDK's own contract, not re-derived here;
+only the final network commit is faked. Privacy-critical: asserts that every raw
+Langfuse id, free-text label, host/path, and other PII the connector's own
+metadata-minimization layer is meant to strip NEVER reaches the submitted payload.
+CONCEPT:AU-KG.ingest.enterprise-source-extractor.
 """
 
 from __future__ import annotations
 
+from types import SimpleNamespace
 from typing import Any
 
-import msgpack
 import pytest
-from agent_utilities.knowledge_graph.core.session import GraphSession, use_session
-from agent_utilities.knowledge_graph.memory.native_ingest import NativeIngestError
-from agent_utilities.security.actor_identity import ActorType
-from agent_utilities.security.brain_context import ActorContext
+from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
+from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
 
 import langfuse_agent.kg_ingest as kg_ingest
 from langfuse_agent.kg_ingest import (
@@ -35,10 +38,8 @@ from langfuse_agent.kg_ingest import (
 def _synthetic_persistence_key(monkeypatch):
     monkeypatch.delenv("LANGFUSE_PERSISTENCE_HMAC_KEY", raising=False)
     monkeypatch.delenv("LANGFUSE_PERSISTENCE_HMAC_MATERIALIZED", raising=False)
-    monkeypatch.setattr(
-        kg_ingest.config,
-        "langfuse_persistence_hmac_key_ref",
-        "env://TEST_LANGFUSE_PERSISTENCE_HMAC_KEY",
+    monkeypatch.setenv(
+        "LANGFUSE_PERSISTENCE_HMAC_KEY_REF", "env://TEST_LANGFUSE_PERSISTENCE_HMAC_KEY"
     )
     monkeypatch.setenv(
         "TEST_LANGFUSE_PERSISTENCE_HMAC_KEY",
@@ -46,135 +47,81 @@ def _synthetic_persistence_key(monkeypatch):
     )
 
 
-@pytest.fixture(autouse=True)
-def _verified_graph_session():
-    actor = ActorContext(
-        actor_id="subject:opaque:synthetic",
-        actor_type=ActorType.SYSTEM,
-        roles=(),
-        tenant_id="tenant:opaque:synthetic",
-        authenticated=True,
-    )
-    session = GraphSession(
-        actor=actor,
-        tenant=actor.tenant_id,
-        scopes=frozenset({"kg:write"}),
-        graph="__commons__",
-        audience="epistemic-graph",
-        policy_version="policy:synthetic",
-    )
-    with use_session(session):
-        yield
+class _FakeTransport:
+    """Records every submitted request; no epistemic-graph engine required."""
 
-
-def _node_of_type(client, entity_type):
-    return next(
-        node
-        for node in client.nodes.values.values()
-        if node["node_type"] == entity_type
-    )
-
-
-class _FakeNodes:
     def __init__(self) -> None:
-        self.values: dict[str, dict[str, Any]] = {}
+        self.requests: list[SourceIngestionRequest] = []
 
-    def properties(self, node_id: str) -> dict[str, Any] | None:
-        return self.values.get(node_id)
+    async def source_status(self, _connector: str, _stream: str) -> Any:
+        return SimpleNamespace(accepted_checkpoint=None)
 
-    def list(self) -> list[tuple[str, dict[str, Any]]]:
-        return list(self.values.items())
+    async def submit(self, request: SourceIngestionRequest) -> Any:
+        self.requests.append(request)
+        return SimpleNamespace(
+            affected_count=len(request.records),
+            relationship_count=len(request.relationships),
+        )
 
-
-class _FakeChanges:
-    def __init__(self, nodes: _FakeNodes) -> None:
-        self.nodes = nodes
-        self.edges: list[tuple[str, str, dict[str, Any]]] = []
-        self.applied: list[dict[str, Any]] = []
-        self.records: dict[str, dict[str, Any]] = {}
-        self.versions: dict[str, dict[str, Any]] = {}
-
-    def get(self, envelope_id: str) -> dict[str, Any] | None:
-        return self.records.get(envelope_id)
-
-    def content_version(self, object_id: str) -> dict[str, Any] | None:
-        return self.versions.get(object_id)
-
-    def cursor(self, _source: str, _partition: str = "") -> None:
-        return None
-
-    def apply(self, envelope: dict[str, Any]) -> dict[str, Any]:
-        self.applied.append(envelope)
-        mutation = envelope["mutation"]
-        for operation in mutation["operations"]:
-            method = operation["method"]
-            params = method["params"]
-            properties = msgpack.unpackb(params["properties_msgpack"], raw=False)
-            if method["method"] == "AddNode":
-                self.nodes.values[params["node_id"]] = properties
-            elif method["method"] == "AddEdge":
-                self.edges.append(
-                    (params["source_id"], params["target_id"], properties)
-                )
-        version = envelope["content_version"]
-        self.versions[version["object_id"]] = version
-        self.records[envelope["envelope_id"]] = envelope
-        return {
-            "batch_id": mutation["batch_id"],
-            "replayed": False,
-            "projection_pending": False,
-        }
+    async def store_blob(self, _data: bytes) -> str:
+        raise AssertionError("langfuse-agent typed-node ingestion carries no media")
 
 
-class _FakeRdf:
-    def validate_shacl(self, _shapes: str, _data_graph: str) -> dict[str, Any]:
-        return {"conforms": True, "results": []}
+@pytest.fixture
+def ingest() -> tuple[KnowledgeIngest, _FakeTransport]:
+    transport = _FakeTransport()
+    return KnowledgeIngest(transport, loop=None), transport
 
 
-class _FakeClient:
-    def __init__(self) -> None:
-        self.nodes = _FakeNodes()
-        self.changes = _FakeChanges(self.nodes)
-        self.rdf = _FakeRdf()
-
-    @staticmethod
-    def supports(operation: str) -> bool:
-        return operation == "ApplyChangeEnvelope"
+def _node_type_of(record: Any) -> str:
+    return record.mapping_reference.rsplit("/", 1)[-1]
 
 
-def test_ingest_entities_writes_nodes_and_edges():
-    c = _FakeClient()
-    res = ingest_entities(
+def _record_of_type(transport: _FakeTransport, node_type: str) -> Any:
+    for request in transport.requests:
+        for record in request.records:
+            if _node_type_of(record) == node_type:
+                return record
+    raise AssertionError(f"no submitted record of type {node_type!r}")
+
+
+def _all_records(transport: _FakeTransport) -> list[Any]:
+    return [record for request in transport.requests for record in request.records]
+
+
+@pytest.mark.asyncio
+async def test_ingest_entities_writes_nodes_and_edges(ingest):
+    service, transport = ingest
+    res = await ingest_entities(
         [
             {"id": "a", "node_type": "Trace", "name": "t"},
             {"id": "b", "node_type": "Session"},
         ],
         [{"source": "a", "target": "b", "relationship": "inSession"}],
-        client=c,
-        graph="__commons__",
+        ingest=service,
     )
     assert res == {"nodes": 2, "edges": 1}
-    assert len(c.changes.applied) == 1
-    assert set(c.nodes.values).isdisjoint({"a", "b"})
-    assert all(node_id.startswith("langfuse:") for node_id in c.nodes.values)
-    # provenance is stamped
-    trace = _node_of_type(c, "Trace")
-    assert trace["source"] == "langfuse-agent"
-    assert trace["domain"] == "langfuse"
-    assert trace["external_access"] == {
+    request = transport.requests[0]
+    assert {r.record_id for r in request.records}.isdisjoint({"a", "b"})
+    assert all(r.record_id.startswith("langfuse:") for r in request.records)
+    trace = _record_of_type(transport, "Trace")
+    assert trace.payload["external_access"] == {
         "is_public": False,
         "user_emails": [],
         "group_ids": [],
         "read_roles": ["kg:read", "kg:write", "kg:admin"],
         "markings": [],
     }
-    assert len(c.changes.edges) == 1
-    assert c.changes.edges[0][2] == {"relationship": "inSession"}
+    assert len(request.relationships) == 1
+    assert request.relationships[0].relation_reference.endswith(
+        "resources/Trace/relations/inSession"
+    )
 
 
-def test_ingest_traces_maps_trace_session_and_user():
-    c = _FakeClient()
-    res = ingest_traces(
+@pytest.mark.asyncio
+async def test_ingest_traces_maps_trace_session_and_user(ingest):
+    service, transport = ingest
+    res = await ingest_traces(
         [
             {
                 "id": "tr-1",
@@ -185,32 +132,37 @@ def test_ingest_traces_maps_trace_session_and_user():
                 "environment": "production",
             }
         ],
-        client=c,
-        graph="__commons__",
+        ingest=service,
     )
     assert res == {"nodes": 2, "edges": 1}
-    assert "name" not in _node_of_type(c, "Trace")
-    assert _node_of_type(c, "Session")["node_type"] == "Session"
-    assert all(node["node_type"] != "Person" for node in c.nodes.values.values())
-    persisted = repr({"nodes": c.nodes.values, "edges": c.changes.edges})
+    assert "name" not in _record_of_type(transport, "Trace").payload
+    assert _record_of_type(transport, "Session")
+    assert all(_node_type_of(r) != "Person" for r in _all_records(transport))
+    persisted = repr([r.payload for r in _all_records(transport)])
     assert "tr-1" not in persisted
     assert "sess-9" not in persisted
     assert "alice" not in persisted
-    assert c.changes.edges[0][2] == {"relationship": "inSession"}
-
-
-def test_ingest_traces_persists_exact_governed_opaque_name():
-    client = _FakeClient()
-    governed_name = "graph_run:pref_run_" + "a1" * 32
-
-    ingest_traces(
-        [{"id": "trace-governed", "name": governed_name}],
-        client=client,
+    assert (
+        transport.requests[0]
+        .relationships[0]
+        .relation_reference.endswith("relations/inSession")
     )
 
-    assert _node_of_type(client, "Trace")["name"] == governed_name
+
+@pytest.mark.asyncio
+async def test_ingest_traces_persists_exact_governed_opaque_name(ingest):
+    service, transport = ingest
+    governed_name = "graph_run:pref_run_" + "a1" * 32
+
+    await ingest_traces(
+        [{"id": "trace-governed", "name": governed_name}],
+        ingest=service,
+    )
+
+    assert _record_of_type(transport, "Trace").payload["name"] == governed_name
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "unsafe_name",
     [
@@ -224,22 +176,23 @@ def test_ingest_traces_persists_exact_governed_opaque_name():
         "contact@example.test",
     ],
 )
-def test_ingest_traces_drops_arbitrary_and_near_match_names(unsafe_name):
-    client = _FakeClient()
+async def test_ingest_traces_drops_arbitrary_and_near_match_names(ingest, unsafe_name):
+    service, transport = ingest
 
-    ingest_traces(
+    await ingest_traces(
         [{"id": "trace-untrusted", "name": unsafe_name}],
-        client=client,
+        ingest=service,
     )
 
-    trace = _node_of_type(client, "Trace")
-    assert "name" not in trace
-    assert unsafe_name not in repr(client.nodes.values)
+    trace = _record_of_type(transport, "Trace")
+    assert "name" not in trace.payload
+    assert unsafe_name not in repr(trace.payload)
 
 
-def test_ingest_observations_generation_maps_model_and_links():
-    c = _FakeClient()
-    res = ingest_observations(
+@pytest.mark.asyncio
+async def test_ingest_observations_generation_maps_model_and_links(ingest):
+    service, transport = ingest
+    res = await ingest_observations(
         [
             {
                 "id": "obs-1",
@@ -258,36 +211,36 @@ def test_ingest_observations_generation_maps_model_and_links():
                 "traceId": "tr-1",
             },
         ],
-        client=c,
-        graph="__commons__",
+        ingest=service,
     )
     # obs-1 (Generation) + Model node + obs-2 (Observation) = 3 nodes
     assert res["nodes"] == 3
-    generation = _node_of_type(c, "Generation")
-    assert "modelName" not in generation
-    assert generation["totalTokens"] == 1234
-    assert _node_of_type(c, "Observation")["node_type"] == "Observation"
-    assert _node_of_type(c, "Model")["node_type"] == "Model"
-    assert "gpt-4o" not in repr(c.nodes.values)
-    assert {edge[2]["relationship"] for edge in c.changes.edges} == {
-        "belongsToTrace",
-        "parentObservation",
-        "usedModel",
+    generation = _record_of_type(transport, "Generation")
+    assert "modelName" not in generation.payload
+    assert generation.payload["totalTokens"] == 1234
+    assert _record_of_type(transport, "Observation")
+    assert _record_of_type(transport, "Model")
+    assert "gpt-4o" not in repr([r.payload for r in _all_records(transport)])
+    relation_refs = {
+        rel.relation_reference.rsplit("/", 1)[-1]
+        for rel in transport.requests[0].relationships
     }
+    assert relation_refs == {"belongsToTrace", "parentObservation", "usedModel"}
 
 
-def test_ingest_sessions_and_scores():
-    c = _FakeClient()
-    res = ingest_sessions(
+@pytest.mark.asyncio
+async def test_ingest_sessions_and_scores(ingest):
+    service, transport = ingest
+    res = await ingest_sessions(
         [{"id": "sess-9", "createdAt": "2026-07-04T00:00:00Z"}],
-        client=c,
-        graph="__commons__",
+        ingest=service,
     )
     assert res == {"nodes": 1, "edges": 0}
-    assert _node_of_type(c, "Session")["node_type"] == "Session"
+    assert _record_of_type(transport, "Session")
 
-    c2 = _FakeClient()
-    res2 = ingest_scores(
+    transport2 = _FakeTransport()
+    service2 = KnowledgeIngest(transport2, loop=None)
+    res2 = await ingest_scores(
         [
             {
                 "id": "sc-1",
@@ -297,58 +250,70 @@ def test_ingest_sessions_and_scores():
                 "traceId": "tr-1",
             }
         ],
-        client=c2,
-        graph="__commons__",
+        ingest=service2,
     )
     assert res2 == {"nodes": 1, "edges": 1}
-    assert _node_of_type(c2, "Score")["scoreValue"] == "0.9"
-    assert c2.changes.edges[0][2] == {"relationship": "scores"}
+    assert _record_of_type(transport2, "Score").payload["scoreValue"] == "0.9"
+    assert (
+        transport2.requests[0]
+        .relationships[0]
+        .relation_reference.endswith("relations/scores")
+    )
 
 
-def test_records_normalises_wrapped_and_single():
+@pytest.mark.asyncio
+async def test_records_normalises_wrapped_and_single():
     assert _records({"data": [{"id": "a"}, {"id": "b"}]}) == [{"id": "a"}, {"id": "b"}]
     assert _records({"id": "x", "name": "n"}) == [{"id": "x", "name": "n"}]
     assert _records(None) == []
 
 
-def test_auto_ingest_uses_typed_agent_config_opt_in(monkeypatch):
+@pytest.mark.asyncio
+async def test_auto_ingest_uses_typed_agent_config_opt_in(monkeypatch):
     ingested = []
+
+    async def _fake_ingest_trace_list(rows):
+        ingested.extend(rows)
+
     monkeypatch.setitem(
-        kg_ingest._INGEST_BY_ACTION,
-        "trace_list",
-        lambda rows: ingested.extend(rows),
+        kg_ingest._INGEST_BY_ACTION, "trace_list", _fake_ingest_trace_list
     )
-    monkeypatch.setattr(kg_ingest.config, "langfuse_kg_auto_ingest", False)
+    monkeypatch.setenv("LANGFUSE_KG_AUTO_INGEST", "false")
 
-    auto_ingest("trace_list", {"data": [{"id": "trace-1"}]})
+    await auto_ingest("trace_list", {"data": [{"id": "trace-1"}]})
     assert ingested == []
 
-    monkeypatch.setattr(kg_ingest.config, "langfuse_kg_auto_ingest", True)
-    auto_ingest("trace_list", {"data": []})
+    monkeypatch.setenv("LANGFUSE_KG_AUTO_INGEST", "true")
+    await auto_ingest("trace_list", {"data": []})
     assert ingested == []
 
-    auto_ingest("trace_list", {"data": [{"id": "trace-1"}]})
+    await auto_ingest("trace_list", {"data": [{"id": "trace-1"}]})
     assert ingested == [{"id": "trace-1"}]
 
 
-def test_parent_mediated_read_ingestion_has_no_second_feature_gate(monkeypatch):
+@pytest.mark.asyncio
+async def test_parent_mediated_read_ingestion_has_no_second_feature_gate(monkeypatch):
     ingested = []
-    monkeypatch.setitem(
-        kg_ingest._INGEST_BY_ACTION,
-        "trace_list",
-        lambda rows: ingested.extend(rows),
-    )
-    monkeypatch.setattr(kg_ingest.config, "langfuse_kg_auto_ingest", False)
 
-    ingest_read_result("trace_list", {"data": [{"id": "trace-1"}]})
+    async def _fake_ingest_trace_list(rows):
+        ingested.extend(rows)
+
+    monkeypatch.setitem(
+        kg_ingest._INGEST_BY_ACTION, "trace_list", _fake_ingest_trace_list
+    )
+    monkeypatch.setenv("LANGFUSE_KG_AUTO_INGEST", "false")
+
+    await ingest_read_result("trace_list", {"data": [{"id": "trace-1"}]})
 
     assert ingested == [{"id": "trace-1"}]
 
 
-def test_ingest_rejects_retired_structural_fields():
-    with pytest.raises(NativeIngestError, match="canonical node_type"):
-        ingest_entities(
-            [{"id": "invalid-shape", "type": "Retired"}], client=_FakeClient()
+@pytest.mark.asyncio
+async def test_ingest_rejects_retired_structural_fields(ingest):
+    service, _transport = ingest
+    with pytest.raises(IngestError, match="node_type"):
+        await ingest_entities(
+            [{"id": "invalid-shape", "type": "Retired"}], ingest=service
         )
 
 
@@ -361,42 +326,43 @@ def test_persistence_key_resolves_dedicated_secret_ref(monkeypatch):
 
 
 def test_persistence_key_accepts_only_flagged_child_material(monkeypatch):
-    monkeypatch.setattr(kg_ingest.config, "langfuse_persistence_hmac_key_ref", None)
+    monkeypatch.delenv("LANGFUSE_PERSISTENCE_HMAC_KEY_REF", raising=False)
     monkeypatch.setenv(
         "LANGFUSE_PERSISTENCE_HMAC_KEY", "materialized-child-key-at-least-32"
     )
 
-    with pytest.raises(NativeIngestError, match="identity key is required"):
+    with pytest.raises(IngestError, match="identity key is required"):
         _persistence_key()
 
     monkeypatch.setenv("LANGFUSE_PERSISTENCE_HMAC_MATERIALIZED", "true")
     assert _persistence_key() == b"materialized-child-key-at-least-32"
 
 
-def test_ingest_fails_closed_without_identity_key(monkeypatch):
-    monkeypatch.setattr(kg_ingest.config, "langfuse_persistence_hmac_key_ref", None)
+@pytest.mark.asyncio
+async def test_ingest_fails_closed_without_identity_key(monkeypatch, ingest):
+    service, _transport = ingest
+    monkeypatch.delenv("LANGFUSE_PERSISTENCE_HMAC_KEY_REF", raising=False)
     monkeypatch.setenv("LANGFUSE_SECRET_KEY", "api-secret-must-not-be-reused")
     monkeypatch.setenv("PERSISTENCE_ID_HMAC_KEY", "plaintext-must-not-be-used")
 
-    with pytest.raises(NativeIngestError, match="identity key is required"):
-        ingest_traces([{"id": "trace-1"}], client=_FakeClient())
+    with pytest.raises(IngestError, match="identity key is required"):
+        await ingest_traces([{"id": "trace-1"}], ingest=service)
 
 
 def test_persistence_key_rejects_plaintext_configuration(monkeypatch):
-    monkeypatch.setattr(
-        kg_ingest.config,
-        "langfuse_persistence_hmac_key_ref",
-        "plaintext-must-not-be-used",
+    monkeypatch.setenv(
+        "LANGFUSE_PERSISTENCE_HMAC_KEY_REF", "plaintext-must-not-be-used"
     )
 
-    with pytest.raises(NativeIngestError, match="identity key is required"):
+    with pytest.raises(IngestError, match="identity key is required"):
         _persistence_key()
 
 
-def test_persisted_payload_redacts_identity_and_machine_location():
-    client = _FakeClient()
+@pytest.mark.asyncio
+async def test_persisted_payload_redacts_identity_and_machine_location(ingest):
+    service, transport = ingest
 
-    result = ingest_traces(
+    result = await ingest_traces(
         [
             {
                 "id": "trace-sensitive",
@@ -408,11 +374,11 @@ def test_persisted_payload_redacts_identity_and_machine_location():
                 "tags": ["Ordinary Person Label", "private-host.invalid"],
             }
         ],
-        client=client,
+        ingest=service,
     )
 
     assert result == {"nodes": 1, "edges": 0}
-    persisted = repr(client.nodes.values)
+    persisted = repr([r.payload for r in _all_records(transport)])
     assert "trace-sensitive" not in persisted
     assert "Ordinary Person Label" not in persisted
     assert "https://private-host.invalid" not in persisted
@@ -422,9 +388,10 @@ def test_persisted_payload_redacts_identity_and_machine_location():
     assert "person-sensitive" not in persisted
 
 
-def test_persisted_observability_metadata_rejects_free_text_values():
-    observations = _FakeClient()
-    ingest_observations(
+@pytest.mark.asyncio
+async def test_persisted_observability_metadata_rejects_free_text_values(ingest):
+    service, transport = ingest
+    await ingest_observations(
         [
             {
                 "id": "observation-sensitive",
@@ -436,11 +403,12 @@ def test_persisted_observability_metadata_rejects_free_text_values():
                 "usage": {"total": 12},
             }
         ],
-        client=observations,
+        ingest=service,
     )
 
-    scores = _FakeClient()
-    ingest_scores(
+    transport2 = _FakeTransport()
+    service2 = KnowledgeIngest(transport2, loop=None)
+    await ingest_scores(
         [
             {
                 "id": "score-sensitive",
@@ -449,19 +417,21 @@ def test_persisted_observability_metadata_rejects_free_text_values():
                 "stringValue": "Ordinary Person Label",
             }
         ],
-        client=scores,
+        ingest=service2,
     )
 
     persisted = repr(
-        {"observations": observations.nodes.values, "scores": scores.nodes.values}
+        [r.payload for r in _all_records(transport) + _all_records(transport2)]
     )
     assert "Ordinary Person Label" not in persisted
     assert "Private Model Label" not in persisted
-    assert _node_of_type(observations, "Generation")["totalTokens"] == 12
-    assert "scoreValue" not in _node_of_type(scores, "Score")
-    assert _node_of_type(scores, "Score")["dataType"] == "CATEGORICAL"
+    assert _record_of_type(transport, "Generation").payload["totalTokens"] == 12
+    assert "scoreValue" not in _record_of_type(transport2, "Score").payload
+    assert _record_of_type(transport2, "Score").payload["dataType"] == "CATEGORICAL"
 
 
-def test_ingest_empty_is_rejected():
-    with pytest.raises(NativeIngestError, match="at least one entity"):
-        ingest_entities([], client=_FakeClient())
+@pytest.mark.asyncio
+async def test_ingest_empty_is_rejected(ingest):
+    service, _transport = ingest
+    with pytest.raises(IngestError, match="at least one entity"):
+        await ingest_entities([], ingest=service)
