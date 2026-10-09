@@ -7,11 +7,10 @@ import os
 import sys
 from unittest.mock import MagicMock, patch
 
-# Mock agent_utilities.mcp.delegated_auth module before any tests import it
-mock_delegated_auth = MagicMock()
-mock_delegated_auth.is_delegation_enabled.return_value = False
-mock_delegated_auth.get_user_identity.return_value = {}
-sys.modules["agent_utilities.mcp.delegated_auth"] = mock_delegated_auth
+# NOTE: delegation is now real agent_connector_sdk.auth.delegation.DelegationSettings,
+# read from settings (ENABLE_DELEGATION, unset/False by default in tests) -- no
+# module-level mock needed; tests that need delegation enabled patch
+# langfuse_agent.auth.is_delegation_enabled directly.
 
 # Mock tree_sitter_javascript which is a dynamic dependency of agent_utilities
 sys.modules["tree_sitter_javascript"] = MagicMock()

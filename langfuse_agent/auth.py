@@ -37,6 +37,18 @@ def resolve_langfuse_requests_transport() -> dict[str, Any]:
     return _resolve_requests_transport()
 
 
+def is_delegation_enabled() -> bool:
+    """Whether the OIDC delegation path is configured.
+
+    Follows the proven pattern from onetrust-api's ``auth.py`` (PR #5):
+    ``agent_connector_sdk.auth.delegation`` now has an end-to-end proof, so
+    this no longer needs to stay on ``agent_utilities.mcp.delegated_auth``.
+    """
+    from agent_connector_sdk.auth.delegation import DelegationSettings
+
+    return DelegationSettings.from_settings().enabled
+
+
 def get_client() -> LangfuseApi:
     """Get or create a singleton Langfuse client instance.
 
@@ -47,14 +59,6 @@ def get_client() -> LangfuseApi:
     """
     global _client
     if _client is None:
-        # NOTE: intentionally still agent_utilities, like agent_server.py (see
-        # recipe Pitfall #1 and the RFC 8693 delegated-auth pitfall found by
-        # opensearch-mcp). agent_connector_sdk.auth.delegation exists, but no
-        # fleet connector has yet proven that wiring end-to-end.
-        from agent_utilities.mcp.delegated_auth import (
-            is_delegation_enabled,
-        )
-
         transport_kwargs = resolve_langfuse_requests_transport()
         # LANGFUSE_BASE_URL is the official Langfuse variable and wins when set;
         # otherwise fall back to the centralized, validated LANGFUSE_HOST contract.
