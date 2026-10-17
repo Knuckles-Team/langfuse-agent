@@ -4,10 +4,10 @@
 starts it. Keep service addresses, credentials, certificate locations, user
 identities, and trace payloads out of repository files and MCP catalogs.
 
-## Minimal GraphOS configuration
+## Minimal Arbora configuration
 
 With the current `agent-connector-sdk` runtime, no handwritten Langfuse MCP entry is
-required. GraphOS registers the installed provider lazily when both credential
+required. Arbora registers the installed provider lazily when both credential
 references are available. The parent process supplies:
 
 | Setting | Purpose |
@@ -22,7 +22,7 @@ references are available. The parent process supplies:
 | `LANGFUSE_CLIENT_KEY_PASSWORD_REF` | Optional reference for an encrypted client key |
 | `LANGFUSE_PERSISTENCE_HMAC_KEY_REF` | Dedicated identity-HMAC key reference for optional graph persistence |
 
-GraphOS resolves references in memory and starts
+Arbora resolves references in memory and starts
 `python -m langfuse_agent.mcp_server` with its own interpreter. It passes only
 the materialized runtime values required by that child. The start performs no
 package download or package-index lookup.
@@ -53,17 +53,17 @@ server chain. OpenSSL and Requests construct and check the target server's
 certificate path at connection time.
 
 The MCP configuration stores neither a certificate path nor project keys.
-GraphOS resolves the secret reference, creates the bounded runtime file, and
+Arbora resolves the secret reference, creates the bounded runtime file, and
 supplies the two CA environment variables only to the child process.
 
 Mutual TLS uses the same boundary. Both client-certificate and private-key
 references are required; an encrypted key may use the password reference.
-GraphOS validates the pair and gives the provider only a private,
+Arbora validates the pair and gives the provider only a private,
 process-lifetime combined client bundle. The Requests adapter applies that
 bundle to every Langfuse API request.
 
 When `uv` itself must install or update the package through platform trust, set
-`UV_NATIVE_TLS=true` in that installer process. Native GraphOS start uses the
+`UV_NATIVE_TLS=true` in that installer process. Native Arbora start uses the
 already-installed module and does not invoke `uv`.
 
 ## Safe verification

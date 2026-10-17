@@ -233,7 +233,7 @@ def _prepared_entity(
     # The projection contains only the bounded metadata allowlist above.
     # Give authenticated graph readers an explicit, tenant-scoped ACL;
     # absence would quarantine the row and make the safe projection
-    # unreadable even to the GraphOS parent that governed the write.
+    # unreadable even to the Arbora parent that governed the write.
     clean["external_access"] = _METADATA_ACCESS.model_dump()
     return raw_id, clean
 
@@ -635,8 +635,8 @@ _INGEST_BY_ACTION = {
 async def auto_ingest(action: str, result: Any) -> None:
     """Opt-in standalone ingestion of a read result.
 
-    When this provider is mounted by GraphOS, the child flag is forced off and
-    GraphOS calls :func:`ingest_read_result` under the authenticated parent
+    When this provider is mounted by Arbora, the child flag is forced off and
+    Arbora calls :func:`ingest_read_result` under the authenticated parent
     ``GraphSession``. This standalone gate remains useful for a directly served
     network provider whose request middleware has already minted graph authority.
     """

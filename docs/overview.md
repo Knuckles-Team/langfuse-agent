@@ -58,16 +58,16 @@ langfuse-agent/
 └── main_agent.json          # Agent identity and system prompt
 ```
 
-## Native GraphOS configuration
+## Native Arbora configuration
 
-GraphOS registers the installed provider lazily from `AgentConfig`. Configure
+Arbora registers the installed provider lazily from `AgentConfig`. Configure
 only the canonical service URL and runtime secret references on the parent:
 
 ```json
 {
   "mcpServers": {
-    "graph-os": {
-      "command": "graph-os",
+    "arbora": {
+      "command": "arbora",
       "env": {
         "LANGFUSE_HOST": "https://langfuse.example.invalid",
         "LANGFUSE_PUBLIC_KEY_REF": "env://LANGFUSE_PROJECT_PUBLIC_KEY",

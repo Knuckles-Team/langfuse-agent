@@ -220,7 +220,7 @@ When query strings or parameters are provided, an LLM-free **Knowledge Graph res
 }
 ```
 
-Runtime references require an alias-aware launcher such as GraphOS. Other
+Runtime references require an alias-aware launcher such as Arbora. Other
 launchers must omit those entries and inject the resolved values through their
 own runtime secret boundary.
 
@@ -327,7 +327,7 @@ langfuse-agent --provider openai --model-id gpt-4o
 The checked-in `docker/agent.compose.yml` runs the MCP and agent services with
 restricted containers and loopback-published ports. Provide pinned image digests
 and let the process supervisor inject materialized child credentials at runtime;
-never add them to the Compose file or a checked-in env file. GraphOS deployments
+never add them to the Compose file or a checked-in env file. Arbora deployments
 keep only the corresponding `*_REF` settings in `AgentConfig`.
 
 Detailed graph node architecture explanations, custom skill configurations, and agentic trace guides are available in [docs/deployment.md](docs/deployment.md).
@@ -354,7 +354,7 @@ Built directly upon the enterprise-ready [`agent-connector-sdk`](https://github.
 
 ## Configuration & Environment Variables
 
-GraphOS configuration uses `AgentConfig` and secret references. Do not store
+Arbora configuration uses `AgentConfig` and secret references. Do not store
 credential values in `.env` files or MCP catalogs.
 
 ### Core API & Credentials
@@ -584,5 +584,5 @@ historical per-task skill wrappers.
 Runtime endpoints, credentials, certificate trust, tenant identity, retention,
 and observability policy are deployment inputs and are never packaged values.
 See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
-network transport, connector ingestion, GraphOS delegation, or trace export.
+network transport, connector ingestion, Arbora delegation, or trace export.
 <!-- GOVERNED-CAPABILITY:END -->

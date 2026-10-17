@@ -20,7 +20,7 @@ surface.
 
 ## Canonical runtime settings
 
-GraphOS reads these settings through `AgentConfig`:
+Arbora reads these settings through `AgentConfig`:
 
 | Setting | Purpose |
 |---|---|
@@ -34,18 +34,18 @@ GraphOS reads these settings through `AgentConfig`:
 | `LANGFUSE_CLIENT_KEY_PASSWORD_REF` | Optional runtime reference for an encrypted client key |
 | `LANGFUSE_PERSISTENCE_HMAC_KEY_REF` | Dedicated identity-HMAC key reference required for graph persistence |
 
-Secret references use `vault://`, `secret://`, or `env://`. GraphOS resolves
+Secret references use `vault://`, `secret://`, or `env://`. Arbora resolves
 them in the parent process and starts the installed
 `langfuse_agent.mcp_server` module with its current Python interpreter. The
 private child environment receives materialized project keys and trust-file
 locations; references and values are not written back to configuration.
 
-Do not add a handwritten Langfuse server entry to a GraphOS MCP catalog. Once
-the provider is installed, GraphOS registers it lazily when both credential
+Do not add a handwritten Langfuse server entry to an Arbora MCP catalog. Once
+the provider is installed, Arbora registers it lazily when both credential
 references are configured. This path performs no package-index lookup at
 startup.
 
-For a direct provider start outside GraphOS, the process supervisor must inject
+For a direct provider start outside Arbora, the process supervisor must inject
 the materialized project keys at process creation. Do not persist those values
 in a shell profile, `.env` file, Compose file, MCP catalog, or command line.
 
@@ -79,7 +79,7 @@ connection time. Static validation does not prove that a particular server
 leaf chains to every certificate in the supplied trust store.
 
 `UV_NATIVE_TLS=true` is an installer setting only when an administrator uses
-`uv` to install or update packages through platform trust. Native GraphOS start
+`uv` to install or update packages through platform trust. Native Arbora start
 does not invoke `uv`, so this setting does not belong in the Langfuse child
 configuration.
 

@@ -86,8 +86,8 @@ docker run --rm -i \
 This direct-container form expects the process supervisor to inject the
 materialized key variables and optional trust-store paths at container creation.
 Do not place their values in the command, a Compose file, or a checked-in env
-file. Production GraphOS deployments instead configure
-`LANGFUSE_PUBLIC_KEY_REF` and `LANGFUSE_SECRET_KEY_REF`; GraphOS performs the
+file. Production Arbora deployments instead configure
+`LANGFUSE_PUBLIC_KEY_REF` and `LANGFUSE_SECRET_KEY_REF`; Arbora performs the
 private child materialization.
 
 For an HTTP server with a published port and the agent server, see

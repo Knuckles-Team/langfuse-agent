@@ -1,7 +1,7 @@
 # Deployment
 
 `langfuse-agent` exposes an MCP server (`langfuse-mcp`) and an optional A2A
-agent server (`langfuse-agent`). GraphOS is the production launcher: it owns
+agent server (`langfuse-agent`). Arbora is the production launcher: it owns
 `AgentConfig`, resolves secret references, and lazily mounts the installed
 provider.
 
@@ -155,16 +155,16 @@ Docker Compose stack, the A2A agent server, putting it behind a Caddy reverse pr
 and giving it a DNS name with Technitium. To provision the **Langfuse platform** it
 connects to, see [Backing Platform](platform.md).
 
-## Native GraphOS deployment
+## Native Arbora deployment
 
-Install the package during image or host provisioning. Configure the GraphOS
+Install the package during image or host provisioning. Configure the Arbora
 parent with references rather than credential values:
 
 ```json
 {
   "mcpServers": {
-    "graph-os": {
-      "command": "graph-os",
+    "arbora": {
+      "command": "arbora",
       "env": {
         "LANGFUSE_HOST": "https://langfuse.example.invalid",
         "LANGFUSE_PUBLIC_KEY_REF": "env://LANGFUSE_PROJECT_PUBLIC_KEY",
@@ -181,7 +181,7 @@ runtime configuration may instead supply any supported `vault://` or
 `secret://` reference. `LANGFUSE_TLS_PROFILE_REF` is optional when system trust
 is enough. Do not
 add a separate Langfuse entry to the MCP catalog. When both credential
-references are configured, GraphOS registers the provider lazily and starts:
+references are configured, Arbora registers the provider lazily and starts:
 
 ```text
 <current-python-interpreter> -m langfuse_agent.mcp_server
@@ -192,7 +192,7 @@ package download, package-index lookup, or PATH-based provider selection.
 
 ## Canonical configuration
 
-The GraphOS parent accepts the following Langfuse settings through
+The Arbora parent accepts the following Langfuse settings through
 `AgentConfig`:
 
 | Setting | Default | Purpose |
@@ -209,7 +209,7 @@ The GraphOS parent accepts the following Langfuse settings through
 | `LANGFUSE_KG_AUTO_INGEST` | `false` | Opt in to privacy-guarded graph persistence |
 | `LANGFUSE_MCP_ENABLED` | automatic | Explicitly enable or disable native registration |
 
-Secret references use `vault://`, `secret://`, or `env://`. GraphOS resolves the
+Secret references use `vault://`, `secret://`, or `env://`. Arbora resolves the
 credential pair in the parent process. The private provider child receives only
 the materialized `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` values required
 by the Langfuse SDK; the references are removed from that child environment.
@@ -246,7 +246,7 @@ that bundle to the provider's Requests transport. The references, password, and
 machine-specific paths are not persisted or logged.
 
 If `uv` itself must use platform trust while installing or updating the package,
-set `UV_NATIVE_TLS=true` in that installer process. Native GraphOS start does
+set `UV_NATIVE_TLS=true` in that installer process. Native Arbora start does
 not invoke `uv`, so this setting does not belong in provider or MCP
 configuration.
 
@@ -274,7 +274,7 @@ Compose file, shell profile, or command line.
 ```
 
 The `python` command must be the interpreter in which the provider was
-installed. Native GraphOS avoids this ambiguity by using its exact current
+installed. Native Arbora avoids this ambiguity by using its exact current
 interpreter.
 
 ### Streamable HTTP
@@ -357,7 +357,7 @@ tokens, zone names, addresses, and hostnames outside the repository.
 
 1. Run `agent-connector-sdk doctor` and confirm that the two credential references
    resolve without printing their values.
-2. Confirm that GraphOS reports the native Langfuse provider as available.
+2. Confirm that Arbora reports the native Langfuse provider as available.
 3. Call `langfuse_observability` with `action=trace_list` and a small `limit`.
    An empty data list is a successful authenticated response.
 4. Emit one synthetic, content-free local-model trace and flush the exporter.

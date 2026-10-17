@@ -1,6 +1,6 @@
 # langfuse-agent
 
-Langfuse observability **MCP Server + A2A Agent** for the Graph OS ecosystem
+Langfuse observability **MCP Server + A2A Agent** for the Arbora ecosystem
 — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and
 dataset APIs.
 
@@ -28,7 +28,7 @@ deterministic MCP tools and a Pydantic-AI agent server. It provides:
 - **An A2A agent server** (`langfuse-agent` console script) that auto-discovers the
   MCP tools and routes requests through the agent-connector-sdk graph engine.
 
-The connector remains inactive when credential references are absent. GraphOS
+The connector remains inactive when credential references are absent. Arbora
 resolves the references only when it starts the provider.
 
 ## Explore the documentation
@@ -47,7 +47,7 @@ resolves the references only when it starts the provider.
 ## Quick start
 
 Install the package during provisioning, configure `AgentConfig`, and start the
-already-installed GraphOS runtime:
+already-installed Arbora runtime:
 
 ```bash
 python -m pip install "langfuse-agent[mcp]"
@@ -55,10 +55,10 @@ export LANGFUSE_HOST=https://langfuse.example.invalid
 export LANGFUSE_PUBLIC_KEY_REF=env://LANGFUSE_PROJECT_PUBLIC_KEY
 export LANGFUSE_SECRET_KEY_REF=env://LANGFUSE_PROJECT_SECRET_KEY
 export LANGFUSE_TLS_PROFILE_REF=env://LANGFUSE_RUNTIME_TLS_PROFILE
-graph-os
+arbora
 ```
 
-GraphOS registers the provider lazily and starts the installed
+Arbora registers the provider lazily and starts the installed
 `langfuse_agent.mcp_server` module with its own interpreter. No package download
 occurs at runtime. The TLS-profile reference is optional when system trust is
 enough.

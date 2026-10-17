@@ -28,7 +28,7 @@ The platform and connector use separate secret scopes. A Langfuse project API
 pair is issued after the platform is healthy; it is not a platform database
 credential.
 
-## Connect GraphOS
+## Connect Arbora
 
 Store the project API pair and optional TLS profile in the configured secret
 provider, then configure only references in `AgentConfig`:
@@ -42,7 +42,7 @@ export LANGFUSE_TLS_PROFILE_REF=env://LANGFUSE_RUNTIME_TLS_PROFILE
 
 The `env://` references are neutral schema examples; a deployment may supply any
 supported reference through `AgentConfig`. The TLS-profile reference is optional
-when system trust is enough. GraphOS
+when system trust is enough. Arbora
 resolves the references in memory and starts the installed provider module; no
 Langfuse-specific MCP catalog entry is required.
 
@@ -81,7 +81,7 @@ services:
 The non-loopback listener is valid only behind the operator-supplied authenticated
 TLS ingress selected by those exact proxy and host policies. Do not put key values,
 platform passwords, deployment hostnames, or certificate paths in the Compose file.
-A production GraphOS parent uses the corresponding `*_REF` settings and performs
+A production Arbora parent uses the corresponding `*_REF` settings and performs
 this child materialization automatically.
 
 ## Check

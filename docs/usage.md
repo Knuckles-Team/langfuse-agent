@@ -37,7 +37,7 @@ in `AgentConfig`.
 ```python
 from langfuse_agent.auth import get_client
 
-# Inside the provider child, after GraphOS has privately materialized its refs.
+# Inside the provider child, after Arbora has privately materialized its refs.
 api = get_client()
 
 # Reads
@@ -48,7 +48,7 @@ sessions = api.sessions_list()                # session records
 scores = api.scores_get_many()               # evaluation scores
 ```
 
-Do not place key values in Python source. GraphOS resolves
+Do not place key values in Python source. Arbora resolves
 `LANGFUSE_PUBLIC_KEY_REF` and `LANGFUSE_SECRET_KEY_REF` in its parent process,
 then starts the provider child with only the materialized values it needs.
 
@@ -65,7 +65,7 @@ langfuse-agent --provider openai --model-id gpt-4o
 ```
 
 Both receive runtime configuration from their process supervisor. The native
-GraphOS path uses secret references and remains inactive when either credential
+Arbora path uses secret references and remains inactive when either credential
 reference is absent. The full configuration surface is documented in
 [`.env.example`](https://github.com/Knuckles-Team/langfuse-agent/blob/main/.env.example)
 and on the [Deployment](deployment.md#canonical-configuration) page.
