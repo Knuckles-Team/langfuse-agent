@@ -187,6 +187,6 @@
     rdfs:comment """Langfuse LLM-observability model — traces, observations, generations,
     sessions, scores and score configs, datasets and dataset runs, prompts and models,
     with their tree, attribution, evaluation and cost relationships — federated into the
-    agent-utilities knowledge-graph hub. Reuses the shared :Person class for the end-user
+    agent-connector-sdk knowledge-graph hub. Reuses the shared :Person class for the end-user
     a trace is attributed to.""" ;
     owl:imports <http://knuckles.team/kg> .

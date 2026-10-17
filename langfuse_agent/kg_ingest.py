@@ -33,14 +33,14 @@ from agent_connector_sdk.ingest import (
 )
 from agent_connector_sdk.privacy import PersistencePrivacyGuard
 
-# SDK gap: agent_connector_sdk has no equivalent of agent_utilities.protocols
+# SDK gap: agent_connector_sdk has no equivalent of agent_connector_sdk.protocols
 # .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
 # ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
 # (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
 # declaration, not a *per-record* runtime ACL the write path can stamp -- a
 # materially different mechanism, not a drop-in replacement. Kept on
-# agent_utilities pending an SDK-side per-record ACL primitive.
-from agent_utilities.protocols.source_connectors.base import ExternalAccess
+# agent_connector_sdk pending an SDK-side per-record ACL primitive.
+from agent_connector_sdk.contracts import ExternalAccess
 
 _UNSAFE_ID_FIELDS = frozenset(
     {
@@ -356,7 +356,7 @@ async def ingest_entities(
     if not prepared:
         raise IngestError("ingest_entities needs at least one entity")
     # The SDK's own request builder only requires a node_type be present -- it does
-    # not reject a lingering retired "type" alias the way agent_utilities' native
+    # not reject a lingering retired "type" alias the way agent_connector_sdk' native
     # ingest did. Keep that fail-closed canonical-key contract here explicitly.
     for entity in prepared:
         if "type" in entity or not entity.get("node_type"):

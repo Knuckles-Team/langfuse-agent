@@ -38,7 +38,7 @@ The base install ships the MCP server runtime. Install the extra for what the op
 
 | Extra | Install | Pulls in |
 |---|---|---|
-| *(base)* | `pip install langfuse-agent` | FastMCP MCP-server runtime (`agent-utilities[mcp]`) + `langfuse` |
+| *(base)* | `pip install langfuse-agent` | FastMCP MCP-server runtime (`agent-connector-sdk[mcp]`) + `langfuse` |
 | `agent` | `pip install "langfuse-agent[agent]"` | Pydantic-AI agent server + Logfire tracing |
 | `all` | `pip install "langfuse-agent[all]"` | The MCP server, the agent server, and tracing |
 | `test` | `pip install "langfuse-agent[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |

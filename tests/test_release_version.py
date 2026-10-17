@@ -28,12 +28,10 @@ def test_release_version_is_consistent_across_runtime_and_metadata() -> None:
     )
     dockerfile = (ROOT / "docker/Dockerfile").read_text(encoding="utf-8")
     assert dockerfile.count(f"langfuse-agent[mcp]=={EXPECTED_VERSION}") == 1
-    assert dockerfile.count(f"langfuse-agent[agent]=={EXPECTED_VERSION}") == 1
     assert f"## [{EXPECTED_VERSION}] - 2026-07-17" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"
     )
     for relative_path in (
-        "langfuse_agent/agent_server.py",
         "langfuse_agent/mcp_server.py",
     ):
         source = (ROOT / relative_path).read_text(encoding="utf-8")

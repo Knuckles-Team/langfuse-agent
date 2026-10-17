@@ -355,7 +355,7 @@ tokens, zone names, addresses, and hostnames outside the repository.
 
 ## Safe verification
 
-1. Run `agent-utilities doctor` and confirm that the two credential references
+1. Run `agent-connector-sdk doctor` and confirm that the two credential references
    resolve without printing their values.
 2. Confirm that GraphOS reports the native Langfuse provider as available.
 3. Call `langfuse_observability` with `action=trace_list` and a small `limit`.

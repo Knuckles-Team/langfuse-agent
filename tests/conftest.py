@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 # module-level mock needed; tests that need delegation enabled patch
 # langfuse_agent.auth.is_delegation_enabled directly.
 
-# Mock tree_sitter_javascript which is a dynamic dependency of agent_utilities
+# Mock tree_sitter_javascript which is a dynamic dependency of the graph runtime
 sys.modules["tree_sitter_javascript"] = MagicMock()
 sys.modules["tree_sitter_python"] = MagicMock()
 sys.modules["tree_sitter_typescript"] = MagicMock()

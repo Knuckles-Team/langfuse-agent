@@ -24,10 +24,9 @@ def test_mcp_local_is_python312_hash_locked_and_path_origin_free() -> None:
         "--only-binary :all:",
         "--require-hashes",
         "RELEASE_REQUIREMENTS_SHA256",
-        'm.version("agent-utilities")',
+        'm.version("agent-connector-sdk")',
         'm.version("epistemic-graph")',
         'm.version("langfuse-agent")',
-        'shutil.which("graph-os")',
         'shutil.which("langfuse-mcp")',
         'glob("*.dist-info/direct_url.json")',
         "import epistemic_graph.numeric",
@@ -44,7 +43,7 @@ def test_mcp_local_is_python312_hash_locked_and_path_origin_free() -> None:
     assert source.count(f"FROM {PYTHON_IMAGE}") == 2
     assert "python:3.11" not in source
     assert source.rsplit("FROM runtime-base AS ", 1)[1].startswith("agent\n")
-    assert "agent-utilities[agent]" not in source
+    assert "agent-connector-sdk[agent]" not in source
     assert "dspy" not in source.casefold()
     assert "litellm" not in source.casefold()
 

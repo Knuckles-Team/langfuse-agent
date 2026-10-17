@@ -13,7 +13,6 @@ __all__: list[str] = []
 CORE_MODULES: list[str] = ["langfuse_agent.api_client"]
 
 OPTIONAL_MODULES = {
-    "langfuse_agent.agent_server": "agent",
     "langfuse_agent.mcp_server": "mcp",
 }
 
@@ -35,7 +34,7 @@ for module_name in CORE_MODULES:
         module = importlib.import_module(module_name)
         _expose_members(module)
 
-# Dynamic/lazy loading of optional modules (agent_server, mcp_server)
+# Dynamic/lazy loading of optional modules (mcp_server)
 _loaded_optional_modules: dict[str, Any] = {}
 
 
@@ -50,7 +49,6 @@ def _import_module_safely(module_name: str):
 # Availability flags map to the substring identifying their optional module.
 _AVAILABILITY_FLAGS = {
     "_MCP_AVAILABLE": "mcp_server",
-    "_AGENT_AVAILABLE": "agent_server",
 }
 
 _MISSING = object()

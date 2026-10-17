@@ -9,17 +9,6 @@ from typing import Any
 
 from agent_connector_sdk.config import setting
 
-# SDK gap: agent_connector_sdk has no equivalent of these two Langfuse-specific
-# helpers yet (grep over agent_connector_sdk/ turns up nothing for either name).
-# resolve_langfuse_host centralizes the validated LANGFUSE_HOST contract and
-# resolve_langfuse_requests_transport is the fail-closed Requests transport
-# contract for Langfuse's observability trust boundary -- neither is a generic
-# connector concern the SDK owns today, so both stay on agent_utilities.
-from agent_utilities.core.config import resolve_langfuse_host as _resolve_host
-from agent_utilities.observability.langfuse_trust import (
-    resolve_langfuse_requests_transport as _resolve_requests_transport,
-)
-
 from .api_client import LangfuseApi
 
 local = threading.local()
@@ -28,13 +17,19 @@ _client = None
 
 
 def resolve_langfuse_host() -> str:
-    """Resolve the sole current Agent Utilities Langfuse host contract."""
-    return str(_resolve_host())
+    """Resolve the validated ``LANGFUSE_HOST`` setting (http/https URL, no trailing slash)."""
+    host = str(setting("LANGFUSE_HOST", "https://cloud.langfuse.com") or "").strip().rstrip("/")
+    if host and not host.startswith(("http://", "https://")):
+        raise ValueError("LANGFUSE_HOST must be an http(s) URL")
+    return host
 
 
 def resolve_langfuse_requests_transport() -> dict[str, Any]:
-    """Resolve the current fail-closed Requests transport contract."""
-    return _resolve_requests_transport()
+    """Resolve the fail-closed Requests transport (TLS verify/cert) for Langfuse."""
+    from agent_connector_sdk.tls.resolve import resolve_tls_profile
+
+    profile = resolve_tls_profile("langfuse")
+    return profile.requests_kwargs()
 
 
 def is_delegation_enabled() -> bool:
@@ -42,7 +37,7 @@ def is_delegation_enabled() -> bool:
 
     Follows the proven pattern from onetrust-api's ``auth.py`` (PR #5):
     ``agent_connector_sdk.auth.delegation`` now has an end-to-end proof, so
-    this no longer needs to stay on ``agent_utilities.mcp.delegated_auth``.
+    this no longer needs to stay on the SDK delegation module.
     """
     from agent_connector_sdk.auth.delegation import DelegationSettings
 
