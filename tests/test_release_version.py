@@ -8,7 +8,7 @@ from pathlib import Path
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "2.2.0"
+EXPECTED_VERSION = "2.2.1"
 
 
 def test_release_version_is_consistent_across_runtime_and_metadata() -> None:
@@ -31,9 +31,7 @@ def test_release_version_is_consistent_across_runtime_and_metadata() -> None:
     assert f"## [{EXPECTED_VERSION}]" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"
     )
-    for relative_path in (
-        "langfuse_agent/mcp_server.py",
-    ):
+    for relative_path in ("langfuse_agent/mcp_server.py",):
         source = (ROOT / relative_path).read_text(encoding="utf-8")
         version = re.search(r'^__version__ = "([^"]+)"$', source, re.MULTILINE)
         assert version is not None
