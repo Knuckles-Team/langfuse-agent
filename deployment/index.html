@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -690,10 +690,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#native-graphos-deployment" class="md-nav__link">
+  <a href="#native-arbora-deployment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native GraphOS deployment
+        Native Arbora deployment
       
     </span>
   </a>
@@ -1009,10 +1009,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#native-graphos-deployment" class="md-nav__link">
+  <a href="#native-arbora-deployment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native GraphOS deployment
+        Native Arbora deployment
       
     </span>
   </a>
@@ -1146,7 +1146,7 @@
 
 <h1 id="deployment">Deployment<a class="headerlink" href="#deployment" title="Permanent link">&para;</a></h1>
 <p><code>langfuse-agent</code> exposes an MCP server (<code>langfuse-mcp</code>) and an optional A2A
-agent server (<code>langfuse-agent</code>). GraphOS is the production launcher: it owns
+agent server (<code>langfuse-agent</code>). Arbora is the production launcher: it owns
 <code>AgentConfig</code>, resolves secret references, and lazily mounts the installed
 provider.</p>
 <!-- BEGIN GENERATED: deployment-options -->
@@ -1255,7 +1255,7 @@ no ports to manage). Swap <code>docker</code> for <code>podman</code> for a daem
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="s2">"-e"</span><span class="p">,</span><span class="w"> </span><span class="s2">"LANGFUSE_BASE_URL=&lt;your-langfuse_base_url&gt;"</span><span class="p">,</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="s2">"-e"</span><span class="p">,</span><span class="w"> </span><span class="s2">"LANGFUSE_TOKEN=&lt;your-langfuse_token&gt;"</span><span class="p">,</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="s2">"-e"</span><span class="p">,</span><span class="w"> </span><span class="s2">"LANGFUSE_PUBLIC_KEY=&lt;your-langfuse_public_key&gt;"</span><span class="p">,</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="s2">"knucklessg1/langfuse-agent:2.1.0"</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="s2">"knucklessg1/langfuse-agent:2.2.0"</span>
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">      </span><span class="p">]</span>
 </span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span><span class="p">}</span>
@@ -1268,7 +1268,7 @@ no ports to manage). Swap <code>docker</code> for <code>podman</code> for a daem
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">LANGFUSE_BASE_URL</span><span class="o">=</span><span class="s2">"&lt;your-langfuse_base_url&gt;"</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">LANGFUSE_TOKEN</span><span class="o">=</span><span class="s2">"&lt;your-langfuse_token&gt;"</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>-e<span class="w"> </span><span class="nv">LANGFUSE_PUBLIC_KEY</span><span class="o">=</span><span class="s2">"&lt;your-langfuse_public_key&gt;"</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>knucklessg1/langfuse-agent:2.1.0
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>knucklessg1/langfuse-agent:2.2.0
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># or, from a clone of this repo:</span>
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker/mcp.compose.yml<span class="w"> </span>up<span class="w"> </span>-d
 </span></code></pre></div>
@@ -1300,13 +1300,13 @@ streamable-http listener; <code>http://langfuse-mcp.example.invalid/health</code
 Docker Compose stack, the A2A agent server, putting it behind a Caddy reverse proxy,
 and giving it a DNS name with Technitium. To provision the <strong>Langfuse platform</strong> it
 connects to, see <a href="../platform/">Backing Platform</a>.</p>
-<h2 id="native-graphos-deployment">Native GraphOS deployment<a class="headerlink" href="#native-graphos-deployment" title="Permanent link">&para;</a></h2>
-<p>Install the package during image or host provisioning. Configure the GraphOS
+<h2 id="native-arbora-deployment">Native Arbora deployment<a class="headerlink" href="#native-arbora-deployment" title="Permanent link">&para;</a></h2>
+<p>Install the package during image or host provisioning. Configure the Arbora
 parent with references rather than credential values:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">"graph-os"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"graph-os"</span><span class="p">,</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">"arbora"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arbora"</span><span class="p">,</span>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">      </span><span class="nt">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">        </span><span class="nt">"LANGFUSE_HOST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://langfuse.example.invalid"</span><span class="p">,</span>
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">        </span><span class="nt">"LANGFUSE_PUBLIC_KEY_REF"</span><span class="p">:</span><span class="w"> </span><span class="s2">"env://LANGFUSE_PROJECT_PUBLIC_KEY"</span><span class="p">,</span>
@@ -1322,13 +1322,13 @@ runtime configuration may instead supply any supported <code>vault://</code> or
 <code>secret://</code> reference. <code>LANGFUSE_TLS_PROFILE_REF</code> is optional when system trust
 is enough. Do not
 add a separate Langfuse entry to the MCP catalog. When both credential
-references are configured, GraphOS registers the provider lazily and starts:</p>
+references are configured, Arbora registers the provider lazily and starts:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>&lt;current-python-interpreter&gt; -m langfuse_agent.mcp_server
 </span></code></pre></div>
 <p>The interpreter and module are already installed. This start path performs no
 package download, package-index lookup, or PATH-based provider selection.</p>
 <h2 id="canonical-configuration">Canonical configuration<a class="headerlink" href="#canonical-configuration" title="Permanent link">&para;</a></h2>
-<p>The GraphOS parent accepts the following Langfuse settings through
+<p>The Arbora parent accepts the following Langfuse settings through
 <code>AgentConfig</code>:</p>
 <table>
 <thead>
@@ -1396,7 +1396,7 @@ package download, package-index lookup, or PATH-based provider selection.</p>
 </tr>
 </tbody>
 </table>
-<p>Secret references use <code>vault://</code>, <code>secret://</code>, or <code>env://</code>. GraphOS resolves the
+<p>Secret references use <code>vault://</code>, <code>secret://</code>, or <code>env://</code>. Arbora resolves the
 credential pair in the parent process. The private provider child receives only
 the materialized <code>LANGFUSE_PUBLIC_KEY</code> and <code>LANGFUSE_SECRET_KEY</code> values required
 by the Langfuse SDK; the references are removed from that child environment.
@@ -1428,7 +1428,7 @@ validates the pair, creates a private process-lifetime client bundle, and passes
 that bundle to the provider's Requests transport. The references, password, and
 machine-specific paths are not persisted or logged.</p>
 <p>If <code>uv</code> itself must use platform trust while installing or updating the package,
-set <code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS start does
+set <code>UV_NATIVE_TLS=true</code> in that installer process. Native Arbora start does
 not invoke <code>uv</code>, so this setting does not belong in provider or MCP
 configuration.</p>
 <h2 id="direct-installed-provider-start">Direct installed-provider start<a class="headerlink" href="#direct-installed-provider-start" title="Permanent link">&para;</a></h2>
@@ -1450,7 +1450,7 @@ Compose file, shell profile, or command line.</p>
 </span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>The <code>python</code> command must be the interpreter in which the provider was
-installed. Native GraphOS avoids this ambiguity by using its exact current
+installed. Native Arbora avoids this ambiguity by using its exact current
 interpreter.</p>
 <h3 id="streamable-http">Streamable HTTP<a class="headerlink" href="#streamable-http" title="Permanent link">&para;</a></h3>
 <p>Run the installed module under a service supervisor and bind loopback unless a
@@ -1507,9 +1507,9 @@ configuration supplies the hostname:</p>
 tokens, zone names, addresses, and hostnames outside the repository.</p>
 <h2 id="safe-verification">Safe verification<a class="headerlink" href="#safe-verification" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Run <code>agent-utilities doctor</code> and confirm that the two credential references
+<li>Run <code>agent-connector-sdk doctor</code> and confirm that the two credential references
    resolve without printing their values.</li>
-<li>Confirm that GraphOS reports the native Langfuse provider as available.</li>
+<li>Confirm that Arbora reports the native Langfuse provider as available.</li>
 <li>Call <code>langfuse_observability</code> with <code>action=trace_list</code> and a small <code>limit</code>.
    An empty data list is a successful authenticated response.</li>
 <li>Emit one synthetic, content-free local-model trace and flush the exporter.</li>

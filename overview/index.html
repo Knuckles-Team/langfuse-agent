@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -592,10 +592,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#native-graphos-configuration" class="md-nav__link">
+  <a href="#native-arbora-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native GraphOS configuration
+        Native Arbora configuration
       
     </span>
   </a>
@@ -870,10 +870,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#native-graphos-configuration" class="md-nav__link">
+  <a href="#native-arbora-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Native GraphOS configuration
+        Native Arbora configuration
       
     </span>
   </a>
@@ -903,12 +903,12 @@
 <h1 id="langfuse-agent-concept-overview">langfuse-agent — Concept Overview<a class="headerlink" href="#langfuse-agent-concept-overview" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p><strong>Category</strong>: Observability | <strong>Ecosystem Role</strong>: MCP Server + A2A Agent
-Built on <a href="https://github.com/Knuckles-Team/agent-utilities"><code>agent-utilities</code></a> — the unified AGI Harness.</p>
+Built on <a href="https://github.com/Knuckles-Team/agent-connector-sdk"><code>agent-connector-sdk</code></a> — the unified AGI Harness.</p>
 </blockquote>
 <h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
 <p>Agent for interacting with Langfuse Observability API</p>
 <h2 id="enterprise-readiness">Enterprise Readiness<a class="headerlink" href="#enterprise-readiness" title="Permanent link">&para;</a></h2>
-<p>All agents in the ecosystem inherit enterprise-grade infrastructure from <code>agent-utilities</code>:</p>
+<p>All agents in the ecosystem inherit enterprise-grade infrastructure from <code>agent-connector-sdk</code>:</p>
 <table>
 <thead>
 <tr>
@@ -921,17 +921,17 @@ Built on <a href="https://github.com/Knuckles-Team/agent-utilities"><code>agent-
 <tr>
 <td style="text-align: left;"><strong>JWT/OIDC Authentication</strong></td>
 <td style="text-align: left;">✅ Built-in</td>
-<td style="text-align: left;"><code>agent-utilities[auth]</code> — Authlib JWKS + API key middleware</td>
+<td style="text-align: left;"><code>agent-connector-sdk[auth]</code> — Authlib JWKS + API key middleware</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>OpenTelemetry Instrumentation</strong></td>
 <td style="text-align: left;">✅ Built-in</td>
-<td style="text-align: left;"><code>agent-utilities[logfire]</code> — OTLP export, FastAPI auto-instrumentation</td>
+<td style="text-align: left;"><code>agent-connector-sdk[logfire]</code> — OTLP export, FastAPI auto-instrumentation</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>HashiCorp Vault Integration</strong></td>
 <td style="text-align: left;">✅ Built-in</td>
-<td style="text-align: left;"><code>agent-utilities[vault]</code> — <code>secret://</code>, <code>env://</code>, <code>vault://</code> URI schemes</td>
+<td style="text-align: left;"><code>agent-connector-sdk[vault]</code> — <code>secret://</code>, <code>env://</code>, <code>vault://</code> URI schemes</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Audit Logging</strong></td>
@@ -984,22 +984,22 @@ Built on <a href="https://github.com/Knuckles-Team/agent-utilities"><code>agent-
 <tr>
 <td style="text-align: left;">ECO-4.1</td>
 <td style="text-align: left;">MCP &amp; Universal Skills</td>
-<td style="text-align: left;"><code>agent-utilities</code> (inherited)</td>
+<td style="text-align: left;"><code>agent-connector-sdk</code> (inherited)</td>
 </tr>
 <tr>
 <td style="text-align: left;">OS-5.5</td>
 <td style="text-align: left;"><strong>Token Usage Tracker</strong></td>
-<td style="text-align: left;"><code>agent-utilities</code> (inherited)</td>
+<td style="text-align: left;"><code>agent-connector-sdk</code> (inherited)</td>
 </tr>
 <tr>
 <td style="text-align: left;">OS-5.8</td>
 <td style="text-align: left;"><strong>Telemetry &amp; Observability</strong></td>
-<td style="text-align: left;"><code>agent-utilities</code> (inherited)</td>
+<td style="text-align: left;"><code>agent-connector-sdk</code> (inherited)</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p>📖 <strong>Full Registry</strong>: See <a href="https://github.com/Knuckles-Team/agent-utilities/blob/main/docs/overview.md"><code>agent-utilities/docs/overview.md</code></a> for the complete 5-Pillar concept index.</p>
+<p>📖 <strong>Full Registry</strong>: See <a href="https://github.com/Knuckles-Team/agent-connector-sdk/blob/main/docs/overview.md"><code>agent-connector-sdk/docs/overview.md</code></a> for the complete 5-Pillar concept index.</p>
 </blockquote>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <p>This project follows the standardized agent-package pattern:</p>
@@ -1019,13 +1019,13 @@ Built on <a href="https://github.com/Knuckles-Team/agent-utilities"><code>agent-
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>├── mcp_config.json          # MCP server configuration
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>└── main_agent.json          # Agent identity and system prompt
 </span></code></pre></div>
-<h2 id="native-graphos-configuration">Native GraphOS configuration<a class="headerlink" href="#native-graphos-configuration" title="Permanent link">&para;</a></h2>
-<p>GraphOS registers the installed provider lazily from <code>AgentConfig</code>. Configure
+<h2 id="native-arbora-configuration">Native Arbora configuration<a class="headerlink" href="#native-arbora-configuration" title="Permanent link">&para;</a></h2>
+<p>Arbora registers the installed provider lazily from <code>AgentConfig</code>. Configure
 only the canonical service URL and runtime secret references on the parent:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">"graph-os"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"graph-os"</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">"arbora"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arbora"</span><span class="p">,</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="nt">"env"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="nt">"LANGFUSE_HOST"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://langfuse.example.invalid"</span><span class="p">,</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">        </span><span class="nt">"LANGFUSE_PUBLIC_KEY_REF"</span><span class="p">:</span><span class="w"> </span><span class="s2">"env://LANGFUSE_PROJECT_PUBLIC_KEY"</span><span class="p">,</span>

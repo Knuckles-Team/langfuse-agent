@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -917,7 +917,7 @@ skill whose certification or tool-schema fingerprint does not match the
 installed package. Delegated agents use the compact, intent-oriented tool
 surface.</p>
 <h2 id="canonical-runtime-settings">Canonical runtime settings<a class="headerlink" href="#canonical-runtime-settings" title="Permanent link">&para;</a></h2>
-<p>GraphOS reads these settings through <code>AgentConfig</code>:</p>
+<p>Arbora reads these settings through <code>AgentConfig</code>:</p>
 <table>
 <thead>
 <tr>
@@ -964,16 +964,16 @@ surface.</p>
 </tr>
 </tbody>
 </table>
-<p>Secret references use <code>vault://</code>, <code>secret://</code>, or <code>env://</code>. GraphOS resolves
+<p>Secret references use <code>vault://</code>, <code>secret://</code>, or <code>env://</code>. Arbora resolves
 them in the parent process and starts the installed
 <code>langfuse_agent.mcp_server</code> module with its current Python interpreter. The
 private child environment receives materialized project keys and trust-file
 locations; references and values are not written back to configuration.</p>
-<p>Do not add a handwritten Langfuse server entry to a GraphOS MCP catalog. Once
-the provider is installed, GraphOS registers it lazily when both credential
+<p>Do not add a handwritten Langfuse server entry to an Arbora MCP catalog. Once
+the provider is installed, Arbora registers it lazily when both credential
 references are configured. This path performs no package-index lookup at
 startup.</p>
-<p>For a direct provider start outside GraphOS, the process supervisor must inject
+<p>For a direct provider start outside Arbora, the process supervisor must inject
 the materialized project keys at process creation. Do not persist those values
 in a shell profile, <code>.env</code> file, Compose file, MCP catalog, or command line.</p>
 <p>Additional operating rules:</p>
@@ -1002,7 +1002,7 @@ both <code>SSL_CERT_FILE</code> and <code>REQUESTS_CA_BUNDLE</code> for the chil
 connection time. Static validation does not prove that a particular server
 leaf chains to every certificate in the supplied trust store.</p>
 <p><code>UV_NATIVE_TLS=true</code> is an installer setting only when an administrator uses
-<code>uv</code> to install or update packages through platform trust. Native GraphOS start
+<code>uv</code> to install or update packages through platform trust. Native Arbora start
 does not invoke <code>uv</code>, so this setting does not belong in the Langfuse child
 configuration.</p>
 <p>Do not disable verification to work around an incomplete server chain. Keep CA

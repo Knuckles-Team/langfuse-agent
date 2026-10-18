@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -997,7 +997,7 @@ no source archive or local-source provenance is admitted to the release.</p>
 <tr>
 <td><em>(base)</em></td>
 <td><code>pip install langfuse-agent</code></td>
-<td>FastMCP MCP-server runtime (<code>agent-utilities[mcp]</code>) + <code>langfuse</code></td>
+<td>FastMCP MCP-server runtime (<code>agent-connector-sdk[mcp]</code>) + <code>langfuse</code></td>
 </tr>
 <tr>
 <td><code>agent</code></td>
@@ -1046,8 +1046,8 @@ reviewed immutable MCP-image digest supplied by the operator:</p>
 <p>This direct-container form expects the process supervisor to inject the
 materialized key variables and optional trust-store paths at container creation.
 Do not place their values in the command, a Compose file, or a checked-in env
-file. Production GraphOS deployments instead configure
-<code>LANGFUSE_PUBLIC_KEY_REF</code> and <code>LANGFUSE_SECRET_KEY_REF</code>; GraphOS performs the
+file. Production Arbora deployments instead configure
+<code>LANGFUSE_PUBLIC_KEY_REF</code> and <code>LANGFUSE_SECRET_KEY_REF</code>; Arbora performs the
 private child materialization.</p>
 <p>For an HTTP server with a published port and the agent server, see
 <a href="../deployment/">Deployment</a>.</p>

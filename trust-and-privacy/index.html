@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -656,10 +656,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#minimal-graphos-configuration" class="md-nav__link">
+  <a href="#minimal-arbora-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Minimal GraphOS configuration
+        Minimal Arbora configuration
       
     </span>
   </a>
@@ -826,10 +826,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#minimal-graphos-configuration" class="md-nav__link">
+  <a href="#minimal-arbora-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Minimal GraphOS configuration
+        Minimal Arbora configuration
       
     </span>
   </a>
@@ -904,9 +904,9 @@
 <p><code>langfuse-agent</code> inherits its runtime configuration from the process that
 starts it. Keep service addresses, credentials, certificate locations, user
 identities, and trace payloads out of repository files and MCP catalogs.</p>
-<h2 id="minimal-graphos-configuration">Minimal GraphOS configuration<a class="headerlink" href="#minimal-graphos-configuration" title="Permanent link">&para;</a></h2>
-<p>With the current <code>agent-utilities</code> runtime, no handwritten Langfuse MCP entry is
-required. GraphOS registers the installed provider lazily when both credential
+<h2 id="minimal-arbora-configuration">Minimal Arbora configuration<a class="headerlink" href="#minimal-arbora-configuration" title="Permanent link">&para;</a></h2>
+<p>With the current <code>agent-connector-sdk</code> runtime, no handwritten Langfuse MCP entry is
+required. Arbora registers the installed provider lazily when both credential
 references are available. The parent process supplies:</p>
 <table>
 <thead>
@@ -954,7 +954,7 @@ references are available. The parent process supplies:</p>
 </tr>
 </tbody>
 </table>
-<p>GraphOS resolves references in memory and starts
+<p>Arbora resolves references in memory and starts
 <code>python -m langfuse_agent.mcp_server</code> with its own interpreter. It passes only
 the materialized runtime values required by that child. The start performs no
 package download or package-index lookup.</p>
@@ -962,7 +962,7 @@ package download or package-index lookup.</p>
 <p>Use system trust when it contains the issuing authority. Otherwise reference a
 PEM trust store containing the required root, roots, or chain certificates. Do
 not disable TLS verification and do not point Requests at a binary certificate.</p>
-<p>At startup, <code>agent-utilities</code>:</p>
+<p>At startup, <code>agent-connector-sdk</code>:</p>
 <ol>
 <li>resolves <code>LANGFUSE_CA_BUNDLE_REF</code> in memory;</li>
 <li>validates bounded, parseable CA certificates and current validity windows;</li>
@@ -980,15 +980,15 @@ subjects are never returned by readiness checks or written to logs.</p>
 server chain. OpenSSL and Requests construct and check the target server's
 certificate path at connection time.</p>
 <p>The MCP configuration stores neither a certificate path nor project keys.
-GraphOS resolves the secret reference, creates the bounded runtime file, and
+Arbora resolves the secret reference, creates the bounded runtime file, and
 supplies the two CA environment variables only to the child process.</p>
 <p>Mutual TLS uses the same boundary. Both client-certificate and private-key
 references are required; an encrypted key may use the password reference.
-GraphOS validates the pair and gives the provider only a private,
+Arbora validates the pair and gives the provider only a private,
 process-lifetime combined client bundle. The Requests adapter applies that
 bundle to every Langfuse API request.</p>
 <p>When <code>uv</code> itself must install or update the package through platform trust, set
-<code>UV_NATIVE_TLS=true</code> in that installer process. Native GraphOS start uses the
+<code>UV_NATIVE_TLS=true</code> in that installer process. Native Arbora start uses the
 already-installed module and does not invoke <code>uv</code>.</p>
 <h2 id="safe-verification">Safe verification<a class="headerlink" href="#safe-verification" title="Permanent link">&para;</a></h2>
 <p>Use a synthetic trace and inspect only status, counts, and neutral identifiers:</p>

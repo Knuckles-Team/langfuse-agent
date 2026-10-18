@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -855,7 +855,7 @@
 
 
 <h1 id="langfuse-agent">langfuse-agent<a class="headerlink" href="#langfuse-agent" title="Permanent link">&para;</a></h1>
-<p>Langfuse observability <strong>MCP Server + A2A Agent</strong> for the agent-utilities ecosystem
+<p>Langfuse observability <strong>MCP Server + A2A Agent</strong> for the Arbora ecosystem
 — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and
 dataset APIs.</p>
 <div class="admonition info">
@@ -879,9 +879,9 @@ deterministic MCP tools and a Pydantic-AI agent server. It provides:</p>
   OpenTelemetry export surface. The default intent mode discloses exact tools only
   when needed.</li>
 <li><strong>An A2A agent server</strong> (<code>langfuse-agent</code> console script) that auto-discovers the
-  MCP tools and routes requests through the agent-utilities graph engine.</li>
+  MCP tools and routes requests through the agent-connector-sdk graph engine.</li>
 </ul>
-<p>The connector remains inactive when credential references are absent. GraphOS
+<p>The connector remains inactive when credential references are absent. Arbora
 resolves the references only when it starts the provider.</p>
 <h2 id="explore-the-documentation">Explore the documentation<a class="headerlink" href="#explore-the-documentation" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
@@ -896,15 +896,15 @@ resolves the references only when it starts the provider.</p>
 </div>
 <h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <p>Install the package during provisioning, configure <code>AgentConfig</code>, and start the
-already-installed GraphOS runtime:</p>
+already-installed Arbora runtime:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"langfuse-agent[mcp]"</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_HOST</span><span class="o">=</span>https://langfuse.example.invalid
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_PUBLIC_KEY_REF</span><span class="o">=</span>env://LANGFUSE_PROJECT_PUBLIC_KEY
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_SECRET_KEY_REF</span><span class="o">=</span>env://LANGFUSE_PROJECT_SECRET_KEY
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_TLS_PROFILE_REF</span><span class="o">=</span>env://LANGFUSE_RUNTIME_TLS_PROFILE
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>graph-os
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>arbora
 </span></code></pre></div>
-<p>GraphOS registers the provider lazily and starts the installed
+<p>Arbora registers the provider lazily and starts the installed
 <code>langfuse_agent.mcp_server</code> module with its own interpreter. No package download
 occurs at runtime. The TLS-profile reference is optional when system trust is
 enough.</p>

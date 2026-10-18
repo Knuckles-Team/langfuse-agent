@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -721,10 +721,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connect-graphos" class="md-nav__link">
+  <a href="#connect-arbora" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Connect GraphOS
+        Connect Arbora
       
     </span>
   </a>
@@ -826,10 +826,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#connect-graphos" class="md-nav__link">
+  <a href="#connect-arbora" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Connect GraphOS
+        Connect Arbora
       
     </span>
   </a>
@@ -902,7 +902,7 @@ database passwords or encryption keys from this connector repository.</p>
 <p>The platform and connector use separate secret scopes. A Langfuse project API
 pair is issued after the platform is healthy; it is not a platform database
 credential.</p>
-<h2 id="connect-graphos">Connect GraphOS<a class="headerlink" href="#connect-graphos" title="Permanent link">&para;</a></h2>
+<h2 id="connect-arbora">Connect Arbora<a class="headerlink" href="#connect-arbora" title="Permanent link">&para;</a></h2>
 <p>Store the project API pair and optional TLS profile in the configured secret
 provider, then configure only references in <code>AgentConfig</code>:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">LANGFUSE_HOST</span><span class="o">=</span>https://langfuse.example.invalid
@@ -912,7 +912,7 @@ provider, then configure only references in <code>AgentConfig</code>:</p>
 </span></code></pre></div>
 <p>The <code>env://</code> references are neutral schema examples; a deployment may supply any
 supported reference through <code>AgentConfig</code>. The TLS-profile reference is optional
-when system trust is enough. GraphOS
+when system trust is enough. Arbora
 resolves the references in memory and starts the installed provider module; no
 Langfuse-specific MCP catalog entry is required.</p>
 <p>For loopback-only development, <code>LANGFUSE_HOST=http://localhost:3000</code> is allowed.
@@ -945,12 +945,12 @@ materialized project keys only from that orchestrator:</p>
 <p>The non-loopback listener is valid only behind the operator-supplied authenticated
 TLS ingress selected by those exact proxy and host policies. Do not put key values,
 platform passwords, deployment hostnames, or certificate paths in the Compose file.
-A production GraphOS parent uses the corresponding <code>*_REF</code> settings and performs
+A production Arbora parent uses the corresponding <code>*_REF</code> settings and performs
 this child materialization automatically.</p>
 <h2 id="check">Check<a class="headerlink" href="#check" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Check the Langfuse platform's documented health endpoint.</li>
-<li>Run <code>agent-utilities doctor</code> without exposing secret values or service URLs.</li>
+<li>Run <code>agent-connector-sdk doctor</code> without exposing secret values or service URLs.</li>
 <li>Call <code>langfuse_observability</code> with <code>action=trace_list</code> and a small limit.</li>
 <li>Treat an authenticated empty result as successful connectivity.</li>
 </ol>

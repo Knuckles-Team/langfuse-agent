@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem.">
+        <meta name="description" content="Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem.">
       
       
       
@@ -913,17 +913,17 @@ runtime boundary. Application configuration keeps the corresponding references
 in <code>AgentConfig</code>.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">langfuse_agent.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_client</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Inside the provider child, after GraphOS has privately materialized its refs.</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Inside the provider child, after Arbora has privately materialized its refs.</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">api</span> <span class="o">=</span> <span class="n">get_client</span><span class="p">()</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Reads</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">health</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">health_health</span><span class="p">()</span>                 <span class="c1"># service health</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">traces</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">trace_list</span><span class="p">()</span>                     <span class="c1"># recent traces</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">datasets</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">datasets_list</span><span class="p">()</span>                <span class="c1"># configured datasets</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">sessions</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">sessions_list</span><span class="p">()</span>                <span class="c1"># session records</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">scores_get_many</span><span class="p">()</span>               <span class="c1"># evaluation scores</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">health</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">health_health</span><span class="p">()</span>  <span class="c1"># service health</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">traces</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">trace_list</span><span class="p">()</span>  <span class="c1"># recent traces</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">datasets</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">datasets_list</span><span class="p">()</span>  <span class="c1"># configured datasets</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">sessions</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">sessions_list</span><span class="p">()</span>  <span class="c1"># session records</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">scores_get_many</span><span class="p">()</span>  <span class="c1"># evaluation scores</span>
 </span></code></pre></div>
-<p>Do not place key values in Python source. GraphOS resolves
+<p>Do not place key values in Python source. Arbora resolves
 <code>LANGFUSE_PUBLIC_KEY_REF</code> and <code>LANGFUSE_SECRET_KEY_REF</code> in its parent process,
 then starts the provider child with only the materialized values it needs.</p>
 <h2 id="as-a-cli">As a CLI<a class="headerlink" href="#as-a-cli" title="Permanent link">&para;</a></h2>
@@ -935,7 +935,7 @@ then starts the provider child with only the materialized values it needs.</p>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>langfuse-agent<span class="w"> </span>--provider<span class="w"> </span>openai<span class="w"> </span>--model-id<span class="w"> </span>gpt-4o
 </span></code></pre></div>
 <p>Both receive runtime configuration from their process supervisor. The native
-GraphOS path uses secret references and remains inactive when either credential
+Arbora path uses secret references and remains inactive when either credential
 reference is absent. The full configuration surface is documented in
 <a href="https://github.com/Knuckles-Team/langfuse-agent/blob/main/.env.example"><code>.env.example</code></a>
 and on the <a href="../deployment/#canonical-configuration">Deployment</a> page.</p>
