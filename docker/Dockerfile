@@ -1,7 +1,16 @@
 # syntax=docker/dockerfile:1
-# MCP-server image: installs langfuse-agent[mcp] (agent-connector-sdk runtime) and runs the MCP server.
+# GENERATED from pipelines/templates/connector/Dockerfile.tmpl by
+# pipelines/scripts/connector_dockerfile.py. Do not hand-edit: change the template or
+# the connector's entry in the script's EXCEPTIONS table, then regenerate.
 #
-#   docker build -t langfuse-agent:local .
+# Wheel-only connector image. The published langfuse-agent wheel is installed from PyPI at
+# the exact version in pyproject.toml (kept in sync by .bumpversion.cfg); no source is
+# copied into any stage, and every distribution in the closure must be a wheel
+# (--only-binary :all:). The release pipeline publishes the wheel before this build,
+# so the install retries while the new version propagates through the index.
+#
+#   docker build --target <stage> -t langfuse-agent:local -f docker/Dockerfile .
+#   stages: mcp
 FROM python:3.14-slim@sha256:cea0e6040540fb2b965b6e7fb5ffa00871e632eef63719f0ea54bca189ce14a6 AS builder-base
 COPY --from=ghcr.io/astral-sh/uv:0.11.7@sha256:240fb85ab0f263ef12f492d8476aa3a2e4e1e333f7d67fbdd923d00a506a516a /uv /uvx /bin/
 ENV UV_COMPILE_BYTECODE=1 \
@@ -9,39 +18,15 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_SYSTEM_PYTHON=1 \
     UV_HTTP_TIMEOUT=3600
 
-FROM builder-base AS builder-published
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Slim MCP-only dependency closure.
-FROM builder-published AS builder-mcp
+FROM builder-base AS builder-mcp
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install --system --break-system-packages langfuse-agent[mcp]==2.2.0
-
-# Exact offline release input for the MCP provider runtime. The caller supplies one
-# complete, hash-locked wheel closure for Langfuse Agent MCP, the Agent Connector SDK, and
-# the full Epistemic Graph runtime. Source distributions and local-source metadata are
-# rejected.
-FROM builder-base AS builder-mcp-local
-ARG RELEASE_REQUIREMENTS=langfuse-agent-requirements.txt
-ARG RELEASE_REQUIREMENTS_SHA256
-ARG AGENT_CONNECTOR_SDK_VERSION
-ARG EPISTEMIC_GRAPH_VERSION
-ARG LANGFUSE_AGENT_VERSION
-COPY release-wheelhouse/ /tmp/release-wheelhouse/
-RUN test "$(basename -- "${RELEASE_REQUIREMENTS}")" = "${RELEASE_REQUIREMENTS}" \
-    && case "${RELEASE_REQUIREMENTS}" in *.txt) ;; *) exit 64 ;; esac \
-    && test -n "${AGENT_CONNECTOR_SDK_VERSION}" \
-    && test -n "${EPISTEMIC_GRAPH_VERSION}" \
-    && test -n "${LANGFUSE_AGENT_VERSION}" \
-    && printf '%s  %s\n' "${RELEASE_REQUIREMENTS_SHA256}" "/tmp/release-wheelhouse/${RELEASE_REQUIREMENTS}" \
-        | sha256sum --check --strict - \
-    && uv pip install --system --break-system-packages --offline --no-index \
-        --find-links /tmp/release-wheelhouse --only-binary :all: --require-hashes \
-        --requirement "/tmp/release-wheelhouse/${RELEASE_REQUIREMENTS}" \
-    && python -c 'import importlib.metadata as m, pathlib, shutil, sys; au, eg, lf = sys.argv[1:]; assert sys.version_info[:2] == (3, 14); assert m.version("agent-connector-sdk") == au; assert m.version("epistemic-graph") == eg; assert m.version("langfuse-agent") == lf; assert shutil.which("langfuse-mcp"); roots = {pathlib.Path(d.locate_file("")) for d in m.distributions()}; assert not any(path for root in roots for path in root.glob("*.dist-info/direct_url.json")); import epistemic_graph.numeric' \
-        "${AGENT_CONNECTOR_SDK_VERSION}" "${EPISTEMIC_GRAPH_VERSION}" "${LANGFUSE_AGENT_VERSION}"
+    for attempt in 1 2 3 4 5 6 7 8 9 10; do \
+        uv pip install --system --break-system-packages --only-binary :all: \
+            --refresh-package langfuse-agent "langfuse-agent[mcp]==2.2.1" && exit 0; \
+        echo "wheel not installable yet (attempt ${attempt}); retrying in 30s"; \
+        sleep 30; \
+    done; \
+    exit 1
 
 FROM python:3.14-slim@sha256:cea0e6040540fb2b965b6e7fb5ffa00871e632eef63719f0ea54bca189ce14a6 AS runtime-base
 ARG HOST=127.0.0.1
@@ -54,27 +39,19 @@ ENV HOST=${HOST} \
     AUTH_TYPE=${AUTH_TYPE} \
     PYTHONUNBUFFERED=1 \
     PATH="/usr/local/bin:${PATH}" \
-    UV_HTTP_TIMEOUT=3600 \
-    UV_SYSTEM_PYTHON=1 \
-    UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy
-
-# Slim image: MCP server only.
-# Fixed identity for least-privilege runtime and stable volume ownership.
+    HOME=/tmp \
+    XDG_CONFIG_HOME=/tmp/.config \
+    XDG_CACHE_HOME=/tmp/.cache \
+    XDG_STATE_HOME=/tmp/.local/state
+# Fixed non-root identity for least-privilege runtime and stable volume ownership.
 RUN groupadd --system --gid 10001 app \
     && useradd --system --uid 10001 --gid 10001 --no-create-home \
-        --home-dir /tmp --shell /usr/sbin/nologin app
-ENV HOME=/tmp \
-    XDG_CONFIG_HOME=/tmp/.config \
-    XDG_CACHE_HOME=/tmp/.cache
+        --home-dir /tmp --shell /usr/sbin/nologin app \
+    && install -d -o 10001 -g 10001 -m 0700 \
+        /tmp/.config /tmp/.cache /tmp/.local/state
 
+# mcp: MCP server only.
 FROM runtime-base AS mcp
-USER 10001:10001
 COPY --from=builder-mcp /usr/local /usr/local
-CMD ["langfuse-mcp"]
-
-# Exact MCP release target: only the closed wheelhouse reaches this image.
-FROM runtime-base AS mcp-local
 USER 10001:10001
-COPY --from=builder-mcp-local /usr/local /usr/local
 CMD ["langfuse-mcp"]
