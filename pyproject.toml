@@ -5,19 +5,19 @@ backend-path = ["."]
 
 [project]
 name = "langfuse-agent"
-version = "2.3.0"
+version = "2.3.1"
 description = "Agent for interacting with Langfuse Observability API"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12"
-dependencies = [ "agent-connector-sdk[mcp]>=0.3.0,<1.0.0", "langfuse>=4,<5", "requests>=2.34.2",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.3.6,<1.0.0", "langfuse>=4,<5", "requests>=2.34.2",]
 license = "MIT"
 [[project.authors]]
 name = "Project Contributors"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.3.0,<1.0.0",]
-all = [ "agent-connector-sdk[mcp]>=0.3.0,<1.0.0",]
+mcp = [ "agent-connector-sdk[mcp]>=0.3.6,<1.0.0",]
+all = [ "agent-connector-sdk[mcp]>=0.3.6,<1.0.0",]
 test = [
     "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
 docs = [

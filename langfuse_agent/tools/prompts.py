@@ -48,7 +48,7 @@ def register_langfuse_prompts_models_tools(mcp: FastMCP):
     @mcp.tool(tags={"langfuse"})
     async def langfuse_prompts_models(
         action: str = Field(
-            description="Action to perform. Must be one of: llm_connections_list, llm_connections_upsert, media_get, media_patch, media_get_upload_url, models_create, models_list, models_get, models_delete, prompt_version_update, prompts_get, prompts_delete, prompts_list, prompts_create"
+            description="Action to perform. Must be one of: 'llm_connections_list', 'llm_connections_upsert', 'media_get', 'media_patch', 'media_get_upload_url', 'models_create', 'models_list', 'models_get', 'models_delete', 'prompt_version_update', 'prompts_get', 'prompts_delete', 'prompts_list', 'prompts_create'"
         ),
         body: Any = Field(default=None, description="body"),
         from_updated_at: Any = Field(default=None, description="from updated at"),
