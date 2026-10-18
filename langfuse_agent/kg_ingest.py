@@ -19,6 +19,15 @@ from datetime import date, datetime
 from typing import Any
 
 from agent_connector_sdk.config import setting
+
+# SDK gap: agent_connector_sdk has no equivalent of agent_connector_sdk.protocols
+# .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
+# ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
+# (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
+# declaration, not a *per-record* runtime ACL the write path can stamp -- a
+# materially different mechanism, not a drop-in replacement. Kept on
+# agent_connector_sdk pending an SDK-side per-record ACL primitive.
+from agent_connector_sdk.contracts import ExternalAccess
 from agent_connector_sdk.credentials.references import SecretReferenceError
 from agent_connector_sdk.credentials.resolution import resolve_secret_reference
 from agent_connector_sdk.credentials.resolver import CredentialUnavailableError
@@ -32,15 +41,6 @@ from agent_connector_sdk.ingest import (
     current_ingest,
 )
 from agent_connector_sdk.privacy import PersistencePrivacyGuard
-
-# SDK gap: agent_connector_sdk has no equivalent of agent_connector_sdk.protocols
-# .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
-# ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
-# (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
-# declaration, not a *per-record* runtime ACL the write path can stamp -- a
-# materially different mechanism, not a drop-in replacement. Kept on
-# agent_connector_sdk pending an SDK-side per-record ACL primitive.
-from agent_connector_sdk.contracts import ExternalAccess
 
 _UNSAFE_ID_FIELDS = frozenset(
     {

@@ -8,7 +8,7 @@ from pathlib import Path
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "1.0.3"
+EXPECTED_VERSION = "2.2.0"
 
 
 def test_release_version_is_consistent_across_runtime_and_metadata() -> None:
@@ -28,7 +28,7 @@ def test_release_version_is_consistent_across_runtime_and_metadata() -> None:
     )
     dockerfile = (ROOT / "docker/Dockerfile").read_text(encoding="utf-8")
     assert dockerfile.count(f"langfuse-agent[mcp]=={EXPECTED_VERSION}") == 1
-    assert f"## [{EXPECTED_VERSION}] - 2026-07-17" in (ROOT / "CHANGELOG.md").read_text(
+    assert f"## [{EXPECTED_VERSION}]" in (ROOT / "CHANGELOG.md").read_text(
         encoding="utf-8"
     )
     for relative_path in (

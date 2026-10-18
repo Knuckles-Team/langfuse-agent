@@ -18,7 +18,11 @@ _client = None
 
 def resolve_langfuse_host() -> str:
     """Resolve the validated ``LANGFUSE_HOST`` setting (http/https URL, no trailing slash)."""
-    host = str(setting("LANGFUSE_HOST", "https://cloud.langfuse.com") or "").strip().rstrip("/")
+    host = (
+        str(setting("LANGFUSE_HOST", "https://cloud.langfuse.com") or "")
+        .strip()
+        .rstrip("/")
+    )
     if host and not host.startswith(("http://", "https://")):
         raise ValueError("LANGFUSE_HOST must be an http(s) URL")
     return host

@@ -41,11 +41,11 @@ from langfuse_agent.auth import get_client
 api = get_client()
 
 # Reads
-health = api.health_health()                 # service health
-traces = api.trace_list()                     # recent traces
-datasets = api.datasets_list()                # configured datasets
-sessions = api.sessions_list()                # session records
-scores = api.scores_get_many()               # evaluation scores
+health = api.health_health()  # service health
+traces = api.trace_list()  # recent traces
+datasets = api.datasets_list()  # configured datasets
+sessions = api.sessions_list()  # session records
+scores = api.scores_get_many()  # evaluation scores
 ```
 
 Do not place key values in Python source. Arbora resolves

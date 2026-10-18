@@ -17,7 +17,7 @@ RUN apt-get update \
 # Slim MCP-only dependency closure.
 FROM builder-published AS builder-mcp
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv pip install --system --break-system-packages langfuse-agent[mcp]==2.1.0
+    uv pip install --system --break-system-packages langfuse-agent[mcp]==2.2.0
 
 # Exact offline release input for the MCP provider runtime. The caller supplies one
 # complete, hash-locked wheel closure for Langfuse Agent MCP, the Agent Connector SDK, and
