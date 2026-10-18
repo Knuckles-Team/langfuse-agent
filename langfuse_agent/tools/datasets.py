@@ -55,7 +55,7 @@ def register_langfuse_datasets_tools(mcp: FastMCP):
     @mcp.tool(tags={"langfuse"})
     async def langfuse_datasets(
         action: str = Field(
-            description="Action to perform. Must be one of: annotation_queues_list_queues, annotation_queues_create_queue, annotation_queues_get_queue, annotation_queues_list_queue_items, annotation_queues_create_queue_item, annotation_queues_get_queue_item, annotation_queues_update_queue_item, annotation_queues_delete_queue_item, annotation_queues_create_queue_assignment, annotation_queues_delete_queue_assignment, dataset_items_create, dataset_items_list, dataset_items_get, dataset_items_delete, dataset_run_items_create, dataset_run_items_list, datasets_list, datasets_create, datasets_get, datasets_get_run, datasets_delete_run, datasets_get_runs"
+            description="Action to perform. Must be one of: 'annotation_queues_list_queues', 'annotation_queues_create_queue', 'annotation_queues_get_queue', 'annotation_queues_list_queue_items', 'annotation_queues_create_queue_item', 'annotation_queues_get_queue_item', 'annotation_queues_update_queue_item', 'annotation_queues_delete_queue_item', 'annotation_queues_create_queue_assignment', 'annotation_queues_delete_queue_assignment', 'dataset_items_create', 'dataset_items_list', 'dataset_items_get', 'dataset_items_delete', 'dataset_run_items_create', 'dataset_run_items_list', 'datasets_list', 'datasets_create', 'datasets_get', 'datasets_get_run', 'datasets_delete_run', 'datasets_get_runs'"
         ),
         body: Any = Field(default=None, description="body"),
         dataset_id: Any = Field(default=None, description="dataset id"),

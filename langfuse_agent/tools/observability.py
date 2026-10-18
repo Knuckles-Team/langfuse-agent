@@ -109,7 +109,7 @@ def register_langfuse_observability_tools(mcp: FastMCP):
     @mcp.tool(tags={"langfuse"})
     async def langfuse_observability(
         action: str = Field(
-            description="Action to perform. Must be one of: runtime_posture, metrics_get, observations_get_many, opentelemetry_export_traces, score_configs_create, score_configs_get, score_configs_get_by_id, score_configs_update, scores_create, scores_get_many, sessions_list, sessions_get, trace_get, trace_delete, trace_list, trace_delete_multiple"
+            description="Action to perform. Must be one of: 'runtime_posture', 'metrics_get', 'observations_get_many', 'opentelemetry_export_traces', 'score_configs_create', 'score_configs_get', 'score_configs_get_by_id', 'score_configs_update', 'scores_create', 'scores_get_many', 'sessions_list', 'sessions_get', 'trace_get', 'trace_delete', 'trace_list', 'trace_delete_multiple'"
         ),
         author_user_id: Any = Field(default=None, description="author user id"),
         body: Any = Field(default=None, description="body"),

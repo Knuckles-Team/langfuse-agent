@@ -63,12 +63,15 @@ def register_langfuse_kg_tools(mcp: FastMCP):
         kwargs.setdefault("limit", limit)
         client = get_client()
 
-        method = {
-            "traces": client.trace_list,
-            "observations": client.observations_get_many,
-            "sessions": client.sessions_list,
-            "scores": client.scores_get_many,
-        }[kind]
+        method = getattr(
+            client,
+            {
+                "traces": "trace_list",
+                "observations": "observations_get_many",
+                "sessions": "sessions_list",
+                "scores": "scores_get_many",
+            }[kind],
+        )
         resp = method(**kwargs)
         records = _records(resp)
         result = await ingest_fn(records)
