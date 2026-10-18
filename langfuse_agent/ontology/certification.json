@@ -1,9 +1,9 @@
 {
   "api_version": "arbora.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "cd6feb89b9947a54d8d4ad788088a05414a5354c1282afd73a1e086eebd43b42",
-    "langfuse_agent/connectors/mcp_source_presets.json": "52a9dcbc858c09c70f6deb9398ca5471e17e396ef44cce738675f9d26bf34435",
-    "langfuse_agent/connectors/tool_schema_fingerprints.json": "c282471f16c93d8c0ef03139796b64a898a5792245d1a0fc90fb963c3b0f4a4d",
+    "connector_manifest.yml": "c1341c4261b9246b2260eae9abc80fcc33ebb93a62c5334d862786cc18b2120f",
+    "langfuse_agent/connectors/mcp_source_presets.json": "475f1d9c5427e982c44397c52d5daf6195189fc7c1e61b59ff3c3fbe7cbfc222",
+    "langfuse_agent/connectors/tool_schema_fingerprints.json": "601e09f32148600219008a5f2e9e05c2e7f02327ffb18e9db0ab6ddd239b6586",
     "langfuse_agent/ontology/fixtures/records.json": "45426db59590ddb6e6f72b2296ceefd87236209488199ca4ab36f700f5e08df2",
     "langfuse_agent/ontology/langfuse.ttl": "443ac809e5801ca6bc88a600c4926e0373f26261eac132860794e0751a01a185",
     "langfuse_agent/ontology/mappings/source.yaml": "6ef844f6a5dedc4ab9362bddc19d4880b0206bd1bbe5d39cfb08b585a7e987b2",

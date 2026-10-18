@@ -1,8 +1,9 @@
 {
-  "algorithm": "agent-connector-sdk:mcp-tool-schema-compat:v1",
+  "algorithm": "agent-connector-sdk:mcp-tool-contract-compat:v2",
   "connector": "langfuse-agent",
   "schema_version": "1",
   "tools": {
-    "langfuse_observability": "2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de"
+    "langfuse_sessions_list": "688d08d0b37f3eeeedf08fe192d3fca158f962440af5fe00e661229b54437540",
+    "langfuse_trace_list": "2d35be15a72f555eb9dd5aa48fed046014cf76aa20c7f0d2928b5095514d2140"
   }
 }

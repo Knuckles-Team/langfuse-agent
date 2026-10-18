@@ -76,9 +76,23 @@ actions:
   description: 'Answers epistemic_status/why/what_changed queries over the shared knowledge graph: calibrated
     confidence, evidence/source citations, belief justification trees, bitemporal valid/tx history, and
     policy-redaction-aware provenance.'
+  label: ''
+  parameters: []
+  target_resource: null
+  conflict_policy: null
+  requires_approval: true
+  approval_class: unclassified
+  effects: []
 - id: run_graph_flow
   name: Graph Flow Execution
   description: Execute a workflow through the agent's graph orchestration engine
+  label: ''
+  parameters: []
+  target_resource: null
+  conflict_policy: null
+  requires_approval: true
+  approval_class: unclassified
+  effects: []
 events:
 - name: langfuse-sessions.updated
   resource: session
@@ -277,8 +291,8 @@ schema_mappings:
 sync:
 - preset: langfuse-sessions
   server: langfuse-mcp
-  tool: langfuse_observability
-  action: sessions_list
+  tool: langfuse_sessions_list
+  action: null
   records_path: data
   id_field: id
   title_field: id
@@ -286,12 +300,11 @@ sync:
   updated_field: createdAt
   pagination: page
   doc_type: session
-  tool_schema_sha256: 2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de
+  tool_schema_sha256: 688d08d0b37f3eeeedf08fe192d3fca158f962440af5fe00e661229b54437540
   raw:
     server: langfuse-mcp
-    tool: langfuse_observability
+    tool: langfuse_sessions_list
     params_style: args
-    action: sessions_list
     records_path: data
     id_field: id
     title_field: id
@@ -307,8 +320,8 @@ sync:
     doc_type: session
 - preset: langfuse-traces
   server: langfuse-mcp
-  tool: langfuse_observability
-  action: trace_list
+  tool: langfuse_trace_list
+  action: null
   records_path: data
   id_field: id
   title_field: name
@@ -316,12 +329,11 @@ sync:
   updated_field: timestamp
   pagination: page
   doc_type: trace
-  tool_schema_sha256: 2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de
+  tool_schema_sha256: 2d35be15a72f555eb9dd5aa48fed046014cf76aa20c7f0d2928b5095514d2140
   raw:
     server: langfuse-mcp
-    tool: langfuse_observability
+    tool: langfuse_trace_list
     params_style: args
-    action: trace_list
     records_path: data
     id_field: id
     title_field: name
@@ -340,20 +352,20 @@ sync:
     doc_type: trace
 provenance:
   generated_by: scripts/generate_connector_manifests.py
-  generated_at: '2026-08-26T13:42:55Z'
+  generated_at: '2026-10-18T00:00:00Z'
   source_artifacts:
   - langfuse_agent/connectors/mcp_source_presets.json
   - langfuse_agent/connectors/tool_schema_fingerprints.json
   - langfuse_agent/ontology/langfuse.ttl
   integrity:
     algorithm: urdna2015-sha256
-    hash: 5184df2ae408cd2a0a91d4937bbb727631a6e880a6c22cc9b88002a9b88b86e1
+    hash: 10d2bd40a3bf767ab13864c5c98abeca83b4001d2b6007ac6e34e09b308b5ae2
     triple_count: 107
   signer: UNSIGNED-PREVIEW
   signature_algorithm: none
   signing_public_key: ''
   signature: null
-  source_commit: 68cbc8cf5256db4a8ec48d6f18a8b7db455c333b
+  source_commit: 2398b612d3be7e2fe5bf151c6ca44bda0f1dd46b
 policy:
   pii_fields: {}
   tenant_boundary: null
