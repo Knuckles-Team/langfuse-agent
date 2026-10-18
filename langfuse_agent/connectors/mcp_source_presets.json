@@ -2,9 +2,8 @@
   "_comment": "Tier-1 mcp_tool source presets for langfuse-agent (AU-KG.ingest.mcp-tool-connector). Sync Langfuse observability records into the KG via the langfuse-agent MCP server. Native typed-node ingestion is handled by langfuse_agent.kg_ingest / the langfuse_ingest tool; these presets cover the generic mcp_tool document path. Contributed presets win over the central MCP_TOOL_PRESETS.",
   "langfuse-traces": {
     "server": "langfuse-mcp",
-    "tool": "langfuse_observability",
+    "tool": "langfuse_trace_list",
     "params_style": "args",
-    "action": "trace_list",
     "records_path": "data",
     "id_field": "id",
     "title_field": "name",
@@ -25,9 +24,8 @@
   },
   "langfuse-sessions": {
     "server": "langfuse-mcp",
-    "tool": "langfuse_observability",
+    "tool": "langfuse_sessions_list",
     "params_style": "args",
-    "action": "sessions_list",
     "records_path": "data",
     "id_field": "id",
     "title_field": "id",
