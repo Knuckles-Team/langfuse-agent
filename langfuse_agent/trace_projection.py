@@ -1,4 +1,4 @@
-"""Closed, metadata-only projection for governed GraphOS trace discovery."""
+"""Closed, metadata-only projection for governed Arbora trace discovery."""
 
 from __future__ import annotations
 

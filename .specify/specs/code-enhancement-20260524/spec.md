@@ -16,7 +16,7 @@
 ## Functional Requirements
 
 - **FR-001**: Minor update: requests 2.32.5 (installed) -> 2.34.2
-- **FR-002**: Minor update: agent-utilities 0.2.40 (installed) -> 0.16.0
+- **FR-002**: Minor update: agent-connector-sdk 0.2.40 (installed) -> 0.16.0
 - **FR-003**: Minor update: pytest-xdist 3.6.0 (constraint — not installed) -> 3.8.0
 - **FR-004**: MAJOR update: langfuse 2.36.0 (constraint — not installed) -> 4.6.1
 - **FR-005**: 6 functions exceed 200 lines (actionable refactoring targets): register_langfuse_observability_tools (300L), register_langfuse_observability_tools (300L), langfuse_observability (293L), langfuse_observability (293L), register_langfuse_management_tools (207L)
@@ -47,7 +47,7 @@
 - **FR-030**: 72 tests use weak assertions (assert result is not None, assert True, etc.)
 - **FR-031**: 1 tests exceed 100 lines — likely doing too much per test
 - **FR-032**: Undocumented env vars: EUNOMIA_POLICY_FILE, EUNOMIA_TYPE, OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_PROTOCOL, OTEL_EXPORTER_OTLP_PUBLIC_KEY, OTEL_EXPORTER_OTLP_SECRET_KEY
-- **FR-033**: Analysis error: No module named 'agent_utilities.knowledge_graph'
+- **FR-033**: Analysis error: No module named 'agent_connector_sdk.knowledge_graph'
 
 ## Success Criteria
 

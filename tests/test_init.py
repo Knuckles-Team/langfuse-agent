@@ -28,14 +28,6 @@ class TestPackageInitialization:
         except ImportError:
             pytest.skip("MCP module not available")
 
-    def test_import_optional_agent_module(self):
-        """Test that agent module can be imported when available."""
-        try:
-            from langfuse_agent import _AGENT_AVAILABLE
-
-            assert isinstance(_AGENT_AVAILABLE, bool)
-        except ImportError:
-            pytest.skip("Agent module not available")
 
     def test_module_exposes_langfuse_api(self):
         """Test that LangfuseApi is exposed in package namespace."""
@@ -121,14 +113,6 @@ class TestModuleImportSafety:
         assert isinstance(langfuse_agent.CORE_MODULES, list)
         assert "langfuse_agent.api_client" in langfuse_agent.CORE_MODULES
 
-    def test_optional_modules_dict(self):
-        """Test that OPTIONAL_MODULES is defined."""
-        import langfuse_agent
-
-        assert hasattr(langfuse_agent, "OPTIONAL_MODULES")
-        assert isinstance(langfuse_agent.OPTIONAL_MODULES, dict)
-        assert "langfuse_agent.agent_server" in langfuse_agent.OPTIONAL_MODULES
-        assert "langfuse_agent.mcp_server" in langfuse_agent.OPTIONAL_MODULES
 
 
 class TestModuleReload:

@@ -38,7 +38,7 @@ The base install ships the MCP server runtime. Install the extra for what the op
 
 | Extra | Install | Pulls in |
 |---|---|---|
-| *(base)* | `pip install langfuse-agent` | FastMCP MCP-server runtime (`agent-utilities[mcp]`) + `langfuse` |
+| *(base)* | `pip install langfuse-agent` | FastMCP MCP-server runtime (`agent-connector-sdk[mcp]`) + `langfuse` |
 | `agent` | `pip install "langfuse-agent[agent]"` | Pydantic-AI agent server + Logfire tracing |
 | `all` | `pip install "langfuse-agent[all]"` | The MCP server, the agent server, and tracing |
 | `test` | `pip install "langfuse-agent[test]"` | `pytest`, `pytest-asyncio`, `pytest-cov`, `pytest-xdist` |
@@ -86,8 +86,8 @@ docker run --rm -i \
 This direct-container form expects the process supervisor to inject the
 materialized key variables and optional trust-store paths at container creation.
 Do not place their values in the command, a Compose file, or a checked-in env
-file. Production GraphOS deployments instead configure
-`LANGFUSE_PUBLIC_KEY_REF` and `LANGFUSE_SECRET_KEY_REF`; GraphOS performs the
+file. Production Arbora deployments instead configure
+`LANGFUSE_PUBLIC_KEY_REF` and `LANGFUSE_SECRET_KEY_REF`; Arbora performs the
 private child materialization.
 
 For an HTTP server with a published port and the agent server, see

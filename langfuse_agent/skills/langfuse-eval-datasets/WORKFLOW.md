@@ -31,7 +31,7 @@ Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
 | `LANGFUSE_SECRET_KEY_REF` | ✅ | Runtime secret reference for the project secret key |
 | `LANGFUSE_HOST` | optional | Base URL (defaults to Langfuse Cloud) |
 
-GraphOS resolves the references in its parent process. Never place materialized
+Arbora resolves the references in its parent process. Never place materialized
 keys in skill content or delegated tool arguments.
 
 ## Tools & actions

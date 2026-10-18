@@ -19,6 +19,15 @@ from datetime import date, datetime
 from typing import Any
 
 from agent_connector_sdk.config import setting
+
+# SDK gap: agent_connector_sdk has no equivalent of agent_connector_sdk.protocols
+# .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
+# ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
+# (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
+# declaration, not a *per-record* runtime ACL the write path can stamp -- a
+# materially different mechanism, not a drop-in replacement. Kept on
+# agent_connector_sdk pending an SDK-side per-record ACL primitive.
+from agent_connector_sdk.contracts import ExternalAccess
 from agent_connector_sdk.credentials.references import SecretReferenceError
 from agent_connector_sdk.credentials.resolution import resolve_secret_reference
 from agent_connector_sdk.credentials.resolver import CredentialUnavailableError
@@ -32,15 +41,6 @@ from agent_connector_sdk.ingest import (
     current_ingest,
 )
 from agent_connector_sdk.privacy import PersistencePrivacyGuard
-
-# SDK gap: agent_connector_sdk has no equivalent of agent_utilities.protocols
-# .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
-# ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
-# (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
-# declaration, not a *per-record* runtime ACL the write path can stamp -- a
-# materially different mechanism, not a drop-in replacement. Kept on
-# agent_utilities pending an SDK-side per-record ACL primitive.
-from agent_utilities.protocols.source_connectors.base import ExternalAccess
 
 _UNSAFE_ID_FIELDS = frozenset(
     {
@@ -233,7 +233,7 @@ def _prepared_entity(
     # The projection contains only the bounded metadata allowlist above.
     # Give authenticated graph readers an explicit, tenant-scoped ACL;
     # absence would quarantine the row and make the safe projection
-    # unreadable even to the GraphOS parent that governed the write.
+    # unreadable even to the Arbora parent that governed the write.
     clean["external_access"] = _METADATA_ACCESS.model_dump()
     return raw_id, clean
 
@@ -356,7 +356,7 @@ async def ingest_entities(
     if not prepared:
         raise IngestError("ingest_entities needs at least one entity")
     # The SDK's own request builder only requires a node_type be present -- it does
-    # not reject a lingering retired "type" alias the way agent_utilities' native
+    # not reject a lingering retired "type" alias the way agent_connector_sdk' native
     # ingest did. Keep that fail-closed canonical-key contract here explicitly.
     for entity in prepared:
         if "type" in entity or not entity.get("node_type"):
@@ -635,8 +635,8 @@ _INGEST_BY_ACTION = {
 async def auto_ingest(action: str, result: Any) -> None:
     """Opt-in standalone ingestion of a read result.
 
-    When this provider is mounted by GraphOS, the child flag is forced off and
-    GraphOS calls :func:`ingest_read_result` under the authenticated parent
+    When this provider is mounted by Arbora, the child flag is forced off and
+    Arbora calls :func:`ingest_read_result` under the authenticated parent
     ``GraphSession``. This standalone gate remains useful for a directly served
     network provider whose request middleware has already minted graph authority.
     """

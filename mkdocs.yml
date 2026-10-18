@@ -1,5 +1,5 @@
 site_name: "langfuse-agent"
-site_description: "Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the agent-utilities ecosystem."
+site_description: "Langfuse observability API + MCP Server + A2A Agent — typed, deterministic access to the Langfuse tracing, evaluation, prompt, and dataset APIs for the Arbora ecosystem."
 site_url: "https://knuckles-team.github.io/langfuse-agent/"
 repo_name: "Knuckles-Team/langfuse-agent"
 repo_url: "https://github.com/Knuckles-Team/langfuse-agent"

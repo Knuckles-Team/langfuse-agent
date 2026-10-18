@@ -20,7 +20,7 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/langfuse-agent)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/langfuse-agent)
 
-*Version: 2.1.0*
+*Version: 2.2.0*
 
 > **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
 > interfaces, and guidance for provisioning the Langfuse platform are maintained in
@@ -59,12 +59,12 @@ This server use dynamic Action-Routed tools to optimize token overhead and maxim
 Auto-generated — do not edit between the markers below.
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed`)
+#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed` or `both`)
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
 | `langfuse_datasets` | `LANGFUSE_DATASETSTOOL` | Perform langfuse_datasets operations. |
-| `langfuse_ingest` | `LANGFUSE_KGTOOL` | Natively ingest Langfuse records into epistemic-graph as typed nodes. |
+| `langfuse_ingest` | `LANGFUSE_KGTOOL` | Perform langfuse_ingest operations. |
 | `langfuse_management` | `LANGFUSE_MANAGEMENTTOOL` | Perform langfuse_management operations. |
 | `langfuse_observability` | `LANGFUSE_OBSERVABILITYTOOL` | Perform langfuse_observability operations. |
 | `langfuse_prompts_models` | `LANGFUSE_PROMPTS_MODELSTOOL` | Perform langfuse_prompts_models operations. |
@@ -72,7 +72,7 @@ Auto-generated — do not edit between the markers below.
 #### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
 
 <details>
-<summary>81 per-operation tools — one per public API method (click to expand)</summary>
+<summary>81 per-operation tools — one per current public API method (click to expand)</summary>
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
@@ -116,8 +116,8 @@ Auto-generated — do not edit between the markers below.
 | `langfuse_models_delete` | `APITOOL` | Delete a model. Cannot delete models managed by Langfuse. You can create your own definition with the same modelName to override the definition though. |
 | `langfuse_models_get` | `APITOOL` | Get a model |
 | `langfuse_models_list` | `APITOOL` | Get all models |
-| `langfuse_observations_get_many` | `APITOOL` | Get a list of observations with cursor-based pagination and flexible field selection.  ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response metadata and should be passed in subsequent requests to retrieve the next page of results.  ## Field Selection Use the `fields` parameter to control which observation fields are returned: - `core` - Always included: id, traceId, startTime, endTime, projectId, parentObservationId, type - `basic` - name, level, statusMessage, version, environment, bookmarked, public, userId, sessionId - `time` - completionStartTime, createdAt, updatedAt - `io` - input, output - `metadata` - metadata (truncated to 200 chars by default, use `expandMetadata` to get full values) - `model` - providedModelName, internalModelId, modelParameters - `usage` - usageDetails, costDetails, totalCost - `prompt` - promptId, promptName, promptVersion - `metrics` - latency, timeToFirstToken  If not specified, `core` and `basic` field groups are returned.  ## Filters Multiple filtering options are available via query parameters or the structured `filter` parameter. When using the `filter` parameter, it takes precedence over individual query parameter filters. |
-| `langfuse_opentelemetry_export_traces` | `APITOOL` | **OpenTelemetry Traces Ingestion Endpoint**  This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability.  **Supported Formats:** - Binary Protobuf: `Content-Type: application/x-protobuf` - JSON Protobuf: `Content-Type: application/json` - Supports gzip compression via `Content-Encoding: gzip` header  **Specification Compliance:** - Conforms to [OTLP/HTTP Trace Export](https://opentelemetry.io/docs/specs/otlp/#otlphttp) - Implements `ExportTraceServiceRequest` message format  **Documentation:** - Integration guide: https://langfuse.com/integrations/native/opentelemetry - Data model: https://langfuse.com/docs/observability/data-model |
+| `langfuse_observations_get_many` | `APITOOL` | Get a list of observations with cursor-based pagination and flexible field selection. ## Cursor-based Pagination This endpoint uses cursor-based pagination for efficient traversal of large datasets. The cursor is returned in the response… |
+| `langfuse_opentelemetry_export_traces` | `APITOOL` | **OpenTelemetry Traces Ingestion Endpoint** This endpoint implements the OTLP/HTTP specification for trace ingestion, providing native OpenTelemetry integration for Langfuse Observability. **Supported Formats:** - Binary Protobuf: `Conte… |
 | `langfuse_organizations_delete_organization_membership` | `APITOOL` | Delete a membership from the organization associated with the API key (requires organization-scoped API key) |
 | `langfuse_organizations_delete_project_membership` | `APITOOL` | Delete a membership from a specific project (requires organization-scoped API key). The user must be a member of the organization. |
 | `langfuse_organizations_get_organization_api_keys` | `APITOOL` | Get all API keys for the organization associated with the API key (requires organization-scoped API key) |
@@ -160,7 +160,7 @@ Auto-generated — do not edit between the markers below.
 
 </details>
 
-_5 action-routed tool(s) · 81 verbose 1:1 tool(s). Each is enabled unless its `<DOMAIN>TOOL` toggle is set false; `MCP_TOOL_MODE` selects the surface (**`intent` default** — the six verb-tools, granular set loaded on demand · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_5 action-routed tool(s) · 81 verbose 1:1 tool(s). `MCP_TOOL_MODE` selects the surface (`intent` default · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/usage.md](docs/usage.md).
@@ -191,7 +191,7 @@ When query strings or parameters are provided, an LLM-free **Knowledge Graph res
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `langfuse-agent[mcp]` to add
-> FastMCP / FastAPI through `agent-utilities[mcp]`; the required Agent Utilities core
+> FastMCP / FastAPI through `agent-connector-sdk[mcp]`; the required Agent Utilities core
 > still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
@@ -220,7 +220,7 @@ When query strings or parameters are provided, an LLM-free **Knowledge Graph res
 }
 ```
 
-Runtime references require an alias-aware launcher such as GraphOS. Other
+Runtime references require an alias-aware launcher such as Arbora. Other
 launchers must omit those entries and inject the resolved values through their
 own runtime secret boundary.
 
@@ -327,7 +327,7 @@ langfuse-agent --provider openai --model-id gpt-4o
 The checked-in `docker/agent.compose.yml` runs the MCP and agent services with
 restricted containers and loopback-published ports. Provide pinned image digests
 and let the process supervisor inject materialized child credentials at runtime;
-never add them to the Compose file or a checked-in env file. GraphOS deployments
+never add them to the Compose file or a checked-in env file. Arbora deployments
 keep only the corresponding `*_REF` settings in `AgentConfig`.
 
 Detailed graph node architecture explanations, custom skill configurations, and agentic trace guides are available in [docs/deployment.md](docs/deployment.md).
@@ -336,7 +336,7 @@ Detailed graph node architecture explanations, custom skill configurations, and 
 
 ## Security & Governance
 
-Built directly upon the enterprise-ready [`agent-utilities`](https://github.com/Knuckles-Team/agent-utilities) core, standard security parameters are fully supported:
+Built directly upon the enterprise-ready [`agent-connector-sdk`](https://github.com/Knuckles-Team/agent-connector-sdk) core, standard security parameters are fully supported:
 
 ### Access Control & Policy Enforcement
 - **Eunomia Policies:** Fine-grained, policy-driven tool authorization. Supports `none`, local `embedded` (`mcp_policies.json`), or centralized `remote` modes.
@@ -354,7 +354,7 @@ Built directly upon the enterprise-ready [`agent-utilities`](https://github.com/
 
 ## Configuration & Environment Variables
 
-GraphOS configuration uses `AgentConfig` and secret references. Do not store
+Arbora configuration uses `AgentConfig` and secret references. Do not store
 credential values in `.env` files or MCP catalogs.
 
 ### Core API & Credentials
@@ -402,8 +402,8 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `langfuse-agent[mcp]` | Connector-focused MCP server (`agent-utilities[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `langfuse-agent[agent]` | Agent runtime (`agent-utilities[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `langfuse-agent[mcp]` | Connector-focused MCP server (`agent-connector-sdk[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
+| `langfuse-agent[agent]` | Agent runtime (`agent-connector-sdk[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
 | `langfuse-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -484,15 +484,15 @@ Contributions are welcome! Please ensure code quality by running local checks be
 - Ran test suites using `pytest`
 
 
-<!-- BEGIN agent-utilities-deployment (generated; do not edit between markers) -->
+<!-- BEGIN agent-connector-sdk-deployment (generated; do not edit between markers) -->
 
-## Deploy with `agent-utilities-deployment`
+## Deploy with `agent-connector-sdk-deployment`
 
-Provision this package with the consolidated **`agent-utilities-deployment`**
+Provision this package with the consolidated **`agent-connector-sdk-deployment`**
 workflow. It selects an installed-package, editable-source, or immutable-container
 path; records only runtime secret and TLS-profile references in `AgentConfig`; and
 runs doctor, registration, policy, observability, and rollback gates. Ask your agent
-to **"deploy `langfuse-agent` with agent-utilities-deployment"**.
+to **"deploy `langfuse-agent` with agent-connector-sdk-deployment"**.
 
 | Install mode | Command |
 |------|---------|
@@ -504,7 +504,7 @@ The repository embeds no deployment profile, credential value, certificate path,
 environment-specific endpoint. Supply those at runtime through `AgentConfig` and the
 configured secret provider.
 
-<!-- END agent-utilities-deployment -->
+<!-- END agent-connector-sdk-deployment -->
 
 ## Environment Variables
 
@@ -548,7 +548,7 @@ configured secret provider.
 | `LANGFUSE_MANAGEMENTTOOL` | `True` |  |
 | `LANGFUSE_KGTOOL` | `True` |  |
 
-#### Inherited agent-utilities variables (apply to every connector)
+#### Inherited agent-connector-sdk variables (apply to every connector)
 
 | Variable | Example | Description |
 |----------|---------|-------------|
@@ -568,7 +568,7 @@ configured secret provider.
 | `MODEL_ID` | `gpt-4o` | Model id for the agent |
 | `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
 
-_33 package + 15 inherited variable(s). Auto-generated from `.env.example` + the shared agent-utilities set — do not edit._
+_33 package + 15 inherited variable(s). Auto-generated from `.env.example` + the shared agent-connector-sdk set — do not edit._
 <!-- ENV-VARS-TABLE:END -->
 
 <!-- GOVERNED-CAPABILITY:START -->
@@ -584,5 +584,5 @@ historical per-task skill wrappers.
 Runtime endpoints, credentials, certificate trust, tenant identity, retention,
 and observability policy are deployment inputs and are never packaged values.
 See [Configuration, trust, and privacy](docs/configuration.md) before enabling a
-network transport, connector ingestion, GraphOS delegation, or trace export.
+network transport, connector ingestion, Arbora delegation, or trace export.
 <!-- GOVERNED-CAPABILITY:END -->
