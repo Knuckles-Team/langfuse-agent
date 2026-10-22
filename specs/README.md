@@ -12,4 +12,4 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 
 ## Local specifications
 
-This repository has no local spec yet.
+- [`CONN-LANGFUSE-AGENT-TRACE-INGEST`](trace-ingest/spec.md) — trace, score and dataset ingest from Langfuse.
