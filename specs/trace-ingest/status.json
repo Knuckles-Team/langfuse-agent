@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "spec_id": "CONN-LANGFUSE-AGENT-TRACE-INGEST",
+  "owner_repo": "langfuse-agent",
+  "delivery_state": "SPECIFIED",
+  "requirement_ids": [
+    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R001",
+    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R002",
+    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R003",
+    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R004"
+  ],
+  "requirements": [
+    {
+      "id": "CONN-LANGFUSE-AGENT-TRACE-INGEST-R001",
+      "title": "Score metadata is kept",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-LANGFUSE-AGENT-TRACE-INGEST-R002",
+      "title": "Datasets and dataset runs are ingested",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-LANGFUSE-AGENT-TRACE-INGEST-R003",
+      "title": "Hot-path proof",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    },
+    {
+      "id": "CONN-LANGFUSE-AGENT-TRACE-INGEST-R004",
+      "title": "Action-dispatch tools split",
+      "delivery_state": "SPECIFIED",
+      "landed_in": [],
+      "verified_by": []
+    }
+  ]
+}
