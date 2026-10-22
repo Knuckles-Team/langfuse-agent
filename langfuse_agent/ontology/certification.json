@@ -1,9 +1,9 @@
 {
   "api_version": "arbora.io/v1",
   "artifacts": {
-    "connector_manifest.yml": "c1341c4261b9246b2260eae9abc80fcc33ebb93a62c5334d862786cc18b2120f",
+    "connector_manifest.yml": "c6ed5e467bb954bf5b979bc6d22c4461db43b5059e7aced966a079fb0147f270",
     "langfuse_agent/connectors/mcp_source_presets.json": "475f1d9c5427e982c44397c52d5daf6195189fc7c1e61b59ff3c3fbe7cbfc222",
-    "langfuse_agent/connectors/tool_schema_fingerprints.json": "601e09f32148600219008a5f2e9e05c2e7f02327ffb18e9db0ab6ddd239b6586",
+    "langfuse_agent/connectors/tool_schema_fingerprints.json": "7035f790a5b3f47428c7a019e27606ac760bd37adc814f4d2e9275395218554e",
     "langfuse_agent/ontology/fixtures/records.json": "45426db59590ddb6e6f72b2296ceefd87236209488199ca4ab36f700f5e08df2",
     "langfuse_agent/ontology/langfuse.ttl": "443ac809e5801ca6bc88a600c4926e0373f26261eac132860794e0751a01a185",
     "langfuse_agent/ontology/mappings/source.yaml": "6ef844f6a5dedc4ab9362bddc19d4880b0206bd1bbe5d39cfb08b585a7e987b2",
@@ -22,7 +22,7 @@
     "bundle_schema": "2",
     "epistemic_graph": ">=2.27.0,<3"
   },
-  "connector": "langfuse-agent",
+  "connector": "langfuse-mcp",
   "kind": "ConnectorSourceAttestation",
   "live_certified": false,
   "mode": "offline-source",

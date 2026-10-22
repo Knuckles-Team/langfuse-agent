@@ -316,7 +316,7 @@ def _prepare_for_persistence(
     return prepared, safe_relationships
 
 
-_BINDING = IngestBinding(connector="langfuse-agent", stream="langfuse")
+_BINDING = IngestBinding(connector="langfuse-mcp", stream="langfuse")
 
 _RESERVED_ENTITY_KEYS = frozenset({"id", "node_type"})
 _RESERVED_RELATIONSHIP_KEYS = frozenset({"source", "target", "relationship"})

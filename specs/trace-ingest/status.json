@@ -7,7 +7,8 @@
     "CONN-LANGFUSE-AGENT-TRACE-INGEST-R001",
     "CONN-LANGFUSE-AGENT-TRACE-INGEST-R002",
     "CONN-LANGFUSE-AGENT-TRACE-INGEST-R003",
-    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R004"
+    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R004",
+    "CONN-LANGFUSE-AGENT-TRACE-INGEST-R005"
   ],
   "requirements": [
     {
@@ -37,6 +38,18 @@
       "delivery_state": "SPECIFIED",
       "landed_in": [],
       "verified_by": []
+    },
+    {
+      "id": "CONN-LANGFUSE-AGENT-TRACE-INGEST-R005",
+      "title": "Fleet name",
+      "delivery_state": "VERIFIED",
+      "landed_in": [
+        "982eda5f4fa3",
+        "e6b39899ff3b"
+      ],
+      "verified_by": [
+        "tests/test_fleet_name.py:35"
+      ]
     }
   ]
 }

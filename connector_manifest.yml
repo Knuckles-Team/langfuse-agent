@@ -1,4 +1,4 @@
-connector: langfuse-agent
+connector: langfuse-mcp
 ontology_source: langfuse
 schema_version: '1'
 resources:

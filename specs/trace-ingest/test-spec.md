@@ -8,3 +8,4 @@ Governing spec: [spec.md](spec.md).
 | T-R002 | CONN-LANGFUSE-AGENT-TRACE-INGEST-R002 | `tests/test_kg_ingest.py::test_dataset_items_and_runs_link` asserts both node kinds and both links. |
 | T-R003 | CONN-LANGFUSE-AGENT-TRACE-INGEST-R003 | `tests/test_trace_ingest_served.py::test_scores_and_datasets_reach_the_engine` passes. |
 | T-R004 | CONN-LANGFUSE-AGENT-TRACE-INGEST-R004 | `tests/test_api_parity_gate.py` asserts no action-dispatch tool and no lost tool. |
+| T-001 | `CONN-LANGFUSE-AGENT-TRACE-INGEST-R005` | `tests/test_fleet_name.py::test_connector_name_is_the_fleet_name` | Every connector name in the package is `langfuse-mcp`. |
