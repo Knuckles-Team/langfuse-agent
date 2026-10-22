@@ -40,6 +40,10 @@ langfuse-agent = "langfuse_agent.connectors"
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 langfuse-agent = "langfuse_agent.prompts"
 
+# The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
+[project.entry-points."agent_connector_sdk.connector"]
+langfuse-mcp = "langfuse_agent"
+
 [tool.uv.workspace]
 members = ["."]
 
