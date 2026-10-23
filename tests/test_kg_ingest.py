@@ -114,7 +114,7 @@ async def test_ingest_entities_writes_nodes_and_edges(ingest):
     }
     assert len(request.relationships) == 1
     assert request.relationships[0].relation_reference.endswith(
-        "resources/Trace/relations/inSession"
+        "relations/Trace/inSession"
     )
 
 
@@ -143,9 +143,7 @@ async def test_ingest_traces_maps_trace_session_and_user(ingest):
     assert "sess-9" not in persisted
     assert "alice" not in persisted
     assert (
-        transport.requests[0]
-        .relationships[0]
-        .relation_reference.endswith("relations/inSession")
+        transport.requests[0].relationships[0].relation_reference.endswith("/inSession")
     )
 
 
@@ -255,9 +253,7 @@ async def test_ingest_sessions_and_scores(ingest):
     assert res2 == {"nodes": 1, "edges": 1}
     assert _record_of_type(transport2, "Score").payload["scoreValue"] == "0.9"
     assert (
-        transport2.requests[0]
-        .relationships[0]
-        .relation_reference.endswith("relations/scores")
+        transport2.requests[0].relationships[0].relation_reference.endswith("/scores")
     )
 
 

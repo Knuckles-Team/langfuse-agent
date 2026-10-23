@@ -19,18 +19,16 @@
     rdfs:label "Trace" ;
     rdfs:comment "A single top-level execution captured by Langfuse — the root of a tree of observations, attributed to a user and grouped into a session (langfuse_observability trace_list/trace_get)." .
 
-:Observation a owl:Class ;
-    rdfs:label "Observation" ;
-    rdfs:comment "A node inside a trace's execution tree — a SPAN, EVENT or GENERATION with a start/end time, level and status (langfuse_observability observations_get_many)." .
+:Observation a owl:Class .
+
 
 :Generation a owl:Class ;
     rdfs:subClassOf :Observation ;
     rdfs:label "Generation" ;
     rdfs:comment "An LLM generation observation (type=GENERATION): a model call carrying model name, model parameters, token usage and cost." .
 
-:Session a owl:Class ;
-    rdfs:label "Session" ;
-    rdfs:comment "A grouping of related traces representing one conversation or user session (langfuse_observability sessions_list/sessions_get)." .
+:Session a owl:Class .
+
 
 :Score a owl:Class ;
     rdfs:label "Score" ;
@@ -40,21 +38,18 @@
     rdfs:label "Score Config" ;
     rdfs:comment "The schema/definition of a score: its name, data type and allowed range or categories (langfuse_observability score_configs_get)." .
 
-:Dataset a owl:Class ;
-    rdfs:label "Dataset" ;
-    rdfs:comment "A named collection of dataset items used as an evaluation/test set (langfuse_datasets datasets_list/datasets_get)." .
+:Dataset a owl:Class .
+
 
 :DatasetRun a owl:Class ;
     rdfs:label "Dataset Run" ;
     rdfs:comment "One execution of a dataset against a system under test, aggregating run items and their scores (langfuse_datasets datasets_get_runs)." .
 
-:Prompt a owl:Class ;
-    rdfs:label "Prompt" ;
-    rdfs:comment "A versioned, labelled prompt template managed in the Langfuse prompt registry (langfuse_prompts_models prompts_get/prompts_list)." .
+:Prompt a owl:Class .
 
-:Model a owl:Class ;
-    rdfs:label "Model" ;
-    rdfs:comment "A model definition with a match pattern and unit/pricing used to compute generation cost (langfuse_prompts_models models_list/models_get)." .
+
+:Model a owl:Class .
+
 
 # --- links (owl:ObjectProperty) ---
 
@@ -188,5 +183,4 @@
     sessions, scores and score configs, datasets and dataset runs, prompts and models,
     with their tree, attribution, evaluation and cost relationships — federated into the
     agent-connector-sdk knowledge-graph hub. Reuses the shared :Person class for the end-user
-    a trace is attributed to.""" ;
-    owl:imports <http://knuckles.team/kg> .
+    a trace is attributed to.""" .
