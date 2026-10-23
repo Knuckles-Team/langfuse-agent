@@ -8,7 +8,7 @@ from pathlib import Path
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "2.3.2"
+EXPECTED_VERSION = "2.3.3"
 
 
 def test_release_version_is_consistent_across_runtime_and_metadata() -> None:
