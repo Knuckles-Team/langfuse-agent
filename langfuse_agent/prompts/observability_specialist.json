@@ -4,8 +4,6 @@
   "schema_version": "1.0",
   "prompt_version": "0.1.0",
   "source": "langfuse-agent",
-  "extends": "agent-connector-sdk:base",
-  "compose": "append",
   "description": "Langfuse LLM-observability specialist: trace analytics, evaluation datasets/scores, and the prompt registry over the langfuse-agent MCP server.",
   "metadata": {
     "topic": "Langfuse LLM Observability",
