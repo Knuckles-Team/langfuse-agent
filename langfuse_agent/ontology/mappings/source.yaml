@@ -1,5 +1,5 @@
 schema_version: '1'
-connector: langfuse-agent
+connector: langfuse-mcp
 ontology_source: langfuse
 sync:
 - preset: langfuse-sessions

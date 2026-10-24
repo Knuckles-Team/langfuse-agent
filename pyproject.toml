@@ -5,19 +5,17 @@ backend-path = ["."]
 
 [project]
 name = "langfuse-agent"
-version = "2.3.4"
+version = "2.3.5"
 description = "Agent for interacting with Langfuse Observability API"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12"
-dependencies = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0", "langfuse>=4,<5", "requests>=2.34.2",]
+dependencies = [ "agent-connector-sdk[mcp]>=0.5.4,<0.6.0", "langfuse>=4,<5", "requests>=2.34.2",]
 license = "MIT"
 [[project.authors]]
-name = "Project Contributors"
+name = "Repository Maintainers"
 
 [project.optional-dependencies]
-mcp = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
-all = [ "agent-connector-sdk[mcp]>=0.4.1,<1.0.0",]
 test = [
     "pytest-xdist>=3.8.0", "pytest>=9.1.1", "pytest-asyncio>=1.4.0", "pytest-cov>=7.1.0",]
 docs = [
@@ -26,20 +24,14 @@ docs = [
 ]
 
 [project.scripts]
-langfuse-mcp = "langfuse_agent.mcp_server:mcp_server"
-
-[project.entry-points."agent_connector_sdk.skill_providers"]
-langfuse-agent = "langfuse_agent.skills"
-
-[project.entry-points."agent_connector_sdk.ontology_providers"]
-langfuse-agent = "langfuse_agent.ontology"
+langfuse-mcp = "agent_connector_sdk.cli:serve"
 
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 langfuse-agent = "langfuse_agent.prompts"
 
 # The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
-langfuse-mcp = "langfuse_agent"
+langfuse-mcp = "langfuse_agent:connector"
 
 [tool.uv.workspace]
 members = ["."]
@@ -48,6 +40,7 @@ members = ["."]
 include-package-data = true
 
 [tool.ruff]
+extend-exclude = ["tests", "scripts"]
 line-length = 88
 target-version = "py312"
 
@@ -86,3 +79,13 @@ override-dependencies = [
 
 [tool.pipelines_hooks.ste]
 exempt = ["specs/*", "specs/**/*"]
+
+[tool.pipelines.container]
+port = 8004
+debug_apt = ["default-jre", "ripgrep", "tree", "fd-find", "curl", "nano", "build-essential", "cmake", "libssl-dev", "libcurl4-openssl-dev", "pkg-config", "cargo", "rustc"]
+limits = {"mcp" = {"memory_limit_env" = "AGENT_CONTAINER_MEMORY_LIMIT", "memory_limit" = "4g", "cpu_limit_env" = "AGENT_CONTAINER_CPU_LIMIT", "cpu_limit" = "2.0"}}
+compose_env = ["LANGFUSE_HOST", "LANGFUSE_PUBLIC_KEY", "LANGFUSE_SECRET_KEY", "REQUESTS_CA_BUNDLE", "SSL_CERT_FILE"]
+
+[tool.pipelines.security]
+license_allowed = ["CDLA-Permissive-2.0", "LGPL-3.0-only", "LGPL-3.0-or-later", "MIT-CMU", "PSF-2.0", "W3C-20150513", "zlib-acknowledgement"]
+license_denied = ["AGPL-1.0-only", "AGPL-1.0-or-later", "GPL-1.0-only", "GPL-1.0-or-later", "GPL-2.0-only", "GPL-2.0-or-later"]
