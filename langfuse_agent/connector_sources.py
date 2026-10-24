@@ -9,9 +9,6 @@ from __future__ import annotations
 from typing import Any
 
 from agent_connector_sdk.ingest.live_declaration import source_meta
-from agent_connector_sdk.ingest.sources import IngestSourceDeclaration, IngestSourceSpec
-
-CONNECTOR: str = "langfuse-mcp"
 
 SOURCES: tuple[Any, ...] = (
     source_meta(
@@ -65,195 +62,66 @@ SOURCES: tuple[Any, ...] = (
     ),
 )
 
+SCHEMA_VERSION = 2
+
+FIELD_SETS: dict[str, dict[str, str]] = {
+    "fields_1": {
+        "dataType": "xsd:string",
+        "endTime": "xsd:dateTime",
+        "environment": "xsd:string",
+        "latency": "xsd:decimal",
+        "level": "xsd:string",
+        "modelName": "xsd:string",
+        "observationType": "xsd:string",
+        "promptVersion": "xsd:integer",
+        "release": "xsd:string",
+        "scoreValue": "xsd:string",
+        "startTime": "xsd:dateTime",
+        "timestamp": "xsd:dateTime",
+        "totalCost": "xsd:decimal",
+        "totalTokens": "xsd:integer",
+    },
+}
+
 SCHEMA_MAPPINGS: dict[str, Any] = {
     "Dataset": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Dataset",
     },
     "DatasetRun": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Dataset",
     },
     "Generation": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": "Observation",
     },
     "Model": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Observation": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Prompt": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Score": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "ScoreConfig": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Session": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
     "Trace": {
-        "fields": {
-            "dataType": "xsd:string",
-            "endTime": "xsd:dateTime",
-            "environment": "xsd:string",
-            "latency": "xsd:decimal",
-            "level": "xsd:string",
-            "modelName": "xsd:string",
-            "observationType": "xsd:string",
-            "promptVersion": "xsd:integer",
-            "release": "xsd:string",
-            "scoreValue": "xsd:string",
-            "startTime": "xsd:dateTime",
-            "timestamp": "xsd:dateTime",
-            "totalCost": "xsd:decimal",
-            "totalTokens": "xsd:integer",
-        },
+        "field_sets": ["fields_1"],
         "ontology_class": None,
     },
 }
@@ -310,23 +178,3 @@ RESOURCES: tuple[dict[str, str], ...] = (
         "name": "Trace",
     },
 )
-
-
-def declaration() -> IngestSourceDeclaration:
-    """The declaration the server assembles from this module."""
-    specs: list[IngestSourceSpec] = []
-    for item in SOURCES:
-        for entry in item["connector_sources"]:
-            body: dict[str, Any] = {
-                k: v for k, v in entry.items() if k not in ("tool", "mapping")
-            }
-            spec = {**body, "tools": (entry["tool"],)}
-            specs.append(IngestSourceSpec.model_validate(spec))
-    return IngestSourceDeclaration.model_validate(
-        {
-            "connector": CONNECTOR,
-            "sources": specs,
-            "schema_mappings": SCHEMA_MAPPINGS,
-            "resources": RESOURCES,
-        }
-    )

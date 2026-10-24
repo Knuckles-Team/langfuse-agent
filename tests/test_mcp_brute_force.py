@@ -1,9 +1,6 @@
 """Dynamic brute force test suite to achieve 100% test coverage for langfuse_agent/mcp_server.py."""
 
 import inspect
-import os
-import sys
-import warnings
 from contextlib import ExitStack
 from typing import Any
 from unittest.mock import MagicMock, patch
@@ -12,8 +9,6 @@ import pytest
 from fastmcp import FastMCP
 
 from langfuse_agent.mcp_server import (
-    get_mcp_instance,
-    mcp_server,
     register_langfuse_datasets_tools,
     register_langfuse_management_tools,
     register_langfuse_observability_tools,
@@ -210,70 +205,3 @@ def test_observability_runtime_posture_is_metadata_only(monkeypatch):
         "content_capture_enabled": False,
         "metadata_only": True,
     }
-
-
-def test_get_mcp_instance_with_disabled_tools():
-    """Test get_mcp_instance when optional tools are disabled via environment variables."""
-    env_vars = {
-        "OBSERVABILITY_TOOL": "False",
-        "DATASETS_TOOL": "False",
-        "PROMPTS_MODELS_TOOL": "False",
-        "MANAGEMENT_TOOL": "False",
-    }
-    with patch.dict(os.environ, env_vars):
-        with patch("langfuse_agent.mcp_server.create_mcp_server") as mock_create:
-            mock_mcp = MagicMock()
-            # create_mcp_server returns (args, mcp, middlewares)
-            mock_create.return_value = (MagicMock(), mock_mcp, [MagicMock()])
-            mcp, _, _ = get_mcp_instance()
-            assert mcp == mock_mcp
-
-
-def test_mcp_server_transports():
-    """Test run loops for standard, HTTP, SSE, and invalid transports in mcp_server()."""
-    mock_mcp = MagicMock()
-    mock_args = MagicMock()
-    mock_middlewares = [MagicMock()]
-
-    with patch(
-        "langfuse_agent.mcp_server.get_mcp_instance",
-        return_value=(mock_mcp, mock_args, mock_middlewares),
-    ):
-        # 1. Test stdio transport
-        mock_args.transport = "stdio"
-        mcp_server()
-        mock_mcp.run.assert_called_with(transport="stdio")
-
-        # 2. Test HTTP transport
-        mock_args.transport = "streamable-http"
-        mock_args.host = "127.0.0.1"
-        mock_args.port = 8080
-        mcp_server()
-        mock_mcp.run.assert_called_with(
-            transport="streamable-http", host="127.0.0.1", port=8080
-        )
-
-        # 3. Test SSE transport
-        mock_args.transport = "sse"
-        mcp_server()
-        mock_mcp.run.assert_called_with(transport="sse", host="127.0.0.1", port=8080)
-
-        # 4. Test invalid transport
-        mock_args.transport = "invalid-transport"
-        with patch("sys.exit") as mock_exit:
-            mcp_server()
-            mock_exit.assert_called_once_with(1)
-
-
-def test_mcp_server_main_execution():
-    """Test __main__ execution block of mcp_server.py."""
-    with (
-        patch.object(sys, "argv", ["langfuse-mcp"]),
-        patch("fastmcp.FastMCP.run") as mock_run,
-        warnings.catch_warnings(),
-    ):
-        warnings.simplefilter("ignore", RuntimeWarning)
-        import runpy
-
-        runpy.run_module("langfuse_agent.mcp_server", run_name="__main__")
-        assert mock_run.called

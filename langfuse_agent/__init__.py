@@ -91,3 +91,18 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     return sorted(list(globals().keys()) + __all__)
+
+
+from agent_connector_sdk.connector import Connector
+
+from langfuse_agent.api_client import LangfuseApi
+from langfuse_agent.auth import get_client
+
+connector = Connector(
+    api=LangfuseApi,
+    get_client=get_client,
+    tools="langfuse_agent.mcp_server",
+    instructions="langfuse-agent MCP Server — Condensed Action-Routed Tools.",
+)
+
+__all__ = ["connector"]

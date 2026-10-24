@@ -13,3 +13,4 @@ Read the existing specs first. Extend the spec that owns the behavior. Create a 
 ## Local specifications
 
 - [`CONN-LANGFUSE-AGENT-TRACE-INGEST`](trace-ingest/spec.md) — trace, score and dataset ingest from Langfuse.
+- [`CONN-LANGFUSE-AGENT-CONNECTOR-CONTENT`](connector-content/spec.md) — The connector serves its packaged content.
