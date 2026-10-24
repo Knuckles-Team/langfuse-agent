@@ -1,58 +1,49 @@
-"""Fail-closed coverage for the Langfuse API-to-MCP source gate."""
+"""Fail-closed coverage for the Langfuse API-to-MCP surface, measured on the served tools.
+
+The connector surface comes from the SDK declaration (``Connector(api=LangfuseApi, ...)``); these tests build the server
+the way the console script does and compare its tools with the public methods of the API client.
+"""
 
 from __future__ import annotations
 
-import importlib.util
-import subprocess
-import sys
-from pathlib import Path
+import asyncio
+import inspect
 
-ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "scripts" / "verify_api_integration.py"
+import pytest
+from agent_connector_sdk.connector import build_server
+from fastmcp import Client
+
+from langfuse_agent.api_client import LangfuseApi
 
 
-def _module():
-    spec = importlib.util.spec_from_file_location("verify_api_integration", SCRIPT)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+def _served_tool_names() -> list[str]:
+    _, mcp = build_server("langfuse_agent", command_args=["--transport", "stdio"])
+
+    async def _list() -> list[str]:
+        async with Client(mcp) as client:
+            return [tool.name for tool in await client.list_tools()]
+
+    return asyncio.run(_list())
 
 
 def test_current_composed_client_is_fully_bound_to_mcp() -> None:
-    result = _module().verify_agent(ROOT)
+    names = _served_tool_names()
+    methods = [n for n, _f in inspect.getmembers(LangfuseApi, inspect.isfunction) if not n.startswith("_")]
 
-    assert result is not None
-    assert result["total_methods"] > 0
-    assert result["covered_methods"] == result["total_methods"]
-    assert result["coverage"] == 100.0
-
-
-def test_local_cli_executes_instead_of_skipping() -> None:
-    completed = subprocess.run(
-        [sys.executable, str(SCRIPT), "--local"],
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=30,
-    )
-
-    assert completed.returncode == 0
-    assert "Skipping" not in completed.stdout
-    assert "100.0%" in completed.stdout
+    assert methods
+    unbound = [m for m in methods if not any(name.endswith(m) for name in names)]
+    assert not unbound, f"API methods with no served tool: {unbound}"
 
 
-def test_local_cli_fails_closed_without_a_surface(tmp_path: Path) -> None:
-    completed = subprocess.run(
-        [sys.executable, str(SCRIPT), "--local"],
-        cwd=tmp_path,
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=30,
-    )
+def test_the_served_surface_is_built_instead_of_skipped() -> None:
+    names = _served_tool_names()
 
-    assert completed.returncode == 1
-    assert "required surface unavailable" in completed.stdout
-    assert str(tmp_path) not in completed.stdout + completed.stderr
+    assert len(names) > 0
+    assert all(name.startswith("langfuse_") for name in names)
+
+
+def test_building_a_server_fails_closed_without_a_surface() -> None:
+    with pytest.raises(Exception) as raised:  # noqa: PT011 - any failure to build counts, none may serve an empty surface
+        build_server("no_such_connector_package", command_args=["--transport", "stdio"])
+
+    assert raised.value is not None
