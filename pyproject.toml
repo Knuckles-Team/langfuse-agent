@@ -10,7 +10,7 @@ description = "Agent for interacting with Langfuse Observability API"
 readme = "README.md"
 classifiers = [ "Development Status :: 4 - Beta", "Environment :: Console", "Operating System :: POSIX :: Linux", "Programming Language :: Python :: 3",]
 requires-python = ">=3.12"
-dependencies = [ "agent-connector-sdk[mcp]>=0.5.4,<0.6.0", "langfuse>=4,<5", "requests>=2.34.2",]
+dependencies = [ "scion-sdk[mcp]>=0.5.9,<0.6.0", "langfuse>=4,<5", "requests>=2.34.2",]
 license = "MIT"
 [[project.authors]]
 name = "Repository Maintainers"
@@ -29,7 +29,7 @@ langfuse-mcp = "agent_connector_sdk.cli:serve"
 [project.entry-points."agent_connector_sdk.prompt_providers"]
 langfuse-agent = "langfuse_agent.prompts"
 
-# The one declared connector identity: the fleet name (SDK-CONNECTOR-CONTROL-R071).
+# The one declared connector identity: the fleet name (SCION-CONNECTOR-CONTROL-R071).
 [project.entry-points."agent_connector_sdk.connector"]
 langfuse-mcp = "langfuse_agent:connector"
 
