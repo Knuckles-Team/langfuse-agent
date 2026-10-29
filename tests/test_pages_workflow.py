@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 import pytest
@@ -12,8 +11,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DASHBOARD = ROOT / ".github" / "spec-dashboard.json"
 
 pytestmark = pytest.mark.spec("PIPE-CONNSPEC-R134.3")
-
-
 
 
 def test_pages_dashboard_declares_generated_spec_status_source() -> None:
