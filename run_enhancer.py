@@ -3,7 +3,7 @@ import os
 import sys
 from pathlib import Path
 
-from agent_connector_sdk.privacy import sanitize_for_persistence
+from scion_sdk.privacy import sanitize_for_persistence
 
 # Add scripts directory to path dynamically
 scripts_dir_value = os.getenv("CODE_ENHANCER_SCRIPTS_DIR")

@@ -26,7 +26,7 @@ deterministic MCP tools and a Pydantic-AI agent server. It provides:
   OpenTelemetry export surface. The default intent mode discloses exact tools only
   when needed.
 - **An A2A agent server** (`langfuse-agent` console script) that auto-discovers the
-  MCP tools and routes requests through the agent-connector-sdk graph engine.
+  MCP tools and routes requests through the scion-sdk graph engine.
 
 The connector remains inactive when credential references are absent. Arbora
 resolves the references only when it starts the provider.

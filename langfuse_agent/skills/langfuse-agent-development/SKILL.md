@@ -10,7 +10,7 @@ license: MIT
 tags: [langfuse, observability, development, connector, test, gates]
 tier: repository
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 
@@ -19,7 +19,7 @@ metadata:
 This repository owns the Langfuse API facade, the governed MCP tool surface,
 authentication boundary, typed graph-ingestion mappings, and packaged connector
 content. Shared connector contracts, transports, TLS profiles, and credential
-helpers belong to `agent-connector-sdk`; admission, serving, and durable graph
+helpers belong to `scion-sdk`; admission, serving, and durable graph
 state belong to their owning repositories. Read `AGENTS.md` before changing
 code. Keep credentials, private endpoints, tenant data, and customer records out
 of source, logs, fixtures, and skill content.
@@ -48,7 +48,7 @@ owning spec row in the commit trailer.
   inventory. Mock provider HTTP responses in tests; never call a live Langfuse
   project or use live credentials in a gate.
 - Preserve typed, privacy-bounded ingestion through
-  `agent_connector_sdk.ingest`, source declarations in
+  `scion_sdk.ingest`, source declarations in
   `langfuse_agent/connector_sources.py`, and neutral ontology assets under
   `langfuse_agent/ontology/`. Do not bypass the shared ingestion facade.
 - Keep `skills/**`, `ontology/**`, `connectors/**`, prompts, and

@@ -3,7 +3,7 @@
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. The langfuse-agent connector natively
 pushes its observability data into the ONE epistemic-graph knowledge graph as **typed OWL
 nodes** (``:Trace``, ``:Observation``, ``:Generation``, ``:Session``, ``:Score``,
-``:Dataset``, ``:Prompt``, ``:Model``) plus links through ``agent_connector_sdk.ingest`` --
+``:Dataset``, ``:Prompt``, ``:Model``) plus links through ``scion_sdk.ingest`` --
 the generated ``SourceIngest`` client, not a local ingestion helper. Node ids follow
 ``langfuse:<class>:<externalId>``; ``node_type`` on each entity
 matches a class federated by ``langfuse_agent.ontology``.
@@ -18,20 +18,20 @@ import re
 from datetime import date, datetime
 from typing import Any
 
-from agent_connector_sdk.config import setting
+from scion_sdk.config import setting
 
-# SDK gap: agent_connector_sdk has no equivalent of agent_connector_sdk.protocols
+# SDK gap: scion_sdk has no equivalent of scion_sdk.protocols
 # .source_connectors.base.ExternalAccess (a per-record ACL stamped onto every
 # ingested node's payload). The SDK's manifest-level PermissionsSpec.read_roles
-# (agent_connector_sdk/manifest/model.py) is a *static, connector-wide*
+# (scion_sdk/manifest/model.py) is a *static, connector-wide*
 # declaration, not a *per-record* runtime ACL the write path can stamp -- a
 # materially different mechanism, not a drop-in replacement. Kept on
-# agent_connector_sdk pending an SDK-side per-record ACL primitive.
-from agent_connector_sdk.contracts import ExternalAccess
-from agent_connector_sdk.credentials.references import SecretReferenceError
-from agent_connector_sdk.credentials.resolution import resolve_secret_reference
-from agent_connector_sdk.credentials.resolver import CredentialUnavailableError
-from agent_connector_sdk.ingest import (
+# scion_sdk pending an SDK-side per-record ACL primitive.
+from scion_sdk.contracts import ExternalAccess
+from scion_sdk.credentials.references import SecretReferenceError
+from scion_sdk.credentials.resolution import resolve_secret_reference
+from scion_sdk.credentials.resolver import CredentialUnavailableError
+from scion_sdk.ingest import (
     ChangeSet,
     Entity,
     IngestBinding,
@@ -40,7 +40,7 @@ from agent_connector_sdk.ingest import (
     Relationship,
     current_ingest,
 )
-from agent_connector_sdk.privacy import PersistencePrivacyGuard
+from scion_sdk.privacy import PersistencePrivacyGuard
 
 _UNSAFE_ID_FIELDS = frozenset(
     {
@@ -356,7 +356,7 @@ async def ingest_entities(
     if not prepared:
         raise IngestError("ingest_entities needs at least one entity")
     # The SDK's own request builder only requires a node_type be present -- it does
-    # not reject a lingering retired "type" alias the way agent_connector_sdk' native
+    # not reject a lingering retired "type" alias the way scion_sdk' native
     # ingest did. Keep that fail-closed canonical-key contract here explicitly.
     for entity in prepared:
         if "type" in entity or not entity.get("node_type"):

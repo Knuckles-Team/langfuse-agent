@@ -7,7 +7,7 @@ import logging
 import threading
 from typing import Any
 
-from agent_connector_sdk.config import setting
+from scion_sdk.config import setting
 
 from .api_client import LangfuseApi
 
@@ -30,7 +30,7 @@ def resolve_langfuse_host() -> str:
 
 def resolve_langfuse_requests_transport() -> dict[str, Any]:
     """Resolve the fail-closed Requests transport (TLS verify/cert) for Langfuse."""
-    from agent_connector_sdk.tls.resolve import resolve_tls_profile
+    from scion_sdk.tls.resolve import resolve_tls_profile
 
     profile = resolve_tls_profile("langfuse")
     return profile.requests_kwargs()
@@ -40,10 +40,10 @@ def is_delegation_enabled() -> bool:
     """Whether the OIDC delegation path is configured.
 
     Follows the proven pattern from onetrust-api's ``auth.py`` (PR #5):
-    ``agent_connector_sdk.auth.delegation`` now has an end-to-end proof, so
+    ``scion_sdk.auth.delegation`` now has an end-to-end proof, so
     this no longer needs to stay on the SDK delegation module.
     """
-    from agent_connector_sdk.auth.delegation import DelegationSettings
+    from scion_sdk.auth.delegation import DelegationSettings
 
     return DelegationSettings.from_settings().enabled
 

@@ -14,7 +14,7 @@ description: >-
 license: MIT
 tags: [langfuse, observability, tracing, llm, metrics, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # Langfuse Trace Analytics

@@ -10,7 +10,7 @@ import asyncio
 import inspect
 
 import pytest
-from agent_connector_sdk.connector import build_server
+from scion_sdk.connector import build_server
 from fastmcp import Client
 
 from langfuse_agent.api_client import LangfuseApi

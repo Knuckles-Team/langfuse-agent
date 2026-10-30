@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [langfuse, evaluation, datasets, scores, llm, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # Langfuse Eval Datasets

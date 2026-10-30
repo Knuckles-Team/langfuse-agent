@@ -50,5 +50,5 @@ def test_development_skill_has_rapid_contract_and_package_binding() -> None:
     package_data = project["tool"]["setuptools"]["package-data"]["langfuse_agent"]
     assert "skills/**" in package_data
     assert project["project"]["scripts"] == {
-        "langfuse-mcp": "agent_connector_sdk.cli:serve",
+        "langfuse-mcp": "scion_sdk.cli:serve",
     }

@@ -1,6 +1,6 @@
 """Privacy-safe runtime posture shared by Langfuse tool surfaces."""
 
-from agent_connector_sdk.config import setting
+from scion_sdk.config import setting
 
 
 def observability_runtime_posture() -> dict[str, bool]:

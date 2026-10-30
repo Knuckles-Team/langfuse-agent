@@ -1,7 +1,7 @@
 {
   "version": 1,
   "licenses": {
-    "agent-connector-sdk": "MIT",
+    "scion-sdk": "MIT",
     "langfuse": "MIT",
     "langfuse-agent": "MIT",
     "mkdocs": "BSD-2-Clause",

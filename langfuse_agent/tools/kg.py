@@ -9,9 +9,9 @@ epistemic-graph knowledge graph as typed OWL nodes (:Trace / :Observation / :Gen
 from collections.abc import Awaitable, Callable
 from typing import Any
 
-from agent_connector_sdk.mcp.action_dispatch import parse_json_object
 from fastmcp import FastMCP
 from pydantic import Field
+from scion_sdk.mcp.action_dispatch import parse_json_object
 
 from langfuse_agent.auth import get_client
 from langfuse_agent.kg_ingest import (

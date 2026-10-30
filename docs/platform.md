@@ -87,7 +87,7 @@ this child materialization automatically.
 ## Check
 
 1. Check the Langfuse platform's documented health endpoint.
-2. Run `agent-connector-sdk doctor` without exposing secret values or service URLs.
+2. Run `scion-sdk doctor` without exposing secret values or service URLs.
 3. Call `langfuse_observability` with `action=trace_list` and a small limit.
 4. Treat an authenticated empty result as successful connectivity.
 

@@ -15,7 +15,7 @@
 ## Functional Requirements
 
 - **FR-001**: Minor update: requests 2.33.1 (installed) -> 2.34.2
-- **FR-002**: Minor update: agent-connector-sdk 0.2.42 (installed) -> 0.16.0
+- **FR-002**: Minor update: scion-sdk 0.2.42 (installed) -> 0.16.0
 - **FR-003**: Minor update: pytest-xdist 3.6.0 (constraint — not installed) -> 3.8.0
 - **FR-004**: Minor update: langfuse 4.5.1 (installed) -> 4.6.1
 - **FR-005**: 3 functions exceed 200 lines (actionable refactoring targets): register_langfuse_observability_tools (295L), langfuse_observability (293L), register_langfuse_management_tools (202L)
