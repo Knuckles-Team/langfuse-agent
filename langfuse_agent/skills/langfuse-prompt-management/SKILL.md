@@ -12,7 +12,7 @@ description: >-
 license: MIT
 tags: [langfuse, prompts, models, registry, llm, mcp]
 metadata:
-  author: Genius
+  author: Knuckles-Team
   version: '0.1.0'
 ---
 # Langfuse Prompt Management

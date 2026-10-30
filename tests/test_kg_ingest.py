@@ -2,8 +2,8 @@
 
 Exercises the real ``ingest_entities`` + record mappers (``ingest_traces`` /
 ``ingest_observations`` / ``ingest_sessions`` / ``ingest_scores``) against a fake
-``agent_connector_sdk.ingest`` transport (no engine required). The real SDK request
-builder (``agent_connector_sdk.ingest.request.build_request``) still runs, so a
+``scion_sdk.ingest`` transport (no engine required). The real SDK request
+builder (``scion_sdk.ingest.request.build_request``) still runs, so a
 malformed change set is still caught by the SDK's own contract, not re-derived here;
 only the final network commit is faked. Privacy-critical: asserts that every raw
 Langfuse id, free-text label, host/path, and other PII the connector's own
@@ -17,7 +17,7 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from agent_connector_sdk.ingest import IngestError, KnowledgeIngest
+from scion_sdk.ingest import IngestError, KnowledgeIngest
 from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
 
 import langfuse_agent.kg_ingest as kg_ingest

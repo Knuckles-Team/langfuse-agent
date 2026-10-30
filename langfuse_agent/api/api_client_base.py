@@ -5,8 +5,8 @@ from collections.abc import Mapping
 from typing import Any
 
 import requests
-from agent_connector_sdk.config import setting
-from agent_connector_sdk.exceptions import ApiError, AuthError
+from scion_sdk.config import setting
+from scion_sdk.exceptions import ApiError, AuthError
 
 logger = logging.getLogger(__name__)
 

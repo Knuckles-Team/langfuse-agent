@@ -6,7 +6,7 @@ identities, and trace payloads out of repository files and MCP catalogs.
 
 ## Minimal Arbora configuration
 
-With the current `agent-connector-sdk` runtime, no handwritten Langfuse MCP entry is
+With the current `scion-sdk` runtime, no handwritten Langfuse MCP entry is
 required. Arbora registers the installed provider lazily when both credential
 references are available. The parent process supplies:
 
@@ -33,7 +33,7 @@ Use system trust when it contains the issuing authority. Otherwise reference a
 PEM trust store containing the required root, roots, or chain certificates. Do
 not disable TLS verification and do not point Requests at a binary certificate.
 
-At startup, `agent-connector-sdk`:
+At startup, `scion-sdk`:
 
 1. resolves `LANGFUSE_CA_BUNDLE_REF` in memory;
 2. validates bounded, parseable CA certificates and current validity windows;

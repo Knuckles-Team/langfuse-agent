@@ -5,7 +5,7 @@ Skipped informational: 4
 
 - [ ] [P] **T001** [Dependency Audit] Minor update: requests 2.33.1 (installed) -> 2.34.2
   - Priority: P3-Low | Effort: Small
-- [ ] [P] **T002** [Dependency Audit] Minor update: agent-connector-sdk 0.2.42 (installed) -> 0.16.0
+- [ ] [P] **T002** [Dependency Audit] Minor update: scion-sdk 0.2.42 (installed) -> 0.16.0
   - Priority: P3-Low | Effort: Small
 - [ ] [P] **T003** [Dependency Audit] Minor update: pytest-xdist 3.6.0 (constraint — not installed) -> 3.8.0
   - Priority: P3-Low | Effort: Small

@@ -7,7 +7,7 @@ import os
 import sys
 from unittest.mock import MagicMock, patch
 
-# NOTE: delegation is now real agent_connector_sdk.auth.delegation.DelegationSettings,
+# NOTE: delegation is now real scion_sdk.auth.delegation.DelegationSettings,
 # read from settings (ENABLE_DELEGATION, unset/False by default in tests) -- no
 # module-level mock needed; tests that need delegation enabled patch
 # langfuse_agent.auth.is_delegation_enabled directly.
