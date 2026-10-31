@@ -14,6 +14,7 @@ dependencies = [ "scion-sdk[mcp]>=0.6.4,<0.7.0", "langfuse>=4,<5", "requests>=2.
 license = "MIT"
 [[project.authors]]
 name = "Repository Maintainers"
+email = "maintainers@knuckles.team"
 
 [project.optional-dependencies]
 test = [
