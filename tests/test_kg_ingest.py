@@ -18,7 +18,7 @@ from typing import Any
 
 import pytest
 from scion_sdk.ingest import IngestError, KnowledgeIngest
-from epistemic_graph.generated.source_ingestion import SourceIngestionRequest
+from medulla.generated.source_ingestion import SourceIngestionRequest
 
 import langfuse_agent.kg_ingest as kg_ingest
 from langfuse_agent.kg_ingest import (
