@@ -2,7 +2,7 @@
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. Exposes an explicit MCP tool that lists
 Langfuse observability records via the real client and natively pushes them into the ONE
-epistemic-graph knowledge graph as typed OWL nodes (:Trace / :Observation / :Generation /
+medulla knowledge graph as typed OWL nodes (:Trace / :Observation / :Generation /
 :Session / :Score). Best-effort: returns ``{"ingested": None}`` when no engine is reachable.
 """
 
@@ -49,7 +49,7 @@ def register_langfuse_kg_tools(mcp: FastMCP):
             description="JSON string of extra list filters passed to the client method.",
         ),
     ) -> Any:
-        """Natively ingest Langfuse records into epistemic-graph as typed nodes.
+        """Natively ingest Langfuse records into medulla as typed nodes.
 
         Lists records of ``kind`` via the langfuse client and pushes them (with their
         :Session/:Person/:Trace/:Model links) into the knowledge graph via the fast

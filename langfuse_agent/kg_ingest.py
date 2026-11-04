@@ -1,7 +1,7 @@
-"""Native epistemic-graph ingestion for Langfuse records (typed graph nodes).
+"""Native medulla ingestion for Langfuse records (typed graph nodes).
 
 CONCEPT:AU-KG.ingest.enterprise-source-extractor. The langfuse-agent connector natively
-pushes its observability data into the ONE epistemic-graph knowledge graph as **typed OWL
+pushes its observability data into the ONE medulla knowledge graph as **typed OWL
 nodes** (``:Trace``, ``:Observation``, ``:Generation``, ``:Session``, ``:Score``,
 ``:Dataset``, ``:Prompt``, ``:Model``) plus links through ``scion_sdk.ingest`` --
 the generated ``SourceIngest`` client, not a local ingestion helper. Node ids follow

@@ -190,7 +190,7 @@ When query strings or parameters are provided, an LLM-free **Knowledge Graph res
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `langfuse-agent[mcp]` to add
 > FastMCP / FastAPI through `scion-sdk[mcp]`; the required Agent Utilities core
-> still carries `epistemic-graph[full]`. The `[agent-runtime]` extra additionally
+> still carries `medulla`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
 #### stdio Transport (local IDEs — Cursor, Claude Desktop, VS Code)
@@ -400,8 +400,8 @@ Pick the extra that matches what the operator want to run:
 
 | Extra | Installs | Use when |
 |-------|----------|----------|
-| `langfuse-agent[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `epistemic-graph[full]`) | The operator only run the **MCP server** (smallest install / image) |
-| `langfuse-agent[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `epistemic-graph[full]`) | The operator run the **integrated agent** |
+| `langfuse-agent[mcp]` | Connector-focused MCP server (`scion-sdk[mcp]` — FastMCP/FastAPI + `medulla`) | The operator only run the **MCP server** (smallest install / image) |
+| `langfuse-agent[agent]` | Agent runtime (`scion-sdk[agent-runtime,logfire]` — model orchestration + `medulla`) | The operator run the **integrated agent** |
 | `langfuse-agent[all]` | Everything (`mcp` + `agent` + `logfire`) | Development / both surfaces |
 
 ```bash
@@ -422,9 +422,9 @@ offline release profile selected by `--target`:
 
 | Build target | Contents | Entrypoint |
 |--------------|----------|------------|
-| `mcp` | `langfuse-agent[mcp]` — **connector-focused**, includes `epistemic-graph[full]`; no model-orchestration stack | `langfuse-mcp` |
+| `mcp` | `langfuse-agent[mcp]` — **connector-focused**, includes `medulla`; no model-orchestration stack | `langfuse-mcp` |
 | `mcp-local` | exact hash-locked wheelhouse for the same MCP profile; release assembly only | `langfuse-mcp` |
-| `agent` (default) | `langfuse-agent[agent]` — **agent runtime**, model orchestration + `epistemic-graph[full]` | `langfuse-agent` |
+| `agent` (default) | `langfuse-agent[agent]` — **agent runtime**, model orchestration + `medulla` | `langfuse-agent` |
 
 ```bash
 docker build --target mcp   -t langfuse-agent:mcp docker/
@@ -433,17 +433,17 @@ docker build --target agent -t langfuse-agent:agent docker/
 
 Promote and deploy only an operator-reviewed immutable image digest.
 
-### Knowledge-graph database (`epistemic-graph`)
+### Knowledge-graph database (`medulla`)
 
-Both `[mcp]` and `[agent]` carry the **epistemic-graph** engine through the required
-Agent Utilities core dependency (`epistemic-graph[full]`, including its folded numeric
+Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
+Agent Utilities core dependency (`medulla`, including its folded numeric
 kernel). The `[mcp]` extra keeps
 the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
-**epistemic-graph as a dedicated database service** and configure the runtime to use it.
+**medulla as a dedicated database service** and configure the runtime to use it.
 Deployment recipes (single-node + Raft HA), connection configuration, and architecture
 diagrams are documented in the
-[epistemic-graph deployment guide](https://knuckles-team.github.io/epistemic-graph/deployment/).
+[medulla deployment guide](https://knuckles-team.github.io/medulla/deployment/).
 
 ---
 
