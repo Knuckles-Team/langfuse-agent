@@ -1,4 +1,4 @@
-"""Native epistemic-graph typed-node ingestion -- Wire-First coverage.
+"""Native medulla typed-node ingestion -- Wire-First coverage.
 
 Exercises the real ``ingest_entities`` + record mappers (``ingest_traces`` /
 ``ingest_observations`` / ``ingest_sessions`` / ``ingest_scores``) against a fake
@@ -48,7 +48,7 @@ def _synthetic_persistence_key(monkeypatch):
 
 
 class _FakeTransport:
-    """Records every submitted request; no epistemic-graph engine required."""
+    """Records every submitted request; no medulla engine required."""
 
     def __init__(self) -> None:
         self.requests: list[SourceIngestionRequest] = []
