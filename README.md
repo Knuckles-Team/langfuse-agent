@@ -57,17 +57,14 @@ This server use dynamic Action-Routed tools to optimize token overhead and maxim
 Auto-generated — do not edit between the markers below.
 <!-- MCP-TOOLS-TABLE:START -->
 
-#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed` or `both`)
+#### Hand-written tools
 
 | MCP Tool | Toggle Env Var | Description |
 |----------|----------------|-------------|
-| `langfuse_datasets` | `LANGFUSE_DATASETSTOOL` | Perform langfuse_datasets operations. |
 | `langfuse_ingest` | `LANGFUSE_KGTOOL` | Perform langfuse_ingest operations. |
-| `langfuse_management` | `LANGFUSE_MANAGEMENTTOOL` | Perform langfuse_management operations. |
-| `langfuse_observability` | `LANGFUSE_OBSERVABILITYTOOL` | Perform langfuse_observability operations. |
-| `langfuse_prompts_models` | `LANGFUSE_PROMPTS_MODELSTOOL` | Perform langfuse_prompts_models operations. |
+| `langfuse_runtime_posture` | `LANGFUSE_OBSERVABILITYTOOL` | Perform langfuse_runtime_posture operations. |
 
-#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)
+#### Typed tools, one per API method
 
 <details>
 <summary>81 per-operation tools — one per current public API method (click to expand)</summary>
@@ -158,7 +155,7 @@ Auto-generated — do not edit between the markers below.
 
 </details>
 
-_5 action-routed tool(s) · 81 verbose 1:1 tool(s). `MCP_TOOL_MODE` selects the surface (`intent` default · `condensed` action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._
+_2 hand-written tool(s) · 81 typed per-method tool(s). Auto-generated — do not edit._
 <!-- MCP-TOOLS-TABLE:END -->
 
 Detailed tool schemas, parameter shapes, and validation constraints are preserved in [docs/usage.md](docs/usage.md).

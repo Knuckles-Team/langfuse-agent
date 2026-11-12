@@ -5,9 +5,9 @@ LLM-observability analytics on Langfuse via the langfuse-agent MCP server — li
 ## Scope
 
 Domain-typed read access to the Langfuse **observability** surface: traces,
-observations (spans/events/generations), sessions, scores and metrics. Prefer the
-condensed `langfuse_observability` tool — it action-routes to the Langfuse public
-API and returns trace-shaped records.
+observations (spans/events/generations), sessions, scores and metrics. Use the typed trace, observation,
+session, score and metrics tools; they call the Langfuse public API and return
+trace-shaped records.
 
 ## When to use
 - Triage recent traces (slowest, most expensive, errored) and read one by id.
@@ -22,7 +22,7 @@ API and returns trace-shaped records.
   → `langfuse-eval-datasets`.
 - Managing prompt versions or model/pricing definitions →
   `langfuse-prompt-management`.
-- Org/project/member/SCIM admin → the `langfuse_management` tool directly.
+- Org/project/member/SCIM admin → the project, organization and SCIM tools of `langfuse-agent-operations`.
 
 ## Prerequisites & environment
 Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
@@ -36,14 +36,20 @@ Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
 Arbora resolves the references in its parent process. Never place materialized
 keys in skill content or delegated tool arguments.
 
-`MCP_TOOL_MODE` (`condensed`|`verbose`|`both`) selects the condensed
-`langfuse_observability` tool (used below) vs. the one-to-one verbose tools.
 
-## Tools & actions
-| Condensed tool | Key actions |
-|----------------|-------------|
-| `langfuse_observability` | `trace_list`, `trace_get`, `observations_get_many`, `sessions_list`, `sessions_get`, `scores_get_many`, `metrics_get` |
-| `langfuse_ingest` | `kind=traces\|observations\|sessions\|scores` — list + push to KG |
+## Tools
+One typed tool per operation; pass each argument by name.
+
+| Tool | Use |
+|------|-----|
+| `langfuse_trace_list`, `langfuse_trace_get` | List and read traces |
+| `langfuse_observations_get_many` | Observations (generations, spans, events) |
+| `langfuse_sessions_list`, `langfuse_sessions_get` | Sessions |
+| `langfuse_scores_get_many` | Scores attached to traces and observations |
+| `langfuse_metrics_get` | Aggregated metrics for a query |
+| `langfuse_comments_get`, `langfuse_comments_get_by_id`, `langfuse_comments_create` | Comments on traces and observations |
+| `langfuse_ingest` | `kind=traces\|observations\|sessions\|scores` - list and push to the knowledge graph |
+| `langfuse_runtime_posture` | Whether content capture is on |
 
 ### Key parameters (passed as top-level tool args)
 - `trace_list`: `user_id`, `session_id`, `name`, `tags`, `from_timestamp`,

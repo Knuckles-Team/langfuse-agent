@@ -102,7 +102,7 @@ connector = Connector(
     api=LangfuseApi,
     get_client=get_client,
     tools="langfuse_agent.mcp_server",
-    instructions="langfuse-agent MCP Server — Condensed Action-Routed Tools.",
+    instructions="langfuse-agent MCP Server — one typed tool per Langfuse operation.",
 )
 
 __all__ = ["connector"]

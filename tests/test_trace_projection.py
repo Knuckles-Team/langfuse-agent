@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-import inspect
-from unittest.mock import AsyncMock, MagicMock
-
-import pytest
+from unittest.mock import MagicMock
 
 from langfuse_agent.api_client import LangfuseApi
-from langfuse_agent.tools import observability
 from langfuse_agent.trace_projection import is_certification_trace_projection
 
 _TRACE_ID = "1" * 32
@@ -139,49 +135,3 @@ def test_ordinary_trace_list_behavior_is_unchanged() -> None:
 
     assert result is raw
     assert request.call_args.kwargs["params"]["fields"] == "core,basic,io"
-
-
-@pytest.mark.asyncio
-async def test_auto_ingest_receives_only_the_projected_result(monkeypatch) -> None:
-    raw = {
-        "data": [
-            {
-                **_governed_row(),
-                "input": "private-input",
-                "output": "private-output",
-                "metadata": {
-                    **_governed_row()["metadata"],
-                    "free_form": "private-metadata",
-                },
-            }
-        ]
-    }
-    client, _ = _client(raw)
-    ingest = AsyncMock()
-    monkeypatch.setattr(observability, "get_client", lambda: client)
-    monkeypatch.setattr(observability, "auto_ingest", ingest)
-
-    class ToolCapture:
-        function = None
-
-        def tool(self, **_kwargs):
-            def capture(function):
-                self.function = function
-                return function
-
-            return capture
-
-    mcp = ToolCapture()
-    observability.register_langfuse_observability_tools(mcp)
-    assert mcp.function is not None
-    arguments = {
-        name: None
-        for name in inspect.signature(mcp.function).parameters
-        if name != "action"
-    }
-    arguments["fields"] = "core,basic,metadata"
-
-    result = await mcp.function(action="trace_list", **arguments)
-
-    assert result == {"data": [_governed_row()]}
-    ingest.assert_called_once_with("trace_list", result)

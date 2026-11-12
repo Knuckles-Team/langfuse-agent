@@ -10,10 +10,10 @@
 
 | Concept ID | Name | Description |
 |------------|------|-------------|
-| `CONCEPT:LF-OS.governance.lf` | Langfuse Datasets Operations | MCP tool domain `langfuse_datasets` — Action-routed dynamic tool registration |
-| `CONCEPT:LF-OS.governance.lf-2` | Langfuse Management Operations | MCP tool domain `langfuse_management` — Action-routed dynamic tool registration |
-| `CONCEPT:LF-OS.governance.lf-3` | Langfuse Observability Operations | MCP tool domain `langfuse_observability` — Action-routed dynamic tool registration |
-| `CONCEPT:LF-OS.governance.lf-4` | Langfuse Prompts Models Operations | MCP tool domain `langfuse_prompts_models` — Action-routed dynamic tool registration |
+| `CONCEPT:LF-OS.governance.lf` | Langfuse Datasets Operations | Typed dataset, dataset item, dataset run and annotation queue tools (`langfuse_datasets_*`, `langfuse_dataset_items_*`) |
+| `CONCEPT:LF-OS.governance.lf-2` | Langfuse Management Operations | Typed project, organization, SCIM and storage tools (`langfuse_projects_*`, `langfuse_organizations_*`, `langfuse_scim_*`) |
+| `CONCEPT:LF-OS.governance.lf-3` | Langfuse Observability Operations | Typed trace, observation, session, score and metrics tools (`langfuse_trace_*`, `langfuse_scores_*`) and `langfuse_runtime_posture` |
+| `CONCEPT:LF-OS.governance.lf-4` | Langfuse Prompts Models Operations | Typed prompt, model and LLM connection tools (`langfuse_prompts_*`, `langfuse_models_*`) |
 
 ## Cross-Project References (from scion-sdk)
 

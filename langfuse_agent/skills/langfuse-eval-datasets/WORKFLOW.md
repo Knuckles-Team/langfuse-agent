@@ -6,8 +6,7 @@ Evaluation datasets and scoring on Langfuse via the langfuse-agent MCP server â€
 
 Domain-typed access to the Langfuse **datasets & scoring** surface: datasets,
 dataset items, dataset runs, score configs and scores. Use these to curate test
-sets and grade LLM output. Prefer the condensed `langfuse_datasets` and
-`langfuse_observability` (score endpoints) tools.
+sets and grade LLM output. Use the dataset, score and annotation-queue tools.
 
 ## When to use
 - Create / list / read datasets and their items.
@@ -34,11 +33,17 @@ Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
 Arbora resolves the references in its parent process. Never place materialized
 keys in skill content or delegated tool arguments.
 
-## Tools & actions
-| Condensed tool | Key actions |
-|----------------|-------------|
-| `langfuse_datasets` | `datasets_list`, `datasets_create`, `datasets_get`, `dataset_items_create`, `dataset_items_list`, `dataset_items_get`, `dataset_run_items_create`, `datasets_get_runs`, `datasets_get_run` |
-| `langfuse_observability` | `score_configs_create`, `score_configs_get`, `score_configs_get_by_id`, `score_configs_update`, `scores_create`, `scores_get_many` |
+## Tools
+One typed tool per operation; pass each argument by name.
+
+| Area | Tools |
+|------|-------|
+| Datasets | `langfuse_datasets_list`, `langfuse_datasets_create`, `langfuse_datasets_get` |
+| Dataset items | `langfuse_dataset_items_create`, `langfuse_dataset_items_list`, `langfuse_dataset_items_get`, `langfuse_dataset_items_delete` |
+| Runs | `langfuse_dataset_run_items_create`, `langfuse_dataset_run_items_list`, `langfuse_datasets_get_runs`, `langfuse_datasets_get_run`, `langfuse_datasets_delete_run` |
+| Score configs | `langfuse_score_configs_create`, `langfuse_score_configs_get`, `langfuse_score_configs_get_by_id`, `langfuse_score_configs_update` |
+| Scores | `langfuse_scores_create`, `langfuse_scores_get_many` |
+| Annotation queues | `langfuse_annotation_queues_list_queues`, `langfuse_annotation_queues_create_queue`, `langfuse_annotation_queues_get_queue`, `langfuse_annotation_queues_list_queue_items`, `langfuse_annotation_queues_create_queue_item`, `langfuse_annotation_queues_get_queue_item`, `langfuse_annotation_queues_update_queue_item`, `langfuse_annotation_queues_delete_queue_item`, `langfuse_annotation_queues_create_queue_assignment`, `langfuse_annotation_queues_delete_queue_assignment` |
 
 ### Key parameters
 - Create/update endpoints take a `body` object; `datasets_get` /

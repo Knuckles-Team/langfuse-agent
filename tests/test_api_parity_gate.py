@@ -10,8 +10,8 @@ import asyncio
 import inspect
 
 import pytest
-from scion_sdk.connector import build_server
 from fastmcp import Client
+from scion_sdk.connector import build_server
 
 from langfuse_agent.api_client import LangfuseApi
 
@@ -47,3 +47,29 @@ def test_building_a_server_fails_closed_without_a_surface() -> None:
         build_server("no_such_connector_package", command_args=["--transport", "stdio"])
 
     assert raised.value is not None
+
+
+def test_no_action_dispatch_tool_is_served() -> None:
+    _, mcp = build_server("langfuse_agent", command_args=["--transport", "stdio"])
+
+    async def _schemas() -> dict[str, dict]:
+        async with Client(mcp) as client:
+            return {
+                tool.name: tool.inputSchema for tool in await client.list_tools()
+            }
+
+    schemas = asyncio.run(_schemas())
+    routed = [
+        name
+        for name, schema in schemas.items()
+        if "action" in schema.get("properties", {})
+    ]
+    assert not routed, f"tools that route an action argument: {routed}"
+    assert {
+        "langfuse_trace_list",
+        "langfuse_datasets_list",
+        "langfuse_prompts_get",
+        "langfuse_projects_get",
+        "langfuse_runtime_posture",
+        "langfuse_ingest",
+    } <= set(schemas)
