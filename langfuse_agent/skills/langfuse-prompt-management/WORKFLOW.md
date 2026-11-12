@@ -6,8 +6,8 @@ Prompt registry and model definitions on Langfuse via the langfuse-agent MCP ser
 
 Domain-typed access to the Langfuse **prompt registry & model definitions**:
 versioned prompt templates (with labels like `production`) and model/pricing
-records that drive generation-cost calculation. Prefer the condensed
-`langfuse_prompts_models` tool.
+records that drive generation-cost calculation. Use the typed prompt, model and
+LLM-connection tools.
 
 ## When to use
 - Create a new prompt or a new **version** of an existing prompt.
@@ -20,7 +20,7 @@ records that drive generation-cost calculation. Prefer the condensed
 - Reading what prompts actually did in production (traces/generations) →
   `langfuse-trace-analytics`.
 - Datasets, dataset runs, or scores → `langfuse-eval-datasets`.
-- LLM-connection / project admin → the `langfuse_management` tool.
+- LLM-connection / project admin → the project, organization and SCIM tools of `langfuse-agent-operations`.
 
 ## Prerequisites & environment
 Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
@@ -34,10 +34,14 @@ Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
 Arbora resolves the references in its parent process. Never place materialized
 keys in skill content or delegated tool arguments.
 
-## Tools & actions
-| Condensed tool | Key actions |
-|----------------|-------------|
-| `langfuse_prompts_models` | `prompts_list`, `prompts_get`, `prompts_create`, `prompts_delete`, `prompt_version_update`, `models_list`, `models_get`, `models_create`, `models_delete`, `llm_connections_list`, `llm_connections_upsert` |
+## Tools
+One typed tool per operation; pass each argument by name.
+
+| Area | Tools |
+|------|-------|
+| Prompts | `langfuse_prompts_list`, `langfuse_prompts_get`, `langfuse_prompts_create`, `langfuse_prompts_delete`, `langfuse_prompt_version_update` |
+| Models | `langfuse_models_list`, `langfuse_models_get`, `langfuse_models_create`, `langfuse_models_delete` |
+| LLM connections | `langfuse_llm_connections_list`, `langfuse_llm_connections_upsert` |
 
 ### Key parameters
 - `prompts_get`: `name` (required), optional `version` (int) or `label` (str).

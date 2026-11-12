@@ -9,15 +9,15 @@
 # Langfuse LLM-observability ontology — traces, observations, generations, sessions,
 # scores, datasets, prompts and models over the Langfuse public API. All classes and
 # properties live in the shared `:` (kg#) namespace; only the owl:Ontology node gets the
-# per-package IRI. Backs the langfuse-agent MCP tool surface (langfuse_observability /
-# langfuse_datasets / langfuse_prompts_models / langfuse_management). The shared
+# per-package IRI. Backs the langfuse-agent MCP tool surface (langfuse_trace_list /
+# langfuse_datasets_list / langfuse_prompts_list / langfuse_projects_get). The shared
 # :Person class models the end-user a trace is attributed to (userId).
 
 # --- classes (owl:Class) ---
 
 :Trace a owl:Class ;
     rdfs:label "Trace" ;
-    rdfs:comment "A single top-level execution captured by Langfuse — the root of a tree of observations, attributed to a user and grouped into a session (langfuse_observability trace_list/trace_get)." .
+    rdfs:comment "A single top-level execution captured by Langfuse — the root of a tree of observations, attributed to a user and grouped into a session (langfuse_trace_list, langfuse_trace_get)." .
 
 :Observation a owl:Class .
 
@@ -32,18 +32,18 @@
 
 :Score a owl:Class ;
     rdfs:label "Score" ;
-    rdfs:comment "An evaluation metric attached to a trace, observation or session — numeric, categorical or boolean, from a human, API, eval or annotation source (langfuse_observability scores_get_many)." .
+    rdfs:comment "An evaluation metric attached to a trace, observation or session — numeric, categorical or boolean, from a human, API, eval or annotation source (langfuse_scores_get_many)." .
 
 :ScoreConfig a owl:Class ;
     rdfs:label "Score Config" ;
-    rdfs:comment "The schema/definition of a score: its name, data type and allowed range or categories (langfuse_observability score_configs_get)." .
+    rdfs:comment "The schema/definition of a score: its name, data type and allowed range or categories (langfuse_score_configs_get)." .
 
 :Dataset a owl:Class .
 
 
 :DatasetRun a owl:Class ;
     rdfs:label "Dataset Run" ;
-    rdfs:comment "One execution of a dataset against a system under test, aggregating run items and their scores (langfuse_datasets datasets_get_runs)." .
+    rdfs:comment "One execution of a dataset against a system under test, aggregating run items and their scores (langfuse_datasets_get_runs)." .
 
 :Prompt a owl:Class .
 
@@ -184,3 +184,8 @@
     with their tree, attribution, evaluation and cost relationships — federated into the
     scion-sdk knowledge-graph hub. Reuses the shared :Person class for the end-user
     a trace is attributed to.""" .
+
+# connector-surface core roll-up
+<http://knuckles.team/kg#Trace> rdfs:subClassOf <http://knuckles.team/kg#Episode> .
+<http://knuckles.team/kg#DatasetRun> rdfs:subClassOf <http://knuckles.team/kg#Event> .
+<http://knuckles.team/kg#ScoreConfig> rdfs:subClassOf <http://knuckles.team/kg#ConfigurationItem> .

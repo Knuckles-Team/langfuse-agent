@@ -358,7 +358,7 @@ tokens, zone names, addresses, and hostnames outside the repository.
 1. Run `scion-sdk doctor` and confirm that the two credential references
    resolve without printing their values.
 2. Confirm that Arbora reports the native Langfuse provider as available.
-3. Call `langfuse_observability` with `action=trace_list` and a small `limit`.
+3. Call `langfuse_trace_list` with a small `limit`.
    An empty data list is a successful authenticated response.
 4. Emit one synthetic, content-free local-model trace and flush the exporter.
 5. Confirm only a neutral trace identifier or aggregate count, then apply the

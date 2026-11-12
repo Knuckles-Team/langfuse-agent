@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.9] - 2026-11-12
+
+### Changed
+- The hand-written `action`-routed tools `langfuse_observability`, `langfuse_datasets`, `langfuse_management` and `langfuse_prompts_models` are removed. Every Langfuse operation is served as one typed tool per `LangfuseApi` method (`langfuse_trace_list`, `langfuse_scores_get_many`, `langfuse_prompts_get`, ...); the privacy posture read is its own tool, `langfuse_runtime_posture`, and `langfuse_ingest` stays. The opt-in `LANGFUSE_KG_AUTO_INGEST` ingest after a read tool no longer runs inside the read tools; call `langfuse_ingest`, or let the platform ingest read results.
+- Declare tool-use contracts, prompt and skill links, data locations and business roles; ship an operator and three business-role agent prompts in place of the placeholder specialist prompt; root every ontology class in a core class.
+- Require `scion-sdk>=0.9.0,<0.10.0`.
+
 ## [2.3.8] - 2026-10-30
 
 ### Changed

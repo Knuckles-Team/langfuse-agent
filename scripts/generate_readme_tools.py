@@ -13,11 +13,8 @@ START = "<!-- MCP-TOOLS-TABLE:START -->"
 END = "<!-- MCP-TOOLS-TABLE:END -->"
 
 CONDENSED = (
-    ("langfuse_datasets", "LANGFUSE_DATASETSTOOL"),
     ("langfuse_ingest", "LANGFUSE_KGTOOL"),
-    ("langfuse_management", "LANGFUSE_MANAGEMENTTOOL"),
-    ("langfuse_observability", "LANGFUSE_OBSERVABILITYTOOL"),
-    ("langfuse_prompts_models", "LANGFUSE_PROMPTS_MODELSTOOL"),
+    ("langfuse_runtime_posture", "LANGFUSE_OBSERVABILITYTOOL"),
 )
 
 
@@ -57,7 +54,7 @@ def _render() -> str:
     lines = [
         START,
         "",
-        "#### Condensed action-routed tools (`MCP_TOOL_MODE=condensed` or `both`)",
+        "#### Hand-written tools",
         "",
         "| MCP Tool | Toggle Env Var | Description |",
         "|----------|----------------|-------------|",
@@ -69,7 +66,7 @@ def _render() -> str:
     lines.extend(
         [
             "",
-            "#### Verbose 1:1 API-mapped tools (`MCP_TOOL_MODE=verbose` or `both`)",
+            "#### Typed tools, one per API method",
             "",
             "<details>",
             f"<summary>{len(methods)} per-operation tools — one per current public API method (click to expand)</summary>",
@@ -87,9 +84,8 @@ def _render() -> str:
             "",
             "</details>",
             "",
-            f"_{len(CONDENSED)} action-routed tool(s) · {len(methods)} verbose 1:1 tool(s). "
-            "`MCP_TOOL_MODE` selects the surface (`intent` default · `condensed` "
-            "action-routed · `verbose` 1:1 · `both`). Auto-generated — do not edit._",
+            f"_{len(CONDENSED)} hand-written tool(s) · {len(methods)} typed per-method tool(s). "
+            "Auto-generated — do not edit._",
             END,
         ]
     )

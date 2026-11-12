@@ -38,9 +38,8 @@ def test_readme_tool_inventory_matches_current_generator() -> None:
     current = readme[readme.index(generator.START) :]
     current = current[: current.index(generator.END) + len(generator.END)]
     assert current == generator._render()
-    assert "`intent` default" in current
-    assert "5 action-routed tool(s)" in current
-    assert "81 verbose 1:1 tool(s)" in current
+    assert "2 hand-written tool(s)" in current
+    assert "81 typed per-method tool(s)" in current
 
 
 def test_local_documentation_links_resolve() -> None:

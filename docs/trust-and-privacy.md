@@ -70,10 +70,10 @@ already-installed module and does not invoke `uv`.
 
 Use a synthetic trace and inspect only status, counts, and neutral identifiers:
 
-1. call `langfuse_observability` with `action=runtime_posture` and require
+1. call `langfuse_runtime_posture` and require
    `content_capture_enabled=false` plus `metadata_only=true`;
 2. emit a synthetic local-LLM trace with no source documents or user fields;
-3. call `langfuse_observability` with `action=trace_list`, the exact opaque
+3. call `langfuse_trace_list` with the exact opaque
    tenant-qualified trace name, metadata-only fields, and a small limit;
 4. require exactly one matching trace whose controlled metadata binds the same
    run, configured model, model class, skill, and skill-body digest; and

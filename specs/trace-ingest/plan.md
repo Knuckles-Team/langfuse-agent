@@ -62,12 +62,12 @@ The repository pre-commit hooks apply: `ruff-format`, `connector-standard`, `sec
 
 ## Production caller chain
 
-1. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R001`: the `langfuse_observability` tool (`langfuse_agent/tools/observability.py::register_langfuse_observability_tools`, line 103) -> `auto_ingest` / `ingest_read_result` (`langfuse_agent/kg_ingest.py` lines 635 and 648) -> `_INGEST_BY_ACTION["scores_get_many"]` -> `ingest_scores` (line 581); `langfuse_ingest` in `langfuse_agent/tools/kg.py` also calls it.
+1. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R001`: the typed `langfuse_scores_get_many` tool, whose result the platform ingests through `ingest_read_result` (`langfuse_agent/kg_ingest.py`) -> `_INGEST_BY_ACTION["scores_get_many"]` -> `ingest_scores` (line 581); `langfuse_ingest` in `langfuse_agent/tools/kg.py` also calls it.
 2. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R002`: (planned) `langfuse_ingest` tool (`langfuse_agent/tools/kg.py::register_langfuse_kg_tools`, line 34) -> `_INGESTERS` map (line 25) -> new dataset and run-item ingesters in `langfuse_agent/kg_ingest.py`; no `:DatasetItem` or `:DatasetRunItem` mapping exists today.
 3. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R003`: (planned) the served SDK source sync (SCION-SOURCE-INGEST-R004.20) -> sources declared in `langfuse_agent/connector_sources.py::SOURCES` -> the connector served from `langfuse_agent:connector`; the dataset sources and the served sync test do not exist yet.
-4. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R004`: arbora `fleet.call` -> tools registered by `langfuse_agent/mcp_server.py` re-exports (`register_langfuse_observability_tools`, `register_langfuse_datasets_tools`, `register_langfuse_management_tools`, `register_langfuse_prompts_models_tools`) -> action-dispatch tools `langfuse_observability`, `langfuse_datasets`, `langfuse_management`, `langfuse_prompts_models` in `langfuse_agent/tools/`.
+4. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R004`: arbora `fleet.call` -> the typed tools that `Connector(api=LangfuseApi, ...)` in `langfuse_agent/__init__.py` serves, one per `LangfuseApi` method, plus the hand-written `langfuse_ingest` and `langfuse_runtime_posture` of `langfuse_agent/tools/`.
 5. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R005`: the `langfuse-mcp` entry point in `pyproject.toml` -> `langfuse_agent/__init__.py::connector` -> `IngestBinding(connector="langfuse-mcp", ...)` in `langfuse_agent/kg_ingest.py` (line 319) and `source_meta(server="langfuse-mcp")` in `langfuse_agent/connector_sources.py`.
-6. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R006`: `langfuse_observability` (`langfuse_agent/tools/observability.py` line 110) -> `auto_ingest` (`langfuse_agent/kg_ingest.py` line 635) -> `ingest_scores` (line 581), which builds the `:Score` node and the `scores` relationship today; `scoresRun`, `grader_kind` and `split` are not mapped yet.
+6. `CONN-LANGFUSE-AGENT-TRACE-INGEST-R006`: the typed `langfuse_scores_get_many` tool -> `ingest_read_result` (`langfuse_agent/kg_ingest.py`) -> `ingest_scores`, which builds the `:Score` node and the `scores` relationship today; `scoresRun`, `grader_kind` and `split` are not mapped yet.
 
 ## Cross-repo seams
 

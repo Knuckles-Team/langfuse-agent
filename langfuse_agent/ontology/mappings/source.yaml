@@ -4,8 +4,7 @@ ontology_source: langfuse
 sync:
 - preset: langfuse-sessions
   server: langfuse-mcp
-  tool: langfuse_observability
-  action: sessions_list
+  tool: langfuse_sessions_list
   records_path: data
   id_field: id
   title_field: id
@@ -15,8 +14,7 @@ sync:
   tool_schema_sha256: 2a854a0bd2d854bb5f8c97196459eb2e13932c2c327fc12dd6e5f70fbc9e33de
 - preset: langfuse-traces
   server: langfuse-mcp
-  tool: langfuse_observability
-  action: trace_list
+  tool: langfuse_trace_list
   records_path: data
   id_field: id
   title_field: name
