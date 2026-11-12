@@ -1,7 +1,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix core: <https://knuckles-team.github.io/ontology/core#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix : <http://knuckles.team/kg#> .
+@prefix : <https://knuckles-team.github.io/ontology/connector/langfuse#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -19,7 +20,8 @@
     rdfs:label "Trace" ;
     rdfs:comment "A single top-level execution captured by Langfuse — the root of a tree of observations, attributed to a user and grouped into a session (langfuse_trace_list, langfuse_trace_get)." .
 
-:Observation a owl:Class .
+:Observation a owl:Class ;
+    rdfs:subClassOf core:Observation .
 
 
 :Generation a owl:Class ;
@@ -27,10 +29,12 @@
     rdfs:label "Generation" ;
     rdfs:comment "An LLM generation observation (type=GENERATION): a model call carrying model name, model parameters, token usage and cost." .
 
-:Session a owl:Class .
+:Session a owl:Class ;
+    rdfs:subClassOf core:Session .
 
 
 :Score a owl:Class ;
+    rdfs:subClassOf core:Score ;
     rdfs:label "Score" ;
     rdfs:comment "An evaluation metric attached to a trace, observation or session — numeric, categorical or boolean, from a human, API, eval or annotation source (langfuse_scores_get_many)." .
 
@@ -38,17 +42,20 @@
     rdfs:label "Score Config" ;
     rdfs:comment "The schema/definition of a score: its name, data type and allowed range or categories (langfuse_score_configs_get)." .
 
-:Dataset a owl:Class .
+:Dataset a owl:Class ;
+    rdfs:subClassOf core:Dataset .
 
 
 :DatasetRun a owl:Class ;
     rdfs:label "Dataset Run" ;
     rdfs:comment "One execution of a dataset against a system under test, aggregating run items and their scores (langfuse_datasets_get_runs)." .
 
-:Prompt a owl:Class .
+:Prompt a owl:Class ;
+    rdfs:subClassOf core:Prompt .
 
 
-:Model a owl:Class .
+:Model a owl:Class ;
+    rdfs:subClassOf core:Model .
 
 
 # --- links (owl:ObjectProperty) ---
@@ -62,7 +69,7 @@
 :tracedUser a owl:ObjectProperty ;
     rdfs:label "traced user" ;
     rdfs:comment "Links a Trace (or Session) to the Person it is attributed to (userId)." ;
-    rdfs:range :Person .
+    rdfs:range core:Person .
 
 :belongsToTrace a owl:ObjectProperty ;
     rdfs:label "belongs to trace" ;
@@ -177,7 +184,7 @@
     rdfs:comment "Version number of a Prompt in the registry." ;
     rdfs:range xsd:integer .
 
-<http://knuckles.team/kg/langfuse> a owl:Ontology ;
+<https://knuckles-team.github.io/ontology/connector/langfuse> a owl:Ontology ;
     rdfs:label "Langfuse Observability Ontology" ;
     rdfs:comment """Langfuse LLM-observability model — traces, observations, generations,
     sessions, scores and score configs, datasets and dataset runs, prompts and models,
@@ -186,6 +193,6 @@
     a trace is attributed to.""" .
 
 # connector-surface core roll-up
-<http://knuckles.team/kg#Trace> rdfs:subClassOf <http://knuckles.team/kg#Episode> .
-<http://knuckles.team/kg#DatasetRun> rdfs:subClassOf <http://knuckles.team/kg#Event> .
-<http://knuckles.team/kg#ScoreConfig> rdfs:subClassOf <http://knuckles.team/kg#ConfigurationItem> .
+<https://knuckles-team.github.io/ontology/connector/langfuse#Trace> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#Episode> .
+<https://knuckles-team.github.io/ontology/connector/langfuse#DatasetRun> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#Event> .
+<https://knuckles-team.github.io/ontology/connector/langfuse#ScoreConfig> rdfs:subClassOf <https://knuckles-team.github.io/ontology/core#ConfigurationItem> .
