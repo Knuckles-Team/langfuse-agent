@@ -224,7 +224,7 @@ key and is never reused for that purpose.
 Certificate and hostname verification remain enabled. With no custom trust
 setting, the provider uses system trust. For a private authority, reference a
 PEM trust store containing the required root, roots, or chain certificates.
-Agent Utilities:
+Meristem:
 
 1. resolves the trust reference in memory;
 2. validates bounded, parseable CA certificates;
@@ -240,7 +240,7 @@ connection time.
 
 For mutual TLS, configure both `LANGFUSE_CLIENT_CERT_REF` and
 `LANGFUSE_CLIENT_KEY_REF`; optionally configure
-`LANGFUSE_CLIENT_KEY_PASSWORD_REF` for an encrypted key. Agent Utilities
+`LANGFUSE_CLIENT_KEY_PASSWORD_REF` for an encrypted key. Meristem
 validates the pair, creates a private process-lifetime client bundle, and passes
 that bundle to the provider's Requests transport. The references, password, and
 machine-specific paths are not persisted or logged.

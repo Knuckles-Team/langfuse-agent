@@ -186,7 +186,7 @@ When query strings or parameters are provided, an LLM-free **Knowledge Graph res
 <!-- MCP-CONFIG-EXAMPLES:START -->
 
 > **Install the connector-focused `[mcp]` extra.** Examples use `langfuse-agent[mcp]` to add
-> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Agent Utilities core
+> FastMCP / FastAPI through `scion-sdk[mcp]`; the required Meristem core
 > still carries `medulla`. The `[agent-runtime]` extra additionally
 > enables model orchestration.
 
@@ -433,7 +433,7 @@ Promote and deploy only an operator-reviewed immutable image digest.
 ### Knowledge-graph database (`medulla`)
 
 Both `[mcp]` and `[agent]` carry the **medulla** engine through the required
-Agent Utilities core dependency (`medulla`, including its folded numeric
+Meristem core dependency (`medulla`, including its folded numeric
 kernel). The `[mcp]` extra keeps
 the server connector-focused; `[agent]` also enables model orchestration. Local
 deployments can use the bundled engine. For production or shared state, run
