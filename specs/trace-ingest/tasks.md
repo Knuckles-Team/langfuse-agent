@@ -9,4 +9,4 @@ Each task line reads `- [ ] T001 [P] [US1] <ID>-R012.4 description`. Order is pr
 - [ ] T003 [US1] CONN-LANGFUSE-AGENT-TRACE-INGEST-R003 Hot-path proof.
 - [ ] T004 [US1] CONN-LANGFUSE-AGENT-TRACE-INGEST-R004 Action-dispatch tools split.
 - [x] T005 [US1] CONN-LANGFUSE-AGENT-TRACE-INGEST-R005 Fleet name.
-- [ ] T006 [US1] CONN-LANGFUSE-AGENT-TRACE-INGEST-R006 Score properties for evaluation corpora.
+- [x] T006 [US1] CONN-LANGFUSE-AGENT-TRACE-INGEST-R006 Score properties for evaluation corpora.

@@ -433,3 +433,49 @@ async def test_ingest_empty_is_rejected(ingest):
     service, _transport = ingest
     with pytest.raises(IngestError, match="at least one entity"):
         await ingest_entities([], ingest=service)
+
+
+@pytest.mark.spec("CONN-LANGFUSE-AGENT-TRACE-INGEST-R006")
+@pytest.mark.asyncio
+async def test_score_properties_for_evaluation_corpora(ingest):
+    service, transport = ingest
+    kinds = ["annotation", "human", "model_judge", "trace_metric", "api"]
+    scores = [
+        {
+            "id": f"sc-{kind}",
+            "value": 0.5,
+            "rangeMin": 0,
+            "rangeMax": 1,
+            "graderKind": kind,
+            "author": "rubric-judge",
+            "split": "dev",
+            "dataType": "NUMERIC",
+            "traceId": "tr-1",
+            "datasetRunId": "run-1",
+        }
+        for kind in kinds
+    ]
+    scores.append({**scores[0], "id": "sc-bad", "graderKind": "oracle"})
+    res = await ingest_scores(scores, ingest=service)
+    assert res == {"nodes": 6, "edges": 12}
+    records = [r for r in _all_records(transport) if _node_type_of(r) == "Score"]
+    assert len(records) == 6
+    seen = set()
+    for record in records:
+        payload = record.payload
+        if "grader_kind" not in payload:
+            continue
+        seen.add(payload["grader_kind"])
+        assert payload["value"] == "0.5"
+        assert payload["range_min"] == 0
+        assert payload["range_max"] == 1
+        # the persistence privacy guard redacts person-like author values
+        assert "author" in payload
+        assert payload["split"] == "dev"
+    assert seen == set(kinds)
+    relations = [
+        rel.relation_reference
+        for req in transport.requests
+        for rel in req.relationships
+    ]
+    assert sum(r.endswith("/scoresRun") for r in relations) == 6
