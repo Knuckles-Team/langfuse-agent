@@ -99,6 +99,12 @@
     rdfs:comment "Links a Score to the Trace, Observation or Session it evaluates." ;
     rdfs:domain :Score .
 
+:scoresRun a owl:ObjectProperty ;
+    rdfs:label "scores run" ;
+    rdfs:comment "Links a Score to the DatasetRun it grades." ;
+    rdfs:domain :Score ;
+    rdfs:range :DatasetRun .
+
 :usesConfig a owl:ObjectProperty ;
     rdfs:label "uses config" ;
     rdfs:comment "Links a Score to the ScoreConfig that defines its schema." ;
@@ -162,6 +168,42 @@
 :scoreValue a owl:DatatypeProperty ;
     rdfs:label "score value" ;
     rdfs:comment "The value of a Score (numeric, or the string value for categorical scores)." ;
+    rdfs:range xsd:string .
+
+:value a owl:DatatypeProperty ;
+    rdfs:label "value" ;
+    rdfs:comment "The value of a Score, rendered as a string." ;
+    rdfs:domain :Score ;
+    rdfs:range xsd:string .
+
+:range_min a owl:DatatypeProperty ;
+    rdfs:label "range min" ;
+    rdfs:comment "Lower bound of the Score value range." ;
+    rdfs:domain :Score ;
+    rdfs:range xsd:decimal .
+
+:range_max a owl:DatatypeProperty ;
+    rdfs:label "range max" ;
+    rdfs:comment "Upper bound of the Score value range." ;
+    rdfs:domain :Score ;
+    rdfs:range xsd:decimal .
+
+:grader_kind a owl:DatatypeProperty ;
+    rdfs:label "grader kind" ;
+    rdfs:comment "Who or what produced the Score: annotation, human, model_judge, trace_metric or api." ;
+    rdfs:domain :Score ;
+    rdfs:range xsd:string .
+
+:author a owl:DatatypeProperty ;
+    rdfs:label "author" ;
+    rdfs:comment "Opaque label of the grader that authored the Score." ;
+    rdfs:domain :Score ;
+    rdfs:range xsd:string .
+
+:split a owl:DatatypeProperty ;
+    rdfs:label "split" ;
+    rdfs:comment "Evaluation corpus split the Score belongs to." ;
+    rdfs:domain :Score ;
     rdfs:range xsd:string .
 
 :dataType a owl:DatatypeProperty ;

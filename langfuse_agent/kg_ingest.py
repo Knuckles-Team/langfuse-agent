@@ -75,13 +75,40 @@ _OBSERVABILITY_PERSISTENCE_POLICY: dict[str, tuple[str, frozenset[str]]] = {
     "model": ("Model", frozenset()),
     "score": (
         "Score",
-        frozenset({"scorevalue", "datatype", "timestamp"}),
+        frozenset(
+            {
+                "scorevalue",
+                "value",
+                "rangemin",
+                "rangemax",
+                "graderkind",
+                "author",
+                "split",
+                "datatype",
+                "timestamp",
+            }
+        ),
     ),
 }
-_NUMERIC_FIELDS = frozenset({"latency", "scorevalue", "totalcost", "totaltokens"})
+_NUMERIC_FIELDS = frozenset(
+    {
+        "latency",
+        "rangemax",
+        "rangemin",
+        "scorevalue",
+        "totalcost",
+        "totaltokens",
+        "value",
+    }
+)
+_LABEL_FIELDS = frozenset({"author", "split"})
+_LABEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 _TIMESTAMP_FIELDS = frozenset({"endtime", "starttime", "timestamp"})
 _ENUM_FIELDS = {
     "datatype": frozenset({"BOOLEAN", "CATEGORICAL", "NUMERIC"}),
+    "graderkind": frozenset(
+        {"annotation", "api", "human", "model_judge", "trace_metric"}
+    ),
     "level": frozenset({"DEBUG", "DEFAULT", "ERROR", "WARNING"}),
     "observationtype": frozenset({"EVENT", "GENERATION", "SPAN"}),
 }
@@ -113,7 +140,7 @@ def _safe_numeric_value(field: str, value: Any) -> Any | None:
         return None
     if not finite:
         return None
-    return str(value) if field == "scorevalue" else value
+    return str(value) if field in {"scorevalue", "value"} else value
 
 
 def _safe_timestamp_value(value: Any) -> str | None:
@@ -130,7 +157,15 @@ def _safe_enum_value(field: str, value: Any) -> str | None:
     if allowed is None:
         return None
     rendered = str(value or "").upper()
-    return rendered if rendered in allowed else None
+    for member in allowed:
+        if member.upper() == rendered:
+            return member
+    return None
+
+
+def _safe_label_value(value: Any) -> str | None:
+    rendered = str(value or "")
+    return rendered if _LABEL_RE.fullmatch(rendered) else None
 
 
 def _safe_observability_value(field: str, value: Any) -> Any | None:
@@ -142,6 +177,8 @@ def _safe_observability_value(field: str, value: Any) -> Any | None:
         return _safe_numeric_value(field, value)
     if field in _TIMESTAMP_FIELDS:
         return _safe_timestamp_value(value)
+    if field in _LABEL_FIELDS:
+        return _safe_label_value(value)
     return _safe_enum_value(field, value)
 
 
@@ -578,6 +615,13 @@ async def ingest_sessions(
     return await ingest_entities(entities, ingest=ingest)
 
 
+def _first(record: dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        if record.get(key) is not None:
+            return record[key]
+    return None
+
+
 async def ingest_scores(
     scores: list[dict[str, Any]],
     *,
@@ -596,6 +640,12 @@ async def ingest_scores(
                 "id": node_id,
                 "node_type": "Score",
                 "scoreValue": sc.get("value"),
+                "value": sc.get("value"),
+                "range_min": _first(sc, "rangeMin", "range_min"),
+                "range_max": _first(sc, "rangeMax", "range_max"),
+                "grader_kind": _first(sc, "graderKind", "grader_kind"),
+                "author": _first(sc, "author", "authorUserId"),
+                "split": sc.get("split"),
                 "dataType": sc.get("dataType"),
                 "timestamp": sc.get("timestamp"),
                 "externalToolId": str(sid),
@@ -617,6 +667,15 @@ async def ingest_scores(
                     "source": node_id,
                     "target": f"langfuse:observation:{oid}",
                     "relationship": "scores",
+                }
+            )
+        rid = _first(sc, "datasetRunId", "runId")
+        if rid:
+            relationships.append(
+                {
+                    "source": node_id,
+                    "target": f"langfuse:datasetrun:{rid}",
+                    "relationship": "scoresRun",
                 }
             )
     return await ingest_entities(entities, relationships, ingest=ingest)
