@@ -20,43 +20,18 @@
     rdfs:label "Trace" ;
     rdfs:comment "A single top-level execution captured by Langfuse — the root of a tree of observations, attributed to a user and grouped into a session (langfuse_trace_list, langfuse_trace_get)." .
 
-:Observation a owl:Class ;
-    rdfs:subClassOf core:Observation .
-
-
 :Generation a owl:Class ;
-    rdfs:subClassOf :Observation ;
+    rdfs:subClassOf core:Observation ;
     rdfs:label "Generation" ;
     rdfs:comment "An LLM generation observation (type=GENERATION): a model call carrying model name, model parameters, token usage and cost." .
-
-:Session a owl:Class ;
-    rdfs:subClassOf core:Session .
-
-
-:Score a owl:Class ;
-    rdfs:subClassOf core:Score ;
-    rdfs:label "Score" ;
-    rdfs:comment "An evaluation metric attached to a trace, observation or session — numeric, categorical or boolean, from a human, API, eval or annotation source (langfuse_scores_get_many)." .
 
 :ScoreConfig a owl:Class ;
     rdfs:label "Score Config" ;
     rdfs:comment "The schema/definition of a score: its name, data type and allowed range or categories (langfuse_score_configs_get)." .
 
-:Dataset a owl:Class ;
-    rdfs:subClassOf core:Dataset .
-
-
 :DatasetRun a owl:Class ;
     rdfs:label "Dataset Run" ;
     rdfs:comment "One execution of a dataset against a system under test, aggregating run items and their scores (langfuse_datasets_get_runs)." .
-
-:Prompt a owl:Class ;
-    rdfs:subClassOf core:Prompt .
-
-
-:Model a owl:Class ;
-    rdfs:subClassOf core:Model .
-
 
 # --- links (owl:ObjectProperty) ---
 
@@ -64,7 +39,7 @@
     rdfs:label "in session" ;
     rdfs:comment "Links a Trace to the Session that groups it." ;
     rdfs:domain :Trace ;
-    rdfs:range :Session .
+    rdfs:range core:Session .
 
 :tracedUser a owl:ObjectProperty ;
     rdfs:label "traced user" ;
@@ -79,50 +54,44 @@
 :parentObservation a owl:ObjectProperty ;
     rdfs:label "parent observation" ;
     rdfs:comment "Links a child Observation to its parent Observation within a trace tree." ;
-    rdfs:domain :Observation ;
-    rdfs:range :Observation .
+    rdfs:domain core:Observation ;
+    rdfs:range core:Observation .
 
 :usedModel a owl:ObjectProperty ;
     rdfs:label "used model" ;
     rdfs:comment "Links a Generation to the Model that produced it." ;
     rdfs:domain :Generation ;
-    rdfs:range :Model .
+    rdfs:range core:Model .
 
 :usedPrompt a owl:ObjectProperty ;
     rdfs:label "used prompt" ;
     rdfs:comment "Links a Generation to the Prompt version it rendered." ;
     rdfs:domain :Generation ;
-    rdfs:range :Prompt .
+    rdfs:range core:Prompt .
 
 :scores a owl:ObjectProperty ;
     rdfs:label "scores" ;
     rdfs:comment "Links a Score to the Trace, Observation or Session it evaluates." ;
-    rdfs:domain :Score .
-
-:scoresRun a owl:ObjectProperty ;
-    rdfs:label "scores run" ;
-    rdfs:comment "Links a Score to the DatasetRun it grades." ;
-    rdfs:domain :Score ;
-    rdfs:range :DatasetRun .
+    rdfs:domain core:Score .
 
 :usesConfig a owl:ObjectProperty ;
     rdfs:label "uses config" ;
     rdfs:comment "Links a Score to the ScoreConfig that defines its schema." ;
-    rdfs:domain :Score ;
+    rdfs:domain core:Score ;
     rdfs:range :ScoreConfig .
 
 :runOf a owl:ObjectProperty ;
     rdfs:label "run of" ;
     rdfs:comment "Links a DatasetRun to the Dataset it executed against." ;
     rdfs:domain :DatasetRun ;
-    rdfs:range :Dataset .
+    rdfs:range core:Dataset .
 
 # --- fields (owl:DatatypeProperty) ---
 
 :observationType a owl:DatatypeProperty ;
     rdfs:label "observation type" ;
     rdfs:comment "Kind of observation: SPAN, EVENT or GENERATION." ;
-    rdfs:domain :Observation ;
+    rdfs:domain core:Observation ;
     rdfs:range xsd:string .
 
 :startTime a owl:DatatypeProperty ;
@@ -170,40 +139,34 @@
     rdfs:comment "The value of a Score (numeric, or the string value for categorical scores)." ;
     rdfs:range xsd:string .
 
-:value a owl:DatatypeProperty ;
-    rdfs:label "value" ;
-    rdfs:comment "The value of a Score, rendered as a string." ;
-    rdfs:domain :Score ;
-    rdfs:range xsd:string .
-
 :range_min a owl:DatatypeProperty ;
     rdfs:label "range min" ;
     rdfs:comment "Lower bound of the Score value range." ;
-    rdfs:domain :Score ;
+    rdfs:domain core:Score ;
     rdfs:range xsd:decimal .
 
 :range_max a owl:DatatypeProperty ;
     rdfs:label "range max" ;
     rdfs:comment "Upper bound of the Score value range." ;
-    rdfs:domain :Score ;
+    rdfs:domain core:Score ;
     rdfs:range xsd:decimal .
 
 :grader_kind a owl:DatatypeProperty ;
     rdfs:label "grader kind" ;
     rdfs:comment "Who or what produced the Score: annotation, human, model_judge, trace_metric or api." ;
-    rdfs:domain :Score ;
+    rdfs:domain core:Score ;
     rdfs:range xsd:string .
 
 :author a owl:DatatypeProperty ;
     rdfs:label "author" ;
     rdfs:comment "Opaque label of the grader that authored the Score." ;
-    rdfs:domain :Score ;
+    rdfs:domain core:Score ;
     rdfs:range xsd:string .
 
 :split a owl:DatatypeProperty ;
     rdfs:label "split" ;
     rdfs:comment "Evaluation corpus split the Score belongs to." ;
-    rdfs:domain :Score ;
+    rdfs:domain core:Score ;
     rdfs:range xsd:string .
 
 :dataType a owl:DatatypeProperty ;
@@ -220,11 +183,6 @@
     rdfs:label "release" ;
     rdfs:comment "Release identifier of the code that produced a Trace." ;
     rdfs:range xsd:string .
-
-:promptVersion a owl:DatatypeProperty ;
-    rdfs:label "prompt version" ;
-    rdfs:comment "Version number of a Prompt in the registry." ;
-    rdfs:range xsd:integer .
 
 <https://knuckles-team.github.io/ontology/connector/langfuse> a owl:Ontology ;
     rdfs:label "Langfuse Observability Ontology" ;
