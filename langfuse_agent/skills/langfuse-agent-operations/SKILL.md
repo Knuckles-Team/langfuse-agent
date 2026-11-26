@@ -27,6 +27,23 @@ Use the provider's governed MCP tools through Arbora delegation.
 - Require explicit approval for destructive, externally visible, or irreversible actions.
 - Keep runtime traces policy-scoped and privacy-sanitized.
 
+## Steps
+
+1. Establish the session and confirm the project by calling `langfuse_runtime_posture`. Verify it returns without an authentication error.
+2. Discover the task area from "Tools by task" below, for example `langfuse_trace_list` for traces. Verify every tool name you plan to call is listed there.
+3. Run read-only inspection first (for example `langfuse_trace_list`, `langfuse_prompts_list` or `langfuse_datasets_list`). Verify the ids you will change exist in the result.
+4. For a change, present the impact and execute the single mutating tool (for example `langfuse_prompts_create`). Verify the response echoes the changed object.
+5. For deletions such as `langfuse_trace_delete`, confirm the ids with the requester first. Verify a follow-up read no longer returns them.
+6. Re-read the changed object with its matching get tool, for example `langfuse_prompts_get`. Verify it matches the intended state before reporting completion.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Tool name unknown | Stale tool surface or wrong name | Re-read the "Tools by task" list below and call the exact listed tool. |
+| 401 or 403 from Langfuse | Missing or wrong project keys, or insufficient role | Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` for the intended project, then call `langfuse_runtime_posture`. |
+| Delete or admin call refused | No explicit approval for a destructive action | Obtain explicit approval naming the ids, then call the delete tool again with those ids. |
+
 ## Specialized workflows
 
 Read [the workflow catalog](references/catalog.md) only when the request needs a

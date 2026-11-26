@@ -56,6 +56,23 @@ owning spec row in the commit trailer.
   `langfuse-mcp` project script. Every delivered
   requirement needs a bound focused test.
 
+## Steps
+
+1. Find the owning spec row with `git grep -n "<term>" -- specs`. Verify a row exists before editing code.
+2. Create a worktree based on `origin/main` with `git worktree add`. Verify `git status --short` is clean.
+3. Make the smallest change in the existing module (`langfuse_agent/api/`, `langfuse_agent/tools/` or `langfuse_agent/auth.py`). Verify with `git diff --stat` that only intended files changed.
+4. Run the focused test with `uv run --locked --extra test pytest -q tests/test_langfuse_development_skill.py`. Verify it passes.
+5. Run the gates with `uvx pre-commit run --all-files`. Verify every hook reports Passed.
+6. Stage an explicit path allowlist with `git add -- <paths>` and commit with the `Spec:` trailer. Verify `git diff --cached --name-status` lists only reviewed paths.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Locked environment out of date | `uv.lock` does not match `pyproject.toml` | Run `uv sync --locked` in the worktree and re-run the failing test; do not edit the lock for a docs slice. |
+| Hook fails on the commit | A gate found a formatting, spelling or spec problem | Read the hook output, fix the named file, and commit again with hooks active. |
+| Test cannot find the skill | Skill folder or `package-data` entry moved | Check `pyproject.toml` package-data includes `skills/**` and the folder path matches the test constant. |
+
 ## Setup and gates
 
 Use the pinned environment from `uv sync --locked`, then run the shared gates:
