@@ -2,13 +2,7 @@
 name: langfuse-eval-datasets
 skill_type: skill
 description: >-
-  Evaluation datasets and scoring on Langfuse via the langfuse-agent MCP server —
-  create and read datasets and dataset items, launch/read dataset runs, define
-  score configs, and write scores against traces/observations/sessions. Use when
-  the agent must build or inspect an eval set, compare model/prompt versions
-  across a dataset run, or attach numeric/categorical/boolean scores. Do NOT use
-  for reading production traces/generations (use langfuse-trace-analytics) or the
-  prompt/model registry (use langfuse-prompt-management).
+  Langfuse datasets and scoring via the langfuse-agent MCP server: create and read datasets, items and runs, define score configs, write scores. Use to build or inspect an eval set or attach scores. Do NOT use for reading traces (langfuse-trace-analytics) or prompts/models (langfuse-prompt-management).
 license: MIT
 tags: [langfuse, evaluation, datasets, scores, llm, mcp]
 metadata:
@@ -16,6 +10,8 @@ metadata:
   version: '0.1.0'
 ---
 # Langfuse Eval Datasets
+
+Scope: Evaluation datasets and scoring on Langfuse via the langfuse-agent MCP server — create and read datasets and dataset items, launch/read dataset runs, define score configs, and write scores against traces/observations/sessions. Use when the agent must build or inspect an eval set, compare model/prompt versions across a dataset run, or attach numeric/categorical/boolean scores. Do NOT use for reading production traces/generations (use langfuse-trace-analytics) or the prompt/model registry (use langfuse-prompt-management).
 
 Domain-typed access to the Langfuse **datasets & scoring** surface: datasets,
 dataset items, dataset runs, score configs and scores. Use these to curate test
@@ -42,6 +38,22 @@ Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
 | `LANGFUSE_PUBLIC_KEY` | ✅ | Project public key (`pk-lf-…`) |
 | `LANGFUSE_SECRET_KEY` | ✅ | Project secret key (`sk-lf-…`) |
 | `LANGFUSE_HOST` | optional | Base URL (defaults to Langfuse Cloud) |
+
+## Steps
+
+1. Pick the dataset by calling `langfuse_datasets_list`. Verify the dataset name you need appears, and create it with `langfuse_datasets_create` (`body`) only if it does not.
+2. Add test cases with `langfuse_dataset_items_create` (`body`). Verify `langfuse_dataset_items_list` returns the new items.
+3. Define the score schema with `langfuse_score_configs_create` (`body` with name, `dataType`, range or categories). Verify `langfuse_score_configs_get` lists the config.
+4. Link a produced trace to a dataset item with `langfuse_dataset_run_items_create` (`body`). Verify `langfuse_datasets_get_runs` (`dataset_name`) shows the run.
+5. Write the score with `langfuse_scores_create` (`body` with name, value, `traceId`, `dataType`). Verify `langfuse_scores_get_many` (`trace_id`) returns it.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Dataset not found | Datasets are addressed by name and the name was misspelled | Call `langfuse_datasets_list`, copy the exact name, and retry `langfuse_datasets_get` with `dataset_name`. |
+| Score rejected | `dataType` does not match the score config (numeric versus categorical or boolean) | Read the config with `langfuse_score_configs_get_by_id` and resend `langfuse_scores_create` with the matching value field. |
+| Run item rejected | The trace referenced does not exist yet | Create the trace first, confirm it with `langfuse_trace_get`, then call `langfuse_dataset_run_items_create` again. |
 
 ## Tools
 One typed tool per operation; pass each argument by name.

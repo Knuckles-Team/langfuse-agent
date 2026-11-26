@@ -2,13 +2,7 @@
 name: langfuse-prompt-management
 skill_type: skill
 description: >-
-  Prompt registry and model definitions on Langfuse via the langfuse-agent MCP
-  server — create, version, label, and fetch prompt templates, and manage the
-  model/pricing definitions used to compute generation cost. Use when the agent
-  must publish a new prompt version, resolve the production prompt for an app,
-  promote a label, or register a model match-pattern with a unit price. Do NOT
-  use for reading traces/generations (use langfuse-trace-analytics) or building
-  eval datasets and scores (use langfuse-eval-datasets).
+  Langfuse prompt registry and model definitions via the langfuse-agent MCP server: create, version, label and fetch prompts, manage model pricing. Use to publish a prompt version or promote a label. Do NOT use for traces (langfuse-trace-analytics) or datasets and scores (langfuse-eval-datasets).
 license: MIT
 tags: [langfuse, prompts, models, registry, llm, mcp]
 metadata:
@@ -16,6 +10,8 @@ metadata:
   version: '0.1.0'
 ---
 # Langfuse Prompt Management
+
+Scope: Prompt registry and model definitions on Langfuse via the langfuse-agent MCP server — create, version, label, and fetch prompt templates, and manage the model/pricing definitions used to compute generation cost. Use when the agent must publish a new prompt version, resolve the production prompt for an app, promote a label, or register a model match-pattern with a unit price. Do NOT use for reading traces/generations (use langfuse-trace-analytics) or building eval datasets and scores (use langfuse-eval-datasets).
 
 Domain-typed access to the Langfuse **prompt registry & model definitions**:
 versioned prompt templates (with labels like `production`) and model/pricing
@@ -43,6 +39,22 @@ Connect via the `mcp-client` skill against the **`langfuse-agent`** MCP server.
 | `LANGFUSE_PUBLIC_KEY` | ✅ | Project public key (`pk-lf-…`) |
 | `LANGFUSE_SECRET_KEY` | ✅ | Project secret key (`sk-lf-…`) |
 | `LANGFUSE_HOST` | optional | Base URL (defaults to Langfuse Cloud) |
+
+## Steps
+
+1. List existing prompts with `langfuse_prompts_list`. Verify whether the prompt name already exists before creating anything.
+2. Read the current prompt with `langfuse_prompts_get` (`name`, plus `label` or `version`). Verify the returned version and labels are what you expect.
+3. Publish a new version with `langfuse_prompts_create` (`body` with name, prompt, type, labels). Verify a follow-up `langfuse_prompts_get` returns the incremented version.
+4. Move a label such as `production` with `langfuse_prompt_version_update`. Verify `langfuse_prompts_get` with `label="production"` resolves to the target version.
+5. Register pricing for a model with `langfuse_models_create` (`body` with `modelName`, `matchPattern`, `unit`, prices). Verify `langfuse_models_list` shows the new entry.
+
+## Failure recovery
+
+| Failure | Cause | Recovery |
+|---------|-------|----------|
+| Prompt not found | Wrong `name`, or the label or version does not exist | Call `langfuse_prompts_list` for exact names, then re-read with a valid `label` or `version`. |
+| Label resolves to the wrong version | The label pointer was not moved | Call `langfuse_prompt_version_update` for the intended version and confirm with `langfuse_prompts_get` using `label`. |
+| Model pricing not applied | `matchPattern` regex does not match the generation's model name | Fix the regex, recreate with `langfuse_models_create`, and remove the bad entry with `langfuse_models_delete`. |
 
 ## Tools
 One typed tool per operation; pass each argument by name.
