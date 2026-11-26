@@ -20,9 +20,9 @@
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/langfuse-agent)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/langfuse-agent)
 
-> **Documentation** — Installation, deployment, usage across the API, CLI, and MCP
-> interfaces, and guidance for provisioning the Langfuse platform are maintained in
-> the [official documentation](https://knuckles-team.github.io/langfuse-agent/).
+> **Documentation** — Installation, deployment, and usage across the API, CLI, MCP,
+> and A2A agent interfaces are maintained in the
+> [official documentation](https://knuckles-team.github.io/langfuse-agent/).
 
 ---
 
@@ -306,6 +306,8 @@ the detailed transport contract.
   `MCP_ALLOWED_HOSTS` in `AgentConfig`.
 <!-- END GENERATED: additional-deployment-options -->
 
+---
+
 ## Agent
 
 This repository features a fully integrated Pydantic AI Graph Agent. It communicates over the **Agent Control Protocol (ACP)** and interacts smoothly with the **Agent Web UI (AG-UI)** and Terminal interface.
@@ -388,6 +390,73 @@ These names match the authoritative "Toggle Env Var" column in the
 - `LANGFUSE_DATASETSTOOL` (Default: `True`): Toggles datasets and annotation queue tools.
 - `LANGFUSE_PROMPTS_MODELSTOOL` (Default: `True`): Toggles prompt template and model connectivity tools.
 - `LANGFUSE_MANAGEMENTTOOL` (Default: `True`): Toggles comments, SCIM, and project management tools.
+
+---
+
+## Environment Variables
+
+<!-- ENV-VARS-TABLE:START -->
+
+#### Package environment variables
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `HOST` | `127.0.0.1` |  |
+| `PORT` | `8004` |  |
+| `TRANSPORT` | `stdio` | options: stdio, streamable-http, sse |
+| `ENABLE_OTEL` | `False` |  |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `https://otel.example.invalid` |  |
+| `OTEL_EXPORTER_OTLP_PUBLIC_KEY_REF` | — |  |
+| `OTEL_EXPORTER_OTLP_SECRET_KEY_REF` | — |  |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
+| `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
+| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
+| `EUNOMIA_REMOTE_URL` | `http://eunomia-server:8000` |  |
+| `LANGFUSE_BASE_URL` | `http://localhost:8080` | LANGFUSE_BASE_URL takes precedence when set; otherwise LANGFUSE_HOST is used. |
+| `LANGFUSE_HOST` | — |  |
+| `LANGFUSE_PUBLIC_KEY` | secret-injected |  |
+| `LANGFUSE_SECRET_KEY` | secret-injected |  |
+| `LANGFUSE_PUBLIC_KEY_REF` | — | Secret references (resolved at runtime) — alternatives to the plaintext keys above: |
+| `LANGFUSE_SECRET_KEY_REF` | — |  |
+| `LANGFUSE_TLS_PROFILE_REF` | — |  |
+| `LANGFUSE_CA_BUNDLE_REF` | — |  |
+| `LANGFUSE_CLIENT_CERT_REF` | — |  |
+| `LANGFUSE_CLIENT_KEY_REF` | — |  |
+| `LANGFUSE_CLIENT_KEY_PASSWORD_REF` | — |  |
+| `LANGFUSE_PERSISTENCE_HMAC_KEY_REF` | — | Required only when LANGFUSE_KG_AUTO_INGEST=True. |
+| `AUTH_TYPE` | `key` | options: key, delegated, none |
+| `DEFAULT_AGENT_NAME` | `"Langfuse Agent"` |  |
+| `AGENT_DESCRIPTION` | `"AI agent for Langfuse Agent operations."` |  |
+| `AGENT_SYSTEM_PROMPT` | `""` |  |
+| `MCP_TOOL_MODE` | `intent` | MCP_TOOL_MODE selects intent (default), condensed, verbose, or both surfaces. |
+| `LANGFUSE_OBSERVABILITYTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
+| `LANGFUSE_DATASETSTOOL` | `True` |  |
+| `LANGFUSE_PROMPTS_MODELSTOOL` | `True` |  |
+| `LANGFUSE_MANAGEMENTTOOL` | `True` |  |
+| `LANGFUSE_KGTOOL` | `True` |  |
+
+#### Inherited scion-sdk variables (apply to every connector)
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
+| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
+| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
+| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
+| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
+| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
+| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
+| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
+| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
+| `DEBUG` | `False` | Verbose logging |
+| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
+| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
+| `PROVIDER` | `openai` | LLM provider for the agent |
+| `MODEL_ID` | `gpt-4o` | Model id for the agent |
+| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
+
+_33 package + 15 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
+<!-- ENV-VARS-TABLE:END -->
 
 ---
 
@@ -478,7 +547,6 @@ Contributions are welcome! Please ensure code quality by running local checks be
 - Validate type-safety with `mypy .`
 - Ran test suites using `pytest`
 
-
 <!-- BEGIN scion-sdk-deployment (generated; do not edit between markers) -->
 
 ## Deploy with `scion-sdk-deployment`
@@ -500,71 +568,6 @@ environment-specific endpoint. Supply those at runtime through `AgentConfig` and
 configured secret provider.
 
 <!-- END scion-sdk-deployment -->
-
-## Environment Variables
-
-<!-- ENV-VARS-TABLE:START -->
-
-#### Package environment variables
-
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `HOST` | `127.0.0.1` |  |
-| `PORT` | `8004` |  |
-| `TRANSPORT` | `stdio` | options: stdio, streamable-http, sse |
-| `ENABLE_OTEL` | `False` |  |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `https://otel.example.invalid` |  |
-| `OTEL_EXPORTER_OTLP_PUBLIC_KEY_REF` | — |  |
-| `OTEL_EXPORTER_OTLP_SECRET_KEY_REF` | — |  |
-| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |  |
-| `EUNOMIA_TYPE` | `none` | options: none, embedded, remote |
-| `EUNOMIA_POLICY_FILE` | `mcp_policies.json` |  |
-| `EUNOMIA_REMOTE_URL` | `http://eunomia-server:8000` |  |
-| `LANGFUSE_BASE_URL` | `http://localhost:8080` | LANGFUSE_BASE_URL takes precedence when set; otherwise LANGFUSE_HOST is used. |
-| `LANGFUSE_HOST` | — |  |
-| `LANGFUSE_PUBLIC_KEY` | secret-injected |  |
-| `LANGFUSE_SECRET_KEY` | secret-injected |  |
-| `LANGFUSE_PUBLIC_KEY_REF` | — | Secret references (resolved at runtime) — alternatives to the plaintext keys above: |
-| `LANGFUSE_SECRET_KEY_REF` | — |  |
-| `LANGFUSE_TLS_PROFILE_REF` | — |  |
-| `LANGFUSE_CA_BUNDLE_REF` | — |  |
-| `LANGFUSE_CLIENT_CERT_REF` | — |  |
-| `LANGFUSE_CLIENT_KEY_REF` | — |  |
-| `LANGFUSE_CLIENT_KEY_PASSWORD_REF` | — |  |
-| `LANGFUSE_PERSISTENCE_HMAC_KEY_REF` | — | Required only when LANGFUSE_KG_AUTO_INGEST=True. |
-| `AUTH_TYPE` | `key` | options: key, delegated, none |
-| `DEFAULT_AGENT_NAME` | `"Langfuse Agent"` |  |
-| `AGENT_DESCRIPTION` | `"AI agent for Langfuse Agent operations."` |  |
-| `AGENT_SYSTEM_PROMPT` | `""` |  |
-| `MCP_TOOL_MODE` | `intent` | MCP_TOOL_MODE selects intent (default), condensed, verbose, or both surfaces. |
-| `LANGFUSE_OBSERVABILITYTOOL` | `True` | These names match the authoritative "Toggle Env Var" column in the README MCP tools table (condensed action-routed surface). |
-| `LANGFUSE_DATASETSTOOL` | `True` |  |
-| `LANGFUSE_PROMPTS_MODELSTOOL` | `True` |  |
-| `LANGFUSE_MANAGEMENTTOOL` | `True` |  |
-| `LANGFUSE_KGTOOL` | `True` |  |
-
-#### Inherited scion-sdk variables (apply to every connector)
-
-| Variable | Example | Description |
-|----------|---------|-------------|
-| `MCP_ENABLED_TOOLS` | — | Comma-separated tool allow-list |
-| `MCP_DISABLED_TOOLS` | — | Comma-separated tool deny-list |
-| `MCP_ENABLED_TAGS` | — | Comma-separated tag allow-list |
-| `MCP_DISABLED_TAGS` | — | Comma-separated tag deny-list |
-| `MCP_CLIENT_AUTH` | — | Outbound MCP child auth: `oidc-client-credentials` \| `basic` \| `none` |
-| `OIDC_CLIENT_ID` | — | OIDC client id (service-account auth) |
-| `OIDC_CLIENT_SECRET_REF` | `secret://identity/oidc-client-secret` | Runtime secret reference for the OIDC service account |
-| `MCP_BASIC_AUTH_USERNAME` | — | HTTP Basic username (`MCP_CLIENT_AUTH=basic`) |
-| `MCP_BASIC_AUTH_PASSWORD_REF` | `secret://identity/mcp-basic-password` | Runtime secret reference for HTTP Basic auth (`MCP_CLIENT_AUTH=basic`) |
-| `DEBUG` | `False` | Verbose logging |
-| `PYTHONUNBUFFERED` | `1` | Unbuffered stdout (recommended in containers) |
-| `MCP_URL` | `http://localhost:8000/mcp` | URL of the MCP server the agent connects to |
-| `PROVIDER` | `openai` | LLM provider for the agent |
-| `MODEL_ID` | `gpt-4o` | Model id for the agent |
-| `ENABLE_WEB_UI` | `True` | Serve the AG-UI web interface |
-
-_33 package + 15 inherited variable(s). Auto-generated from `.env.example` + the shared scion-sdk set — do not edit._
-<!-- ENV-VARS-TABLE:END -->
 
 <!-- GOVERNED-CAPABILITY:START -->
 ## Governed capability contract
